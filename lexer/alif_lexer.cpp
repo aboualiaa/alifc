@@ -240,7 +240,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE, bool T
 				if (IS_PATH(FILE_NAME))
 					OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".aliflib";
 				else
-					OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = "/usr/local/lib/aliflib/" + FILE_NAME + ".aliflib";
+					OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = "/app/usr/local/lib/aliflib/" + FILE_NAME + ".aliflib";
 			#endif
 		}
 		else

@@ -327,7 +327,7 @@ bool CHECK_SETUP() // string ARGV_0, string OUTPUT)
 		// Get Absolute Path
 		// -------------------
 
-		PATH_ABSOLUTE = "/usr/local/bin";
+		PATH_ABSOLUTE = "/app/usr/local/bin";
 
 		// -------------------
 		// Get Working Path
@@ -360,7 +360,7 @@ bool CHECK_SETUP() // string ARGV_0, string OUTPUT)
 		PATH_FULL_RC = "";
 		PATH_FULL_ICO = "";
 
-		PATH_FULL_LIB_SETTING = "/usr/local/lib/aliflib/aliflib.inf";
+		PATH_FULL_LIB_SETTING = "/app/usr/local/lib/aliflib/aliflib.inf";
 
 	#endif
 

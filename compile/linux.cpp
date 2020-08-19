@@ -107,7 +107,7 @@ void COMPILE_LINUX_64BIT() // string RAND)
  
     LINUX_CMD = "g++ -c -o \"" + PATH_FULL_OBJ + "\" -Wno-undef -Wno-unused-parameter "
                       "-D__WXGTK__ -Wno-ctor-dtor-privacy -Woverloaded-virtual -D_FILE_OFFSET_BITS=64 "
-                      "-DwxDEBUG_LEVEL=0 -I\"/usr/local/include/aliflibwx\" -I\"/app/usr/local/include/aliflibwx\" -pthread -m64 -DG_DISABLE_CAST_CHECKS -O2 -m64 -std=c++11 " + Compile_ExtraCompile + " \"" +
+                      "-DwxDEBUG_LEVEL=0 -I\"/usr/local/include/aliflibwx\" -I\"/app/include/wx-3.1-alif/\" -I\"/app/usr/local/include/aliflibwx\" -pthread -m64 -DG_DISABLE_CAST_CHECKS -O2 -m64 -std=c++11 " + Compile_ExtraCompile + " \"" +
                       PATH_FULL_CPP + "\" 2> \"" + PATH_TEMP + "/alifcompiler_" + RANDOM + "_compile.log\" ";
 
     system(LINUX_CMD.c_str());
@@ -164,7 +164,7 @@ void COMPILE_LINUX_64BIT() // string RAND)
     // -L\"/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu" -lpython3.5
     
     LINUX_CMD = "g++ -o \"" + PATH_FULL_BIN + "\" \"" + PATH_FULL_OBJ + "\"  "
-                      "-L\"/usr/local/lib/aliflibwx\" -L\"/app/lib/\" -L\"/lib\" -L\"/app/usr/local/lib/aliflibwx\" -lwx_gtk2u_alif_webview-3.1 -lwx_gtk2u_alif_propgrid-3.1 -lwx_gtk2u_alif_aui-3.1 -lwebkitgtk-1.0 -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lpangoft2-1.0 -lpango-1.0 -lfontconfig -lfreetype -lsoup-2.4 -lgio-2.0 -lgobject-2.0 -ljavascriptcoregtk-1.0 -lglib-2.0 -lwx_gtk2u_alif_stc-3.1 -lwx_gtk2u_alif_core-3.1 -lwx_baseu_alif-3.1 -lwxscintilla_alif-3.1 -lwxtiff_alif-3.1 -lwxjpeg_alif-3.1 -lwxpng_alif-3.1  -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lfontconfig -lfreetype -lgthread-2.0 -pthread -lglib-2.0 -lX11 -lXxf86vm -lSM -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype -lwxzlib_alif-3.1 -lwxregexu_alif-3.1 -lwxexpat_alif-3.1 "
+                      "-L\"/usr/local/lib/aliflibwx\" -L\"/app/lib/\" -L\"/lib\" -I\"/app/include/wx-3.1-alif/\" -L\"/app/usr/local/lib/aliflibwx\" -lwx_gtk2u_alif_webview-3.1 -lwx_gtk2u_alif_propgrid-3.1 -lwx_gtk2u_alif_aui-3.1 -lwebkitgtk-1.0 -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lpangoft2-1.0 -lpango-1.0 -lfontconfig -lfreetype -lsoup-2.4 -lgio-2.0 -lgobject-2.0 -ljavascriptcoregtk-1.0 -lglib-2.0 -lwx_gtk2u_alif_stc-3.1 -lwx_gtk2u_alif_core-3.1 -lwx_baseu_alif-3.1 -lwxscintilla_alif-3.1 -lwxtiff_alif-3.1 -lwxjpeg_alif-3.1 -lwxpng_alif-3.1  -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lfontconfig -lfreetype -lgthread-2.0 -pthread -lglib-2.0 -lX11 -lXxf86vm -lSM -lgtk-x11-2.0 -lgdk-x11-2.0 -lpangocairo-1.0 -latk-1.0 -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lfontconfig -lfreetype -lwxzlib_alif-3.1 -lwxregexu_alif-3.1 -lwxexpat_alif-3.1 "
                       "-pthread -m64 -static-libgcc -static-libstdc++ -ldl -lm -ldl -lm -O2 -L\"/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu\" " + Compile_ExtraLink;
 
     if (system(LINUX_CMD.c_str()) != 0)

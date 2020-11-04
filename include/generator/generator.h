@@ -9,16 +9,12 @@
 #include <string>
 
 // General
-std::string CPP_ID_DECLARATION;
-std::string CPP_GLOBAL;
-std::string CPP_OBJ_DECLARATION;
-std::string CPP_FUN;
-std::string CPP_GLOBAL_FUN;
-std::string CPP_CLASS;
-// string CPP_AlifJavaScript_Functions;
-
-// Window
-std::map<std::pair<std::string, std::string>, std::string>
-    CPP_WINDOW; // [window][option] = value
+extern std::string CPP_ID_DECLARATION;
+extern std::string CPP_GLOBAL;
+extern std::string CPP_OBJ_DECLARATION;
+extern std::string CPP_FUN;
+extern std::string CPP_GLOBAL_FUN;
+extern std::string CPP_CLASS;
+extern std::map<std::pair<std::string, std::string>, std::string> CPP_WINDOW;
 
 #endif // ALIFC_GENERATOR_H

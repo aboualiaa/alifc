@@ -17,6 +17,7 @@
 
 #include "compile/macos.h"
 #include "core/core.h"
+#include "general/global.h"
 #include "general/headers.h"
 #include "general/setup.h"
 #include "generator/generator.h"
@@ -27,17 +28,6 @@
 // --------------------------------------------------------
 // Help
 // --------------------------------------------------------
-
-extern const std::string VERSION;
-extern std::string PATH_FULL_ALIF;
-extern std::string PATH_FULL_BIN;
-extern std::string PATH_FULL_LOG;
-extern std::string PATH_WORKING;
-extern bool DEBUG;
-extern bool ERROR_PRINT_ON_SCREEN;
-extern bool THIS_IS_ALIF_C_FILE;
-extern std::string PATH_FULL_CPP;
-extern std::string PATH_FULL_ICO;
 
 void ALIF_HELP() {
   std::cout << std::endl;

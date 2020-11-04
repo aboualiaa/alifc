@@ -20,6 +20,20 @@
 #include "general/headers.h"
 #include "general/log.h"
 
+int Generated_ID = 10000;
+int useconst = 0;
+int zeroterminated = 0;
+const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                 "abcdefghijklmnopqrstuvwxyz"
+                                 "0123456789+/";
+std::map<std::string, std::string> ID;           // abc[var] = V1000d
+std::map<std::string, std::string> Global_ID;    // abc[var] = G_V1000d
+std::map<std::string, std::string> Control_ID;   // abc[var] = C_V1000d
+std::map<std::string, std::string> Obj_ID;       // abc[var] = OBJ_V1000d
+std::map<std::string, std::string> GlobalObj_ID; // abc[var] = G_OBJ_V1000
+std::string IsValidVar_Type = "عادم";
+std::string C_LAST_ARG;
+
 auto ID_GENERATOR() -> int {
   // return rand() % 10 + 10000;
   return Generated_ID++;
@@ -410,7 +424,6 @@ auto IsInArray_v(const std::string &value,
 }
 
 auto IsDataType(const std::string &value) -> bool {
-
   return IsInArray_v(value, DataType_v);
 }
 

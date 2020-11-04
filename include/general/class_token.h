@@ -8,8 +8,6 @@
 #include <map>
 #include <string>
 
-using namespace std;
-
 class CLASS_TOKEN {
 public:
   // ----------------------------------
@@ -17,7 +15,7 @@ public:
   // ----------------------------------
 
   // to block setting Alif-Window inside librarys
-  string ALIF_SCRIPT_TYPE;
+  std::string ALIF_SCRIPT_TYPE;
 
   // ----------------------------------
   // File Path
@@ -25,20 +23,21 @@ public:
 
   // usr/username/Desktop/myproject/src/mysource.alif
   // Used only by Lexer()
-  string PATH_FULL_SOURCE;
+  std::string PATH_FULL_SOURCE;
 
   // ----------------------------------
   // Tokens
   // ----------------------------------
 
-  string REAL_LINE[2048]; // The real Alif script line, without toknonisation !
+  std::string
+      REAL_LINE[2048]; // The real Alif script line, without toknonisation !
   std::map<std::pair<int, int>, int>
       REAL_TOKEN_POSITION; // The real Alif script token position in real line !
   // [Line Number, Token Number] = "real char number"
 
   bool TOKENS_PREDEFINED = false;
 
-  std::map<std::pair<int, int>, string>
+  std::map<std::pair<int, int>, std::string>
       TOKEN; // TOKEN [Line Number, Token Number] = "token"
 
   int TOTAL[2048];

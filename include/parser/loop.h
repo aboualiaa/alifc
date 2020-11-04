@@ -5,6 +5,6 @@
 #ifndef ALIFC_LOOP_H
 #define ALIFC_LOOP_H
 
-void parser_While(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_While(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_LOOP_H

@@ -15,51 +15,55 @@
 
 #include "../lib/utf8.h"
 #include "../lib/utf8/core.h"
+#include "core/core.h"
 #include "general/global.h"
 #include "general/headers.h"
 #include "general/log.h"
 
-int Generated_ID = 10000;
-int ID_GENERATOR() {
+auto ID_GENERATOR() -> int {
   // return rand() % 10 + 10000;
   return Generated_ID++;
 }
 
-bool replace(std::string &str, const std::string &from, const std::string &to) {
+auto replace(std::string &str, const std::string &from, const std::string &to)
+    -> bool {
 
   size_t start_pos = str.find(from);
 
-  if (start_pos == std::string::npos)
+  if (start_pos == std::string::npos) {
     return false;
+  }
 
   str.replace(start_pos, from.length(), to);
 
   return true;
 }
 
-bool replace_end(std::string &str, const std::string &from,
-                 const std::string &to) {
+auto replace_end(std::string &str, const std::string &from,
+                 const std::string &to) -> bool {
 
   size_t start_pos = str.rfind(from);
 
-  if (start_pos == std::string::npos)
+  if (start_pos == std::string::npos) {
     return false;
+  }
 
   str.replace(start_pos, from.length(), to);
 
   return true;
 }
 
-string substr_utf8(string originalString, int Position, int MaxLen) {
+auto substr_utf8(const std::string &originalString, int Position, int MaxLen)
+    -> std::string {
 
-  string resultString_start = originalString;
+  std::string resultString_start = originalString;
   const char *aStr_start = originalString.c_str();
 
   int len = 0;
   int byteCount = 0;
 
   if (Position > 0) {
-    while (*aStr_start) {
+    while (*aStr_start != 0) {
 
       if ((*aStr_start & 0xc0) != 0x80) {
         len += 1;
@@ -79,73 +83,72 @@ string substr_utf8(string originalString, int Position, int MaxLen) {
   if (MaxLen == 0) {
 
     return resultString_start;
+  }
+  // Initialization
+  len = 0;
+  byteCount = 0;
 
-  } else {
+  std::string resultString = resultString_start;
 
-    // Initialization
-    len = 0;
-    byteCount = 0;
+  const char *aStr = resultString_start.c_str();
 
-    string resultString = resultString_start;
+  while (*aStr) {
 
-    const char *aStr = resultString_start.c_str();
+    if ((*aStr & 0xc0) != 0x80) {
 
-    while (*aStr) {
-
-      if ((*aStr & 0xc0) != 0x80) {
-
-        len += 1;
-      }
-
-      if (len > MaxLen) {
-
-        resultString = resultString.substr(0, byteCount);
-        break;
-      }
-
-      byteCount++;
-      aStr++;
+      len += 1;
     }
 
-    return resultString;
+    if (len > MaxLen) {
+
+      resultString = resultString.substr(0, byteCount);
+      break;
+    }
+
+    byteCount++;
+    aStr++;
   }
+
+  return resultString;
 }
 
-string IntToString(int INT_VAL) {
+auto IntToString(int INT_VAL) -> std::string {
 
   // Int --> String
 
-  stringstream STRING_STREAM_BUFFER;
+  std::stringstream STRING_STREAM_BUFFER;
   STRING_STREAM_BUFFER << INT_VAL;
-  string STRING_BUFFER = STRING_STREAM_BUFFER.str();
+  std::string STRING_BUFFER = STRING_STREAM_BUFFER.str();
   return STRING_BUFFER;
 }
 
-string CONVERT_STRING_ARRAY_TO_STRING(string STRING_ARRAY_VAL[1024], int LONG) {
+auto CONVERT_STRING_ARRAY_TO_STRING(std::string STRING_ARRAY_VAL[1024],
+                                    int LONG) -> std::string {
   // string[123] --> String
-  stringstream STRING_STREAM_BUFFER;
+  std::stringstream STRING_STREAM_BUFFER;
 
-  if (LONG < 1)
+  if (LONG < 1) {
     return "";
+  }
 
   for (int p = 0; p <= LONG; p++) {
     STRING_STREAM_BUFFER << STRING_ARRAY_VAL[p];
   }
 
-  string STRING_BUFFER = STRING_STREAM_BUFFER.str();
+  std::string STRING_BUFFER = STRING_STREAM_BUFFER.str();
   return STRING_BUFFER;
 }
 
-string CONVERT_WCHAT_T_TO_STRING(wchar_t *WCHART_T_VAL) {
+auto CONVERT_WCHAT_T_TO_STRING(wchar_t *WCHART_T_VAL) -> std::string {
   // wchar_t --> String
-  wstring W_STRING_BUFFER(WCHART_T_VAL);
-  string STRING_BUFFER(W_STRING_BUFFER.begin(), W_STRING_BUFFER.end());
+  std::wstring W_STRING_BUFFER(WCHART_T_VAL);
+  std::string STRING_BUFFER(W_STRING_BUFFER.begin(), W_STRING_BUFFER.end());
   return STRING_BUFFER;
 }
 
-string CONVERT_CHAR_TO_STRING(char *CHART_VAL) {
+auto CONVERT_CHAR_TO_STRING(char *CHART_VAL) -> std::string {
   // Char --> String
-  string STRING_BUFFER(CHART_VAL);
+  std::string STRING_BUFFER(CHART_VAL);
   return STRING_BUFFER;
 }
 
@@ -269,27 +272,23 @@ void BinaryToC(string FileIn, string FileOut){
 
 // https://github.com/ReneNyffenegger/cpp-base64/blob/master/base64.cpp
 
-static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                                        "abcdefghijklmnopqrstuvwxyz"
-                                        "0123456789+/";
-
-static inline bool is_base64(unsigned char c) {
-  return (isalnum(c) || (c == '+') || (c == '/'));
+static inline auto is_base64(unsigned char c) -> bool {
+  return ((isalnum(c) != 0) || (c == '+') || (c == '/'));
 }
 
 // const std::string s = "...";
 // std::string encoded = base64_encode(reinterpret_cast<const unsigned
 // char*>(s.c_str()), s.length()); std::string decoded = base64_decode(encoded);
 
-std::string base64_encode(unsigned char const *bytes_to_encode,
-                          unsigned int in_len) {
+auto base64_encode(unsigned char const *bytes_to_encode, unsigned int in_len)
+    -> std::string {
   std::string ret;
   int i = 0;
   int j = 0;
   unsigned char char_array_3[3];
   unsigned char char_array_4[4];
 
-  while (in_len--) {
+  while ((in_len--) != 0u) {
     char_array_3[i++] = *(bytes_to_encode++);
     if (i == 3) {
       char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
@@ -299,15 +298,17 @@ std::string base64_encode(unsigned char const *bytes_to_encode,
           ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
       char_array_4[3] = char_array_3[2] & 0x3f;
 
-      for (i = 0; (i < 4); i++)
+      for (i = 0; (i < 4); i++) {
         ret += base64_chars[char_array_4[i]];
+      }
       i = 0;
     }
   }
 
-  if (i) {
-    for (j = i; j < 3; j++)
+  if (i != 0) {
+    for (j = i; j < 3; j++) {
       char_array_3[j] = '\0';
+    }
 
     char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
     char_array_4[1] =
@@ -315,11 +316,13 @@ std::string base64_encode(unsigned char const *bytes_to_encode,
     char_array_4[2] =
         ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
 
-    for (j = 0; (j < i + 1); j++)
+    for (j = 0; (j < i + 1); j++) {
       ret += base64_chars[char_array_4[j]];
+    }
 
-    while ((i++ < 3))
+    while ((i++ < 3)) {
       ret += '=';
+    }
   }
 
   return ret;
@@ -364,49 +367,49 @@ base64_chars.find(char_array_4[i]) & 0xff;
 }
 */
 
-string BinaryToBase64(string FileIn) { return ""; }
+auto BinaryToBase64(const std::string &FileIn) -> std::string { return ""; }
 
 // -----------------------------------------------------------
 // CPP Set Variables Name
 // -----------------------------------------------------------
 
-static std::map<string, string> ID;           // abc[var] = V1000
-static std::map<string, string> Global_ID;    // abc[var] = G_V1000
-static std::map<string, string> Control_ID;   // abc[var] = C_V1000
-static std::map<string, string> Obj_ID;       // abc[var] = OBJ_V1000
-static std::map<string, string> GlobalObj_ID; // abc[var] = G_OBJ_V1000
-
-void SET_OBJ_C_NAME(string VAR) {
-  if (Obj_ID[VAR] == "")
+void SET_OBJ_C_NAME(const std::string &VAR) {
+  if (Obj_ID[VAR].empty()) {
     Obj_ID[VAR] = "OBJ_" + IntToString(ID_GENERATOR());
+  }
 }
 
-void SET_GLOBAL_OBJ_C_NAME(string VAR) {
-  if (GlobalObj_ID[VAR] == "")
+void SET_GLOBAL_OBJ_C_NAME(const std::string &VAR) {
+  if (GlobalObj_ID[VAR].empty()) {
     GlobalObj_ID[VAR] = "G_OBJ_" + IntToString(ID_GENERATOR());
+  }
 }
 
-void SET_C_NAME(string VAR) {
-  if (ID[VAR] == "")
+void SET_C_NAME(const std::string &VAR) {
+  if (ID[VAR].empty()) {
     ID[VAR] = "V_" + IntToString(ID_GENERATOR());
+  }
 }
 
-void SET_GLOBAL_C_NAME(string VAR) {
-  if (Global_ID[VAR] == "")
+void SET_GLOBAL_C_NAME(const std::string &VAR) {
+  if (Global_ID[VAR].empty()) {
     Global_ID[VAR] = "G_V_" + IntToString(ID_GENERATOR());
+  }
 }
 
-void SET_CONTROL_C_NAME(string VAR) {
-  if (Control_ID[VAR] == "")
+void SET_CONTROL_C_NAME(const std::string &VAR) {
+  if (Control_ID[VAR].empty()) {
     Control_ID[VAR] = "C_V_" + IntToString(ID_GENERATOR());
+  }
 }
 
-bool IsInArray_v(const std::string &value, const std::vector<string> &array) {
+auto IsInArray_v(const std::string &value,
+                 const std::vector<std::string> &array) -> bool {
 
   return std::find(array.begin(), array.end(), value) != array.end();
 }
 
-bool IsDataType(const std::string &value) {
+auto IsDataType(const std::string &value) -> bool {
 
   return IsInArray_v(value, DataType_v);
 }
@@ -415,7 +418,7 @@ bool IsDataType(const std::string &value) {
 // Get UTF8 Total Leng
 // -----------------------------------------------------------
 
-int CharCount_utf8(string LINE8, CLASS_TOKEN *o_tokens) {
+auto CharCount_utf8(std::string LINE8, CLASS_TOKEN *o_tokens) -> int {
 
   // ------------------------------------------------------
   // check ل invalid utf-8
@@ -423,7 +426,8 @@ int CharCount_utf8(string LINE8, CLASS_TOKEN *o_tokens) {
   // there is also utf8::is_valid function
   // ------------------------------------------------------
 
-  string::iterator LINE_END_IT = utf8::find_invalid(LINE8.begin(), LINE8.end());
+  std::string::iterator LINE_END_IT =
+      utf8::find_invalid(LINE8.begin(), LINE8.end());
 
   if (LINE_END_IT != LINE8.end()) {
     ALIF_ERROR("ERROR : Invalid UTF-8 encoding at line " +
@@ -436,7 +440,7 @@ int CharCount_utf8(string LINE8, CLASS_TOKEN *o_tokens) {
   // ------------------------------------------------------
 
   // vector<int short> LINE32;
-  string LINE32;
+  std::string LINE32;
   utf8::utf8to32(LINE8.begin(), LINE_END_IT, back_inserter(LINE32));
 
   // ------------------------------------------------------
@@ -458,53 +462,63 @@ int CharCount_utf8(string LINE8, CLASS_TOKEN *o_tokens) {
 
 // ====================================================
 
-string GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens) {
-  if (DEBUG)
+auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens)
+    -> std::string {
+  if (DEBUG) {
     DEBUG_MESSAGE("REAL_LINE : |" + o_tokens->REAL_LINE[o_tokens->Line] +
                       "| \n",
                   o_tokens);
-  if (DEBUG)
+  }
+  if (DEBUG) {
     DEBUG_MESSAGE("START : " + IntToString(START) + " \n", o_tokens);
-  if (DEBUG)
+  }
+  if (DEBUG) {
     DEBUG_MESSAGE("TOKEN_POSITION : " + IntToString(TOKEN_POSITION) + " \n",
                   o_tokens);
-  if (DEBUG)
+  }
+  if (DEBUG) {
     DEBUG_MESSAGE("REAL_TOKEN_POSITION : " +
                       IntToString(o_tokens->REAL_TOKEN_POSITION[std::make_pair(
                           o_tokens->Line, TOKEN_POSITION)]) +
                       " \n",
                   o_tokens);
+  }
 
-  if (START < 0 || TOKEN_POSITION < 1) // Exception !
+  if (START < 0 || TOKEN_POSITION < 1) { // Exception !
     return o_tokens->REAL_LINE[o_tokens->Line];
+  }
 
-  string BUFFER;
+  std::string BUFFER;
 
   BUFFER = substr_utf8(o_tokens->REAL_LINE[o_tokens->Line], START,
                        o_tokens->REAL_TOKEN_POSITION[std::make_pair(
                            o_tokens->Line, TOKEN_POSITION)]);
 
-  if (BUFFER.empty())
+  if (BUFFER.empty()) {
     return o_tokens->REAL_LINE[o_tokens->Line]; // Empty, So tray to return full
                                                 // real line !
-  else
+  } else {
     return BUFFER; // Return the SubStr requested.
+  }
 }
 
 // ====================================================
 
-bool IsValidStringFormat(string STRING, CLASS_TOKEN *o_tokens) {
-  if (substr_utf8(STRING, 0, 1) != "\"")
+auto IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens)
+    -> bool {
+  if (substr_utf8(STRING, 0, 1) != "\"") {
     return false;
+  }
 
-  if (substr_utf8(STRING, (CharCount_utf8(STRING, o_tokens) - 1), 1) != "\"")
+  if (substr_utf8(STRING, (CharCount_utf8(STRING, o_tokens) - 1), 1) != "\"") {
     return false;
+  }
 
   return true;
 }
 
 /*
-bool IsValidStringFormatOrStringVar(string STRING, CLASS_TOKEN *o_tokens){
+bool IsValidStringFormatOrStringVar(std::string STRING, CLASS_TOKEN *o_tokens){
 
         // TODO : We need add support for global class var, global var.
 
@@ -535,9 +549,10 @@ STRING)] != "نص") return false;
 
 // ====================================================
 
-string REMOVE_DOUBLE_SPACE(string LINE_BUFFER, CLASS_TOKEN *o_tokens) {
-  string Char;
-  string BUFFER;
+auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, CLASS_TOKEN *o_tokens)
+    -> std::string {
+  std::string Char;
+  std::string BUFFER;
 
   bool INSIDE = false;
   bool VALID_CHAR = false;
@@ -553,12 +568,14 @@ string REMOVE_DOUBLE_SPACE(string LINE_BUFFER, CLASS_TOKEN *o_tokens) {
       BUFFER.append("\"");
     } else if (Char == "\xEF\xBB\xBF") // BOM Signe in first char of file
     {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[BOM]", o_tokens); // LOG
+      }
     } else if (Char == "\u202E") // RIGHT-TO-LEFT OVERRIDE signe, إلى force RTL
     {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[RTL]", o_tokens); // LOG
+      }
     } else if (Char == " " || Char == "\t") {
       if (INSIDE) {
         BUFFER.append(Char);
@@ -592,10 +609,11 @@ string REMOVE_DOUBLE_SPACE(string LINE_BUFFER, CLASS_TOKEN *o_tokens) {
 
 // ====================================================
 
-bool IsValidDigit(string DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens) {
+auto IsValidDigit(const std::string &DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens)
+    -> bool {
   int I = 0;
   int TOTAL_CHAR = CharCount_utf8(DIGIT, o_tokens);
-  string Char;
+  std::string Char;
   bool First = true;
   bool DECIMAL = false;
 
@@ -646,7 +664,7 @@ bool IsValidDigit(string DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens) {
 
 // ====================================================
 
-bool CAN_ADD_OPERATION_HERE(string TOKEN_LAST) {
+auto CAN_ADD_OPERATION_HERE(const std::string &TOKEN_LAST) -> bool {
   // = 1 + 2 * (3 / 4 - 5) + 6
   // IF
 
@@ -671,15 +689,16 @@ bool CAN_ADD_OPERATION_HERE(string TOKEN_LAST) {
   {
   */
   if ((TOKEN_LAST == "=") || (TOKEN_LAST == "+") || (TOKEN_LAST == "-") ||
-      (TOKEN_LAST == "*") || (TOKEN_LAST == "/") || (TOKEN_LAST == "("))
+      (TOKEN_LAST == "*") || (TOKEN_LAST == "/") || (TOKEN_LAST == "(")) {
     return false;
+  }
 
   //}
 
   return true;
 }
 
-bool CAN_ADD_VAR_HERE(string TOKEN_LAST) {
+auto CAN_ADD_VAR_HERE(const std::string &TOKEN_LAST) -> bool {
   // str / عدد = متغير + متغير * (var / متغير - var)
 
   /*
@@ -703,8 +722,9 @@ bool CAN_ADD_VAR_HERE(string TOKEN_LAST) {
   {
   */
   if ((TOKEN_LAST != "+") && (TOKEN_LAST != "-") && (TOKEN_LAST != "*") &&
-      (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "("))
+      (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "(")) {
     return false;
+  }
 
   //}
 
@@ -713,7 +733,7 @@ bool CAN_ADD_VAR_HERE(string TOKEN_LAST) {
 
 // ====================================================
 
-bool CAN_ADD_FUN_HERE(string TOKEN_LAST) {
+auto CAN_ADD_FUN_HERE(const std::string &TOKEN_LAST) -> bool {
   // str / عدد = متغير + fun(var) * (fun(var) / fun(var, fun(var), var) - var)
 
   /*
@@ -739,15 +759,16 @@ bool CAN_ADD_FUN_HERE(string TOKEN_LAST) {
 
   if ((TOKEN_LAST != "+") && (TOKEN_LAST != "-") && (TOKEN_LAST != "*") &&
       (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "،") &&
-      (TOKEN_LAST != ",") && (TOKEN_LAST != "("))
+      (TOKEN_LAST != ",") && (TOKEN_LAST != "(")) {
     return false;
+  }
 
   return true;
 }
 
 // ====================================================
 
-bool CAN_ADD_PARENTHESIS_OPEN_HERE(string TOKEN_LAST) {
+auto CAN_ADD_PARENTHESIS_OPEN_HERE(const std::string &TOKEN_LAST) -> bool {
   // = ((1)) + (2 * (3 / (4) - 5) +( 6))
   // IF = (a + s < b * h) او (z + 2) != (x - 7) و (z = x)
 
@@ -758,12 +779,14 @@ bool CAN_ADD_PARENTHESIS_OPEN_HERE(string TOKEN_LAST) {
         (TOKEN_LAST != "<") && (TOKEN_LAST != ">") && (TOKEN_LAST != "و") &&
         (TOKEN_LAST != "أو") &&
 
-        (TOKEN_LAST != "("))
+        (TOKEN_LAST != "(")) {
       return true;
+    }
   } else {
     if ((TOKEN_LAST != "+") && (TOKEN_LAST != "-") && (TOKEN_LAST != "*") &&
-        (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "("))
+        (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "(")) {
       return false;
+    }
   }
 
   return true;
@@ -771,12 +794,10 @@ bool CAN_ADD_PARENTHESIS_OPEN_HERE(string TOKEN_LAST) {
 
 // ====================================================
 
-string IsValidVar_Type = "عادم";
-
-bool IsValidVar(string Var, CLASS_TOKEN *o_tokens) {
+auto IsValidVar(const std::string &Var, CLASS_TOKEN *o_tokens) -> bool {
   IsValidVar_Type = "عادم";
 
-  if (Var == "") {
+  if (Var.empty()) {
 
     return false;
   } else if (Var == "صحيح" || Var == "خطأ") {
@@ -878,28 +899,31 @@ bool IsValidVar(string Var, CLASS_TOKEN *o_tokens) {
     IsValidVar_Type = "عادم";
 
     return true;
-  } else
+  } else {
     return false;
+  }
 }
 
 // ====================================================
 
-bool CAN_ADD_PARENTHESIS_CLOSE_HERE(string TOKEN_LAST) {
+auto CAN_ADD_PARENTHESIS_CLOSE_HERE(const std::string &TOKEN_LAST) -> bool {
   // = ((1)) + (2 * (3 / (4) - 5) + ( 6)) + ()
 
-  if (TOKEN_LAST == "(") // إلى avoid ... () ...
+  if (TOKEN_LAST == "(") { // إلى avoid ... () ...
     return false;
+  }
 
   if ((TOKEN_LAST == "=") || (TOKEN_LAST == "+") || (TOKEN_LAST == "-") ||
-      (TOKEN_LAST == "*") || (TOKEN_LAST == "/"))
+      (TOKEN_LAST == "*") || (TOKEN_LAST == "/")) {
     return false;
+  }
 
   return true;
 }
 
 // ====================================================
 
-bool CAN_ADD_DIGIT_HERE(string TOKEN_LAST) {
+auto CAN_ADD_DIGIT_HERE(const std::string &TOKEN_LAST) -> bool {
   // = 1 + 2 * (3 / 4 - 5) + 6
 
   /*
@@ -923,8 +947,9 @@ bool CAN_ADD_DIGIT_HERE(string TOKEN_LAST) {
   {
   */
   if ((TOKEN_LAST != "+") && (TOKEN_LAST != "-") && (TOKEN_LAST != "*") &&
-      (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "("))
+      (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "(")) {
     return false;
+  }
   //}
 
   return true;
@@ -932,11 +957,13 @@ bool CAN_ADD_DIGIT_HERE(string TOKEN_LAST) {
 
 // ====================================================
 
-string GET_TXT_FROM_STRING(string STRING, CLASS_TOKEN *o_tokens) {
-  string MESSAGE_BUFFER;
+auto GET_TXT_FROM_STRING(const std::string &STRING, CLASS_TOKEN *o_tokens)
+    -> std::string {
+  std::string MESSAGE_BUFFER;
 
-  if (CharCount_utf8(STRING, o_tokens) < 3) // "" Emty string
-    return "";                              // 3 is the minimum msg, "a"
+  if (CharCount_utf8(STRING, o_tokens) < 3) { // "" Emty string
+    return "";                                // 3 is the minimum msg, "a"
+  }
 
   MESSAGE_BUFFER = substr_utf8(STRING, 1, CharCount_utf8(STRING, o_tokens));
   MESSAGE_BUFFER = substr_utf8(MESSAGE_BUFFER, 0,
@@ -947,7 +974,7 @@ string GET_TXT_FROM_STRING(string STRING, CLASS_TOKEN *o_tokens) {
 
 // ====================================================
 
-void CheckForSameGlobalID(string Name, CLASS_TOKEN *o_tokens) {
+void CheckForSameGlobalID(const std::string &Name, CLASS_TOKEN *o_tokens) {
   // check if same name with any already global declaration
 
   if (OBJ_IS_SET[std::make_pair("", Name)]) {
@@ -994,9 +1021,9 @@ void CheckForSameGlobalID(string Name, CLASS_TOKEN *o_tokens) {
   }
 }
 
-bool IsValidName(string Name, CLASS_TOKEN *o_tokens) {
+auto IsValidName(const std::string &Name, CLASS_TOKEN *o_tokens) -> bool {
 
-  string Char;
+  std::string Char;
   bool First = true;
 
   for (int I = 0; I <= CharCount_utf8(Name, o_tokens); I++) {
@@ -1037,7 +1064,7 @@ bool IsValidName(string Name, CLASS_TOKEN *o_tokens) {
                Char == "@" || Char == "[" || Char == "]" || Char == "&" ||
                Char == " " ||        // Space
                Char == "	" || // Tab
-               Char == "") {
+               Char.empty()) {
       if (Char == " ") {
         if (!IS_CONTROL_FUNCTION_NAME) {
           ErrorCode("حرف غير مقبول : ' " + Char + " ' داخل ' " + Name + " ' ",
@@ -1073,15 +1100,18 @@ bool IsValidName(string Name, CLASS_TOKEN *o_tokens) {
 
 // ====================================================
 
-void ADD_FUN(bool GLOBAL, string WIN_NAME, string FUN_NAME, string TYPE,
-             int Line, CLASS_TOKEN *o_tokens) {
-  if (!IsValidName(FUN_NAME, o_tokens))
+void ADD_FUN(bool GLOBAL, const std::string &WIN_NAME,
+             const std::string &FUN_NAME, const std::string &TYPE, int Line,
+             CLASS_TOKEN *o_tokens) {
+  if (!IsValidName(FUN_NAME, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + FUN_NAME + " ' ", o_tokens);
+  }
 
   // if same name as Window !
-  if (WIN_NAME == FUN_NAME)
+  if (WIN_NAME == FUN_NAME) {
     ErrorCode("تشابه في الاسم بين الدالة و النافدة ' " + FUN_NAME + " ' ",
               o_tokens);
+  }
 
   if (GLOBAL) {
     // if already exist global fun
@@ -1102,8 +1132,9 @@ void ADD_FUN(bool GLOBAL, string WIN_NAME, string FUN_NAME, string TYPE,
     Global_FunctionNames[Global_TotalFucntion] = FUN_NAME;
     Global_TotalFucntion++;
 
-    if (TYPE == "عادم")
+    if (TYPE == "عادم") {
       RETURN_FUN[std::make_pair("", FUN_NAME)] = "OK";
+    }
 
     // *** Generate Code ***
     SET_GLOBAL_C_NAME(FUN_NAME);
@@ -1120,8 +1151,9 @@ void ADD_FUN(bool GLOBAL, string WIN_NAME, string FUN_NAME, string TYPE,
     L_FUN_IS_SET[std::make_pair(WIN_NAME, FUN_NAME)] = true;
     L_FUN_AT_LINE[std::make_pair(WIN_NAME, FUN_NAME)] = IntToString(Line);
 
-    if (TYPE == "عادم")
+    if (TYPE == "عادم") {
       RETURN_FUN[std::make_pair(WIN_NAME, FUN_NAME)] = "OK";
+    }
 
     // *** Generate Code ***
     SET_C_NAME(FUN_NAME);
@@ -1129,22 +1161,26 @@ void ADD_FUN(bool GLOBAL, string WIN_NAME, string FUN_NAME, string TYPE,
   }
 }
 
-void SetNewVar(bool IsGlobal, string TmpWindow, string TmpFunction,
-               string VarName, string VarDataType, bool IsConstant,
-               bool IsArray, int Line, CLASS_TOKEN *o_tokens) {
+void SetNewVar(bool IsGlobal, const std::string &TmpWindow,
+               const std::string &TmpFunction, const std::string &VarName,
+               const std::string &VarDataType, bool IsConstant, bool IsArray,
+               int Line, CLASS_TOKEN *o_tokens) {
 
-  if (!IsValidName(VarName, o_tokens))
+  if (!IsValidName(VarName, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + VarName + " ' ", o_tokens);
+  }
 
-  if (TmpFunction == VarName)
+  if (TmpFunction == VarName) {
     ErrorCode("تشابه في الاسم بين المتغير و الدالة ' " + VarName + " ' ",
               o_tokens);
+  }
 
   if (IsGlobal) {
-    if (G_VAR_IS_SET[(VarName)])
+    if (G_VAR_IS_SET[(VarName)]) {
       ErrorCode("المتغير العام ' " + VarName +
                     " ' تم انشاؤه مسبقا في السطر : " + G_VAR_AT_LINE[(VarName)],
                 o_tokens);
+    }
 
     CheckForSameGlobalID(VarName, o_tokens);
 
@@ -1181,20 +1217,23 @@ void SetNewVar(bool IsGlobal, string TmpWindow, string TmpFunction,
   }
 }
 
-void SetNewVarClass(bool IsGlobal, bool IsPrivate, string ClassName,
-                    string FunctionName, string VarName, string VarDataType,
-                    bool IsConstant, bool IsArray, int Line,
-                    CLASS_TOKEN *o_tokens) {
+void SetNewVarClass(bool IsGlobal, bool IsPrivate, const std::string &ClassName,
+                    const std::string &FunctionName, const std::string &VarName,
+                    const std::string &VarDataType, bool IsConstant,
+                    bool IsArray, int Line, CLASS_TOKEN *o_tokens) {
 
-  if (!IsValidName(VarName, o_tokens))
+  if (!IsValidName(VarName, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + VarName + " ' ", o_tokens);
+  }
 
-  if (!IsGlobal && IsPrivate)
+  if (!IsGlobal && IsPrivate) {
     ErrorCode("يجب استخدام ' خاص ' خارج الدالة", o_tokens);
+  }
 
-  if (ClassName == VarName)
+  if (ClassName == VarName) {
     ErrorCode("تشابه في الاسم بين المتغير و الصنف ' " + VarName + " ' ",
               o_tokens);
+  }
 
   if (IsGlobal) {
     if (CLASS_G_VAR_IS_SET[std::make_pair(ClassName, VarName)]) {
@@ -1245,21 +1284,24 @@ void SetNewVarClass(bool IsGlobal, bool IsPrivate, string ClassName,
   }
 }
 
-string GetSyntaxDataType(string Token[1024], int Position,
-                         CLASS_TOKEN *o_tokens) {
+auto GetSyntaxDataType(std::string Token[1024], int Position,
+                       CLASS_TOKEN *o_tokens) -> std::string {
 
   // Token[Position] -> '='
 
-  if (IsValidVar(Token[Position + 1], o_tokens))
+  if (IsValidVar(Token[Position + 1], o_tokens)) {
     return IsValidVar_Type;
+  }
 
   return {};
 }
 
-void ADD_FUN_CLASS(bool PRIVATE, string CLASS_NAME, string FUN_NAME,
-                   string TYPE, int Line, CLASS_TOKEN *o_tokens) {
-  if (!IsValidName(FUN_NAME, o_tokens))
+void ADD_FUN_CLASS(bool PRIVATE, const std::string &CLASS_NAME,
+                   const std::string &FUN_NAME, const std::string &TYPE,
+                   int Line, CLASS_TOKEN *o_tokens) {
+  if (!IsValidName(FUN_NAME, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + FUN_NAME + " ' ", o_tokens);
+  }
 
   // if already exist class fun
   if (CLASS_FUN_IS_SET[std::make_pair(CLASS_NAME, FUN_NAME)]) {
@@ -1280,19 +1322,21 @@ void ADD_FUN_CLASS(bool PRIVATE, string CLASS_NAME, string FUN_NAME,
   // o_tokens); // DEBUG
 
   // if same name as class !
-  if (CLASS_NAME == FUN_NAME)
+  if (CLASS_NAME == FUN_NAME) {
     ErrorCode("تشابه في الاسم بين الدالة و الصنف ' " + FUN_NAME +
                   " '، على العموم إن كنت تقصد دالة بناء الصنف استخدم التعريف ' "
                   "بناء '",
               o_tokens);
+  }
 
   CLASS_FUN_TYPE[std::make_pair(CLASS_NAME, FUN_NAME)] = TYPE;
   CLASS_FUN_IS_SET[std::make_pair(CLASS_NAME, FUN_NAME)] = true;
   CLASS_FUN_AT_LINE[std::make_pair(CLASS_NAME, FUN_NAME)] = IntToString(Line);
   CLASS_FUN_PRIVATE[std::make_pair(CLASS_NAME, FUN_NAME)] = PRIVATE;
 
-  if (TYPE == "عادم")
+  if (TYPE == "عادم") {
     RETURN_FUN[std::make_pair(CLASS_NAME, FUN_NAME)] = "OK";
+  }
 
   // *** Generate Code ***
   SET_C_NAME(FUN_NAME);
@@ -1306,22 +1350,21 @@ void ADD_FUN_CLASS(bool PRIVATE, string CLASS_NAME, string FUN_NAME,
 
 // ====================================================
 
-string C_LAST_ARG;
-
-string
-CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
-                     string TmpWindow,   // fun1 { a = b + win:fun2(x) + z }
-                     string TmpFunction, // fun1 { a = b + win:fun2(x) + z }
-                     CLASS_TOKEN *o_tokens) {
+auto CHECK_NEW_FUN_SYNTAX(bool GLOBAL, std::string SYNTAX[1024],
+                          int SYNTAX_LONG, const std::string &TmpWindow,
+                          const std::string &TmpFunction, CLASS_TOKEN *o_tokens)
+    -> std::string {
   // function (int a, نص b)
 
   // SYNTAX : عدد 	| SYNTAX[3] : string
   // SYNTAX[1] : a	| SYNTAX[4] : b
   // SYNTAX[2] : ,	| SYNTAX[5] : )
 
-  int TYPE = 0, VAR = 1, COMMA = 2;
+  int TYPE = 0;
+  int VAR = 1;
+  int COMMA = 2;
 
-  string CPP_CODE;
+  std::string CPP_CODE;
   NEW_FUNCTION_ARG = "";
 
   for (int p = 0; p <= SYNTAX_LONG; p += 3) {
@@ -1333,18 +1376,23 @@ CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
         ErrorCode("نوع غير مقبول ' " + SYNTAX[TYPE] + " ' ", o_tokens);
       }
 
-      if (!IsValidName(SYNTAX[VAR], o_tokens))
+      if (!IsValidName(SYNTAX[VAR], o_tokens)) {
         ErrorCode("اسم غير مقبول ' " + SYNTAX[VAR] + " ' ", o_tokens);
+      }
 
       if (L_VAR_IS_SET[std::make_pair(TmpWindow + TmpFunction,
-                                      SYNTAX[VAR])]) // الدالة (int a, نص a)
+                                      SYNTAX[VAR])]) { // الدالة (int a, نص a)
         ErrorCode("متغير محلي موجود مسبقا ' " + SYNTAX[VAR] + " ' ", o_tokens);
+      }
 
-      if (SYNTAX[COMMA] != "،" && SYNTAX[COMMA] != "," && SYNTAX[COMMA] != ")")
+      if (SYNTAX[COMMA] != "،" && SYNTAX[COMMA] != "," &&
+          SYNTAX[COMMA] != ")") {
         ErrorCode("فاصله غير صحيحه ' " + SYNTAX[COMMA] + " ' ", o_tokens);
+      }
 
-      if (SYNTAX[COMMA] == ")" && COMMA < SYNTAX_LONG)
+      if (SYNTAX[COMMA] == ")" && COMMA < SYNTAX_LONG) {
         ErrorCode("غير مكتمل ' " + IntToString(SYNTAX_LONG) + " ' ", o_tokens);
+      }
 
       // if(DEBUG)DEBUG_MESSAGE("[" + SYNTAX[TYPE] + "|" + SYNTAX[VAR] + "]",
       // o_tokens); // DEBUG
@@ -1371,8 +1419,9 @@ CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
       // Tokens already predifined, so we need show log, and return C++ code
 
       if (SYNTAX[TYPE] == "عدد") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[INT " + SYNTAX[VAR] + "]", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // always need pointer to one elem array
@@ -1380,8 +1429,9 @@ CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
         NEW_FUNCTION_ARG.append(" double " + ID[SYNTAX[VAR]] + " ");
         // *** *** *** *** *** ***
       } else if (SYNTAX[TYPE] == "نص") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[STRING " + SYNTAX[VAR] + "]", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" wxString " + ID[SYNTAX[VAR]] + " ");
@@ -1389,8 +1439,9 @@ CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
         // *** *** *** *** *** ***
 
       } else if (SYNTAX[TYPE] == "منطق") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[BOOL " + SYNTAX[VAR] + "]", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" bool " + ID[SYNTAX[VAR]] + " ");
@@ -1413,16 +1464,17 @@ CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
     }
   }
 
-  if (o_tokens->TOKENS_PREDEFINED)
+  if (o_tokens->TOKENS_PREDEFINED) {
     return CPP_CODE;
-  else
+  } else {
     return "";
+  }
 }
 
 // ====================================================
 
-string CheckForSyntax(
-    string OBJECTIF_TYPE,       // OBJECTIF_TYPE
+auto CheckForSyntax(
+    const std::string &OBJECTIF_TYPE, // OBJECTIF_TYPE
     bool ACCEPT_REF_WIN_WIDGET, // Accept Using Reference إلى Window:Controls
     bool ACCEPT_REF_WIN_FUN,    // Accept Using Reference إلى Window:Function
     bool ACCEPT_REF_GLOBAL_FUN, // Accept Using Reference إلى Global Functions
@@ -1431,22 +1483,24 @@ string CheckForSyntax(
     bool ACCEPT_REF_LOCAL_VAR,  // Accept Using Reference إلى Local VAR
     bool ACCEPT_STR_TO_INT,     // Accept Convertion من نص إلى Int
     bool ACCEPT_INT_TO_STRING,  // Accept Convertion من عدد إلى String
-    string SYNTAX[1024],        // SYNTAX[] string
+    std::string SYNTAX[1024],   // SYNTAX[] string
     int SYNTAX_LONG,            // SYNTAX_LONG int
-    string TMP_WIN_OR_CLASS,    // a = b + win:fun(2+2) + class:fun(x)
-    string TmpFunction,         // a = b + win/class:fun(2+2)
-    CLASS_TOKEN *o_tokens) {
+    const std::string &TMP_WIN_OR_CLASS, // a = b + win:fun(2+2) + class:fun(x)
+    const std::string &TmpFunction,      // a = b + win/class:fun(2+2)
+    CLASS_TOKEN *o_tokens) -> std::string {
   // Note : WX Crash if On creating using reference إلى Controls, BUT OK ل
   // Functions.
 
   // SYNTAX = '='
   // SYNTAX[1] = ...
 
-  // TmpFunction				: = a + b + TMP_FUN_NAME(X, Y, Z) +
+  // TmpFunction				: = a + b + TMP_FUN_NAME(X, Y,
+  // Z)
+  // +
   // ... TMP_WIN_OR_CLASS		: إلى get Generated_ID of tmp الدالة
   // name OBJECTIF_TYPE		: INT.ToString or STRING.ToInt
 
-  string CPP_CODE;
+  std::string CPP_CODE;
 
   if (SYNTAX[0] != "=") {
     ErrorCode("بناء غير صحيح : علة : " +
@@ -1470,16 +1524,18 @@ string CheckForSyntax(
     } else if (SYNTAX[p] == "_س_") {
       // xyz = _س_ ...C++...@ Alif @...C++... _س_
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE(" {_س_ Syntax START} ", o_tokens); // DEBUG
+      }
 
       bool C_FOUND = false;
 
       for (int z = p + 1; z <= SYNTAX_LONG; z++) {
         if (SYNTAX[z] == "_س_") // End C++ Code
         {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {_س_ Syntax END} ", o_tokens); // DEBUG
+          }
           C_FOUND = true;
           p = z;
           break;
@@ -1487,10 +1543,11 @@ string CheckForSyntax(
         {
           // xyz = ...C++...@ Alif @...C++...
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {Syntax@} ", o_tokens); // DEBUG
+          }
 
-          string TempToken[1024];
+          std::string TempToken[1024];
           TempToken[0] = "=";     // CheckForSyntax() Need this.
           int TempTokenCount = 1; // CheckForSyntax() Need this.
 
@@ -1507,10 +1564,11 @@ string CheckForSyntax(
             TempTokenCount++;
           }
 
-          if (!AT_FOUND)
+          if (!AT_FOUND) {
             ErrorCode("نهايه شفرة غير موجود داخل البناء ' @ '", o_tokens);
+          }
 
-          string SYNTAX_BUFFER = CheckForSyntax(
+          std::string SYNTAX_BUFFER = CheckForSyntax(
               "C++",     // OBJECTIF_TYPE
               true,      // Accept Using Reference إلى Window:Controls
               true,      // Accept Using Reference إلى Window:Function
@@ -1526,8 +1584,9 @@ string CheckForSyntax(
               TheFunction,          // TMP_FUNCTION_NAME
               o_tokens);
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {Syntax@} ", o_tokens); // DEBUG
+          }
 
           // *** C++ ***
           CPP_CODE.append(" " + SYNTAX_BUFFER + " ");
@@ -1536,15 +1595,17 @@ string CheckForSyntax(
           // @ End.
         } else if (SYNTAX[z] != "") {
           CPP_CODE.append(SYNTAX[z]);
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {" + SYNTAX[z] + "} ", o_tokens); // DEBUG
+          }
         }
       }
 
-      if (C_FOUND)
+      if (C_FOUND) {
         continue; // Point إلى next بعد _س_
-      else
+      } else {
         ErrorCode("نهايه شفرة غير موجود داخل البناء ' _س_ '", o_tokens);
+      }
     }
 
     // ----------------------
@@ -1554,40 +1615,48 @@ string CheckForSyntax(
     if (SYNTAX[p] == "+" || SYNTAX[p] == "-" || SYNTAX[p] == "*" ||
         SYNTAX[p] == "/") {
       if (p > 0) {
-        if (!CAN_ADD_OPERATION_HERE(SYNTAX[p - 1]))
+        if (!CAN_ADD_OPERATION_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة عملية هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
       }
 
       if (p >= SYNTAX_LONG) {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("######################", o_tokens); // DEBUG
-        for (int p = 1; p <= SYNTAX_LONG; p++)
-          if (DEBUG)
+        }
+        for (int p = 1; p <= SYNTAX_LONG; p++) {
+          if (DEBUG) {
             DEBUG_MESSAGE("[" + SYNTAX[p] + "] ", o_tokens); // DEBUG
+          }
+        }
         ErrorCode("لا يمكن الإنتهاء بعملية ' " + SYNTAX[p] + " ' ", o_tokens);
       }
 
       if (OBJECTIF_TYPE == "نص") // only acceptable operation in نص is '+'
       {
-        if (SYNTAX[p] != "+")
+        if (SYNTAX[p] != "+") {
           ErrorCode("لا يمكن إضافة عملية داخل نص ' " + SYNTAX[p] + " ' ",
                     o_tokens);
+        }
       }
 
-      if (OBJECTIF_TYPE == "منطق")
+      if (OBJECTIF_TYPE == "منطق") {
         ErrorCode("لا يمكن أجراء عملية في متغير منطقي ' " + SYNTAX[p] + " ' ",
                   o_tokens);
+      }
 
       if (substr_utf8(SYNTAX[p - 1], 0, 1) == "\"" &&
-          substr_utf8(SYNTAX[p + 1], 0, 1) == "\"") // "test" + "hello"
+          substr_utf8(SYNTAX[p + 1], 0, 1) == "\"") { // "test" + "hello"
         ErrorCode("لا يمكن إضافة نص إلى نص ' " + SYNTAX[p - 1] + " " +
                       SYNTAX[p] + " " + SYNTAX[p + 1] + " ' ",
                   o_tokens);
+      }
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[OPERATION " + SYNTAX[p] + "] ", o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_CODE.append(" " + SYNTAX[p] + " ");
@@ -1599,16 +1668,19 @@ string CheckForSyntax(
     // ----------------------
 
     else if (SYNTAX[p] == "(") {
-      if (p > 0)
-        if (!CAN_ADD_PARENTHESIS_OPEN_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_PARENTHESIS_OPEN_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة قوس مفتوح هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       ALIF_PARENTHESIS_STATUS++;
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[PARENTHESIS Open (] ", o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_CODE.append(" ( ");
@@ -1620,19 +1692,23 @@ string CheckForSyntax(
     // ----------------------
 
     else if (SYNTAX[p] == ")") {
-      if (ALIF_PARENTHESIS_STATUS < 1)
+      if (ALIF_PARENTHESIS_STATUS < 1) {
         ErrorCode("غلق قوس ليس مفتوحا ' " + SYNTAX[p] + " ' ", o_tokens);
+      }
 
-      if (p > 0)
-        if (!CAN_ADD_PARENTHESIS_CLOSE_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_PARENTHESIS_CLOSE_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة غلق قوس هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       ALIF_PARENTHESIS_STATUS--;
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[PARENTHESIS CLOSE )] ", o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_CODE.append(" ) ");
@@ -1645,37 +1721,43 @@ string CheckForSyntax(
     // ----------------------
 
     else if (substr_utf8(SYNTAX[p], 0, 1) == "_" || G_VAR_IS_SET[(SYNTAX[p])]) {
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة متغير هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
-      string G_VAR_WITHOUT_;
+      std::string G_VAR_WITHOUT_;
 
-      if (G_VAR_IS_SET[(SYNTAX[p])])
+      if (G_VAR_IS_SET[(SYNTAX[p])]) {
         G_VAR_WITHOUT_ = SYNTAX[p];
-      else
+      } else {
         G_VAR_WITHOUT_ =
             substr_utf8(SYNTAX[p], 1, CharCount_utf8(SYNTAX[p], o_tokens));
+      }
 
-      if (!G_VAR_IS_SET[(G_VAR_WITHOUT_)])
+      if (!G_VAR_IS_SET[(G_VAR_WITHOUT_)]) {
         ErrorCode("ليس متغير عام ' " + SYNTAX[p] + " ' ", o_tokens);
+      }
 
       if (G_VAR_TYPE[(G_VAR_WITHOUT_)] == "عدد") {
         if (OBJECTIF_TYPE == "عدد") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-INT (" + G_VAR_WITHOUT_ + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[G_VAR_WITHOUT_] + " ");
           // *** *** *** *** *** ***
         } else if (OBJECTIF_TYPE == "نص") {
           if (ACCEPT_INT_TO_STRING) {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-INT (" + G_VAR_WITHOUT_ + ").ToString] ",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" alifcore_IntToString(" +
@@ -1686,9 +1768,10 @@ string CheckForSyntax(
                       o_tokens);
           }
         } else if (OBJECTIF_TYPE == "C++") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ Global عدد (" + G_VAR_WITHOUT_ + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[G_VAR_WITHOUT_] + " ");
@@ -1711,17 +1794,19 @@ string CheckForSyntax(
                       o_tokens);
           }
         } else if (OBJECTIF_TYPE == "نص") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-STRING (" + G_VAR_WITHOUT_ + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[G_VAR_WITHOUT_] + " ");
           // *** *** *** *** *** ***
         } else if (OBJECTIF_TYPE == "C++") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ Global نص (" + G_VAR_WITHOUT_ + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[G_VAR_WITHOUT_] + " ");
@@ -1738,9 +1823,10 @@ string CheckForSyntax(
                     o_tokens);
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[GLOBAL-BOOL ' " + G_VAR_WITHOUT_ + " '] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + Global_ID[G_VAR_WITHOUT_] + " ");
@@ -1759,24 +1845,28 @@ string CheckForSyntax(
 
     else if (L_VAR_TYPE[std::make_pair(TMP_WIN_OR_CLASS + TmpFunction,
                                        SYNTAX[p])] == "عدد") {
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة متغير هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       if (OBJECTIF_TYPE == "عدد") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[LOCAL-INT (" + SYNTAX[p] + ")] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + ID[SYNTAX[p]] + " ");
         // *** *** *** *** *** ***
       } else if (OBJECTIF_TYPE == "نص") {
         if (ACCEPT_INT_TO_STRING) {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[LOCAL-INT (" + SYNTAX[p] + ").ToString] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" alifcore_IntToString(" + ID[SYNTAX[p]] + ") ");
@@ -1786,9 +1876,10 @@ string CheckForSyntax(
                     o_tokens);
         }
       } else if (OBJECTIF_TYPE == "C++") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[C++ Local INT (" + SYNTAX[p] + ")] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + ID[SYNTAX[p]] + " ");
@@ -1806,28 +1897,32 @@ string CheckForSyntax(
 
     else if (L_VAR_TYPE[std::make_pair(TMP_WIN_OR_CLASS + TmpFunction,
                                        SYNTAX[p])] == "نص") {
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة متغير هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       if (OBJECTIF_TYPE == "عدد") {
         // if(DEBUG)DEBUG_MESSAGE("[LOCAL-STRING (" + SYNTAX[p] + ").ToInt] ",
         // o_tokens); // DEBUG
         ErrorCode("لا يمكن تحويل نص إلى عدد ' " + SYNTAX[p] + " ' ", o_tokens);
       } else if (OBJECTIF_TYPE == "نص") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[LOCAL-STRING (" + SYNTAX[p] + ")] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + ID[SYNTAX[p]] + " ");
         // *** *** *** *** *** ***
       } else if (OBJECTIF_TYPE == "C++") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[C++ Local STRING (" + SYNTAX[p] + ")] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + ID[SYNTAX[p]] + " ");
@@ -1850,15 +1945,16 @@ string CheckForSyntax(
       // ErrorCode("أمر غير معروف ' " + SYNTAX[p] + " ' ", o_tokens);
       //}
 
-      if (SYNTAX[p + 1] != "") {
+      if (!SYNTAX[p + 1].empty()) {
         // bool A = B + wrong
         ErrorCode("أمر غير معروف ' " + SYNTAX[p + 1] +
                       " '، على العموم لا يمكن أجراء أية عملية على متغير منطقي ",
                   o_tokens);
       } else if (OBJECTIF_TYPE == "C++") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[C++ Local Bool (" + SYNTAX[p] + ")] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + ID[SYNTAX[p]] + " ");
@@ -1876,8 +1972,9 @@ string CheckForSyntax(
       // o_tokens);
       //}
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[LOCAL-BOOL ' " + SYNTAX[p] + " '] ", o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_CODE.append(" " + ID[SYNTAX[p]] + " ");
@@ -1889,10 +1986,11 @@ string CheckForSyntax(
     // -----------------------------------
 
     else if (SYNTAX[p] == "صحيح") {
-      if (p != 1)
+      if (p != 1) {
         ErrorCode("لا يمكن وضع ( منطق ) هنا ' " + SYNTAX[p] + " ' ", o_tokens);
+      }
 
-      if (SYNTAX[p + 1] != "") {
+      if (!SYNTAX[p + 1].empty()) {
         // bool A = TRUE + wrong
         ErrorCode("أمر غير معروف ' " + SYNTAX[p + 1] +
                       " '، على العموم لا يمكن أجراء أية عملية على متغير منطقي ",
@@ -1900,8 +1998,9 @@ string CheckForSyntax(
       }
 
       if (OBJECTIF_TYPE == "منطق") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[TRUE] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" true ");
@@ -1912,10 +2011,11 @@ string CheckForSyntax(
                   o_tokens);
       }
     } else if (SYNTAX[p] == "خطأ") {
-      if (p != 1)
+      if (p != 1) {
         ErrorCode("لا يمكن وضع ( منطق ) هنا ' " + SYNTAX[p] + " ' ", o_tokens);
+      }
 
-      if (SYNTAX[p + 1] != "") {
+      if (!SYNTAX[p + 1].empty()) {
         // bool A = FALSE + wrong
         ErrorCode("أمر غير معروف ' " + SYNTAX[p + 1] +
                       " '، على العموم لا يمكن أجراء أية عملية على متغير منطقي ",
@@ -1923,8 +2023,9 @@ string CheckForSyntax(
       }
 
       if (OBJECTIF_TYPE == "منطق") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[FALSE] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" false ");
@@ -1941,11 +2042,13 @@ string CheckForSyntax(
     // -----------------------------------
 
     else if (SYNTAX[p] == "سطر") {
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة سطر جديد هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       if (OBJECTIF_TYPE == "عدد") {
         // if(DEBUG)DEBUG_MESSAGE("[LOCAL-STRING (" + SYNTAX[p] + ").ToInt] ",
@@ -1953,8 +2056,9 @@ string CheckForSyntax(
         ErrorCode("لا يمكن تحويل سطر جديد إلى عدد ' " + SYNTAX[p] + " ' ",
                   o_tokens);
       } else if (OBJECTIF_TYPE == "نص") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[NewLine] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" ALIFCORE_NEW_LINE ");
@@ -1963,8 +2067,9 @@ string CheckForSyntax(
         ErrorCode("لا يمكن تحويل سطر جديد إلى منطق ' " + SYNTAX[p] + " ' ",
                   o_tokens);
       } else if (OBJECTIF_TYPE == "C++") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[C++_NewLine] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" wxT(\"\n\") ");
@@ -1987,11 +2092,13 @@ string CheckForSyntax(
       // a = obj:mem + c
       // b = obj:mem_func(a, b) + c
 
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة كائن هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       // if (SYNTAX[p + 1] != ":")
       // ErrorCode("يجب إضافة ':' بعد ' " + SYNTAX[p] + " ' ", o_tokens);
@@ -1999,24 +2106,28 @@ string CheckForSyntax(
       // ErrorCode("يجب إضافة إسم منتمي للصنف بعد ' " + SYNTAX[p] + " : ' ",
       // o_tokens);
 
-      if (SYNTAX[p + 1] != ":")
+      if (SYNTAX[p + 1] != ":") {
         ErrorCode("يجب وضع نقطتين ':' بين الكائن و المنتمي، أي بعد ' " +
                       SYNTAX[p] + " ' ",
                   o_tokens);
-      if (SYNTAX[p + 2] == "بناء")
+      }
+      if (SYNTAX[p + 2] == "بناء") {
         ErrorCode("لا يمكن استدعاء دالة ' بناء() '، هته الدالة تستدعى بشكل آلي "
                   "عند إنشاء الكائن",
                   o_tokens);
-      if (SYNTAX[p + 2] == "هدم")
+      }
+      if (SYNTAX[p + 2] == "هدم") {
         ErrorCode("لا يمكن استدعاء دالة ' هدم() '، هته الدالة تستدعى بشكل آلي "
                   "عند الحاجة إلى تدمير هذا الكائن",
                   o_tokens);
-      if (SYNTAX[p + 2] == "")
+      }
+      if (SYNTAX[p + 2].empty()) {
         ErrorCode("يجب وضع اسم المنتمي بعد ' " + SYNTAX[p] + ":' ", o_tokens);
+      }
 
       // C++, allow create Obj on global, global-class, local, but using it only
       // on func.
-      string OBJ_ID;
+      std::string OBJ_ID;
       bool IS_GLOBAL_OBJ = false;
       if (OBJ_IS_SET[std::make_pair(TMP_WIN_OR_CLASS + TmpFunction,
                                     SYNTAX[p])]) {
@@ -2035,51 +2146,56 @@ string CheckForSyntax(
         IS_GLOBAL_OBJ = true;
       }
 
-      string TK_CLASS = OBJ_CLASS[std::make_pair(OBJ_ID, SYNTAX[p])];
+      std::string TK_CLASS = OBJ_CLASS[std::make_pair(OBJ_ID, SYNTAX[p])];
 
       if (!CLASS_G_VAR_IS_SET[std::make_pair(TK_CLASS, SYNTAX[p + 2])] &&
-          !CLASS_FUN_IS_SET[std::make_pair(TK_CLASS, SYNTAX[p + 2])])
+          !CLASS_FUN_IS_SET[std::make_pair(TK_CLASS, SYNTAX[p + 2])]) {
         ErrorCode("الصنف ' " + TK_CLASS + " ' ليس فيه أي منتمي معرف باسم ' " +
                       SYNTAX[p + 2] + " ' ",
                   o_tokens);
+      }
 
-      string MEMBER_TYPE;
+      std::string MEMBER_TYPE;
 
       if (CLASS_G_VAR_IS_SET[std::make_pair(TK_CLASS, SYNTAX[p + 2])]) {
         // متغير member
 
         // a = obj : mem + c
 
-        if (CLASS_G_VAR_PRIVATE[std::make_pair(TK_CLASS, SYNTAX[p + 2])])
+        if (CLASS_G_VAR_PRIVATE[std::make_pair(TK_CLASS, SYNTAX[p + 2])]) {
           ErrorCode("لا يمكن استدعاء المتغير ' " + SYNTAX[p + 2] +
                         " ' المنتمي للصنف ' " + TK_CLASS +
                         " ' لأنه من نوع ' خاص ' ",
                     o_tokens);
+        }
 
         MEMBER_TYPE = CLASS_G_VAR_TYPE[std::make_pair(TK_CLASS, SYNTAX[p + 2])];
 
-        if (MEMBER_TYPE == "عادم")
+        if (MEMBER_TYPE == "عادم") {
           ErrorCode("لا يمكن إضافة منتمي عادم ' " + SYNTAX[p] + " : " +
                         SYNTAX[p + 2] + " ' ",
                     o_tokens);
+        }
 
         if (MEMBER_TYPE == "عدد") {
           if (OBJECTIF_TYPE == "عدد") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(INT)] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + GlobalObj_ID[SYNTAX[p]] + "." +
                               Global_ID[SYNTAX[p + 2]] + " ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(INT)] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + Obj_ID[SYNTAX[p]] + "." +
@@ -2088,10 +2204,11 @@ string CheckForSyntax(
             }
           } else if (OBJECTIF_TYPE == "نص") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(INT).ToString] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" alifcore_IntToString(" +
@@ -2099,10 +2216,11 @@ string CheckForSyntax(
                               Global_ID[SYNTAX[p + 2]] + ") ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(INT).ToString] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" alifcore_IntToString(" + Obj_ID[SYNTAX[p]] +
@@ -2124,20 +2242,22 @@ string CheckForSyntax(
                       o_tokens);
           } else if (OBJECTIF_TYPE == "نص") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(STRING)] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + GlobalObj_ID[SYNTAX[p]] + "." +
                               Global_ID[SYNTAX[p + 2]] + " ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(STRING)] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + Obj_ID[SYNTAX[p]] + "." +
@@ -2160,20 +2280,22 @@ string CheckForSyntax(
                       o_tokens);
           } else if (OBJECTIF_TYPE == "منطق") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(BOOL)] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + GlobalObj_ID[SYNTAX[p]] + "." +
                               Global_ID[SYNTAX[p + 2]] + " ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(BOOL)] ",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + Obj_ID[SYNTAX[p]] + "." +
@@ -2197,20 +2319,23 @@ string CheckForSyntax(
 
         // b = obj : memf (a, b)
 
-        if (CLASS_FUN_PRIVATE[std::make_pair(TK_CLASS, SYNTAX[p + 2])])
+        if (CLASS_FUN_PRIVATE[std::make_pair(TK_CLASS, SYNTAX[p + 2])]) {
           ErrorCode("الدالة منتمي ' " + SYNTAX[p + 2] + " ' داخل الصنف ' " +
                         TK_CLASS + " ' خاص ",
                     o_tokens);
+        }
 
-        if (CLASS_FUN_TYPE[std::make_pair(TK_CLASS, SYNTAX[p + 2])] == "عادم")
+        if (CLASS_FUN_TYPE[std::make_pair(TK_CLASS, SYNTAX[p + 2])] == "عادم") {
           ErrorCode("لا يمكن إضافة منتمي عادم ' " + SYNTAX[p] + " : " +
                         SYNTAX[p + 2] + " ' داخل الصنف ' " + TK_CLASS + " ' ",
                     o_tokens);
+        }
 
-        if (SYNTAX[p + 3] != "(")
+        if (SYNTAX[p + 3] != "(") {
           ErrorCode("يجب إضافة '(' بعد ' " + SYNTAX[p] + ":" + SYNTAX[p + 2] +
                         " ' ",
                     o_tokens);
+        }
 
         MEMBER_TYPE = CLASS_FUN_TYPE[std::make_pair(TK_CLASS, SYNTAX[p + 2])];
 
@@ -2219,13 +2344,13 @@ string CheckForSyntax(
 
         while (TMP_FUN_LONG <= SYNTAX_LONG) {
           if (SYNTAX[TMP_FUN_LONG] ==
-              "(") // مفتوح inside الدالة args : fun( a + (b))
+              "(") { // مفتوح inside الدالة args : fun( a + (b))
             OPEN_PARENTIZE++;
-          else if (SYNTAX[TMP_FUN_LONG] == ")" &&
-                   OPEN_PARENTIZE > 0) // Close inside الدالة args
+          } else if (SYNTAX[TMP_FUN_LONG] == ")" &&
+                     OPEN_PARENTIZE > 0) { // Close inside الدالة args
             OPEN_PARENTIZE--;
-          else if (SYNTAX[TMP_FUN_LONG] == ")" &&
-                   OPEN_PARENTIZE < 1) // Close final الدالة call
+          } else if (SYNTAX[TMP_FUN_LONG] == ")" &&
+                     OPEN_PARENTIZE < 1) // Close final الدالة call
           {
             if (TMP_FUN_LONG < SYNTAX_LONG) {
               // a = fun( a + (b)) + 123
@@ -2247,10 +2372,11 @@ string CheckForSyntax(
             } else if (TMP_FUN_LONG == SYNTAX_LONG) {
               // a = obj:fun( a + (b))
               if (SYNTAX[TMP_FUN_LONG] != ")" ||
-                  SYNTAX[SYNTAX_LONG] != ")") // double check!
+                  SYNTAX[SYNTAX_LONG] != ")") { // double check!
                 ErrorCode("يجب إنهاء نداء الدالة ' " + SYNTAX[p] + " : " +
                               SYNTAX[p + 2] + "()' بالإشارة ')' ",
                           o_tokens);
+              }
             }
 
             break;
@@ -2259,15 +2385,16 @@ string CheckForSyntax(
           TMP_FUN_LONG++;
         }
 
-        if (SYNTAX[TMP_FUN_LONG] != ")") // Double check!
+        if (SYNTAX[TMP_FUN_LONG] != ")") { // Double check!
           ErrorCode("يجب إنهاء نداء الدالة ' " + SYNTAX[p] + " : " +
                         SYNTAX[p + 2] + "()' بالإشارة ')' ",
                     o_tokens);
+        }
 
-        string TempToken[1024];
+        std::string TempToken[1024];
         int TempTokenCount = 0;
         for (int i = p + 4; i <= TMP_FUN_LONG; i++) {
-          if (SYNTAX[i] != "") {
+          if (!SYNTAX[i].empty()) {
             TempToken[TempTokenCount] = SYNTAX[i];
             TempTokenCount++;
           }
@@ -2276,20 +2403,22 @@ string CheckForSyntax(
         if (MEMBER_TYPE == "عدد") {
           if (OBJECTIF_TYPE == "عدد") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-INT) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + GlobalObj_ID[SYNTAX[p]] +
                               ".ClassFUNCTION_" + ID[SYNTAX[p + 2]] + "( ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-INT) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + Obj_ID[SYNTAX[p]] + ".ClassFUNCTION_" +
@@ -2303,8 +2432,9 @@ string CheckForSyntax(
                                                TempToken, (TempTokenCount - 1),
                                                o_tokens));
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(")] ", o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" ) ");
@@ -2312,10 +2442,11 @@ string CheckForSyntax(
 
           } else if (OBJECTIF_TYPE == "نص") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-INT) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" alifcore_IntToString(" +
@@ -2323,10 +2454,11 @@ string CheckForSyntax(
                               ID[SYNTAX[p + 2]] + "( ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-INT) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" alifcore_IntToString(" + Obj_ID[SYNTAX[p]] +
@@ -2340,8 +2472,9 @@ string CheckForSyntax(
                                                TempToken, (TempTokenCount - 1),
                                                o_tokens));
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(").IntFunToString] ", o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" )) ");
@@ -2359,20 +2492,22 @@ string CheckForSyntax(
                       o_tokens);
           } else if (OBJECTIF_TYPE == "نص") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-STRING) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + GlobalObj_ID[SYNTAX[p]] +
                               ".ClassFUNCTION_" + ID[SYNTAX[p + 2]] + "( ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-STRING) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + Obj_ID[SYNTAX[p]] + ".ClassFUNCTION_" +
@@ -2386,8 +2521,9 @@ string CheckForSyntax(
                                                TempToken, (TempTokenCount - 1),
                                                o_tokens));
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(")] ", o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" ) ");
@@ -2405,20 +2541,22 @@ string CheckForSyntax(
                       o_tokens);
           } else if (OBJECTIF_TYPE == "منطق") {
             if (IS_GLOBAL_OBJ) {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[GLOBAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-BOOL) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + GlobalObj_ID[SYNTAX[p]] +
                               ".ClassFUNCTION_" + ID[SYNTAX[p + 2]] + "( ");
               // *** *** *** *** *** ***
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("[LOCAL-OBJ ' " + SYNTAX[p] + " ':'" +
                                   SYNTAX[p + 2] + " '(Func-BOOL) (",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               CPP_CODE.append(" " + Obj_ID[SYNTAX[p]] + ".ClassFUNCTION_" +
@@ -2432,8 +2570,9 @@ string CheckForSyntax(
                                                TempToken, (TempTokenCount - 1),
                                                o_tokens));
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(")] ", o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" ) ");
@@ -2466,27 +2605,31 @@ string CheckForSyntax(
              IsInsideClass) {
       // Class Global area
 
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة متغير هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       if (CLASS_G_VAR_TYPE[std::make_pair(TMP_WIN_OR_CLASS, SYNTAX[p])] ==
           "عدد") {
         if (OBJECTIF_TYPE == "عدد") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[CLASS-GLOBAL-INT (" + SYNTAX[p] + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[SYNTAX[p]] + " ");
           // *** *** *** *** *** ***
         } else if (OBJECTIF_TYPE == "نص") {
           if (ACCEPT_INT_TO_STRING) {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CLASS-GLOBAL-INT (" + SYNTAX[p] + ").ToString] ",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" alifcore_IntToString(" + Global_ID[SYNTAX[p]] +
@@ -2500,9 +2643,10 @@ string CheckForSyntax(
           ErrorCode("لا يمكن تحويل عدد إلى منطق : ' " + SYNTAX[p] + " ' ",
                     o_tokens);
         } else if (OBJECTIF_TYPE == "C++") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ CLASS-GLOBAL-INT (" + SYNTAX[p] + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[SYNTAX[p]] + " ");
@@ -2520,9 +2664,10 @@ string CheckForSyntax(
           ErrorCode("لا يمكن تحويل نص إلى عدد ' " + SYNTAX[p] + " ' ",
                     o_tokens);
         } else if (OBJECTIF_TYPE == "نص") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[CLASS-GLOBAL-STRING (" + SYNTAX[p] + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[SYNTAX[p]] + " ");
@@ -2531,9 +2676,10 @@ string CheckForSyntax(
           ErrorCode("لا يمكن تحويل نص إلى منطق : ' " + SYNTAX[p] + " ' ",
                     o_tokens);
         } else if (OBJECTIF_TYPE == "C++") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ CLASS-GLOBAL-STRING (" + SYNTAX[p] + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[SYNTAX[p]] + " ");
@@ -2546,9 +2692,10 @@ string CheckForSyntax(
       } else if (CLASS_G_VAR_TYPE[std::make_pair(TMP_WIN_OR_CLASS,
                                                  SYNTAX[p])] == "منطق") {
         if (OBJECTIF_TYPE == "C++") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ CLASS-GLOBAL-BOOL (" + SYNTAX[p] + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[SYNTAX[p]] + " ");
@@ -2558,9 +2705,10 @@ string CheckForSyntax(
                         SYNTAX[p] + " ' ",
                     o_tokens);
         } else if (OBJECTIF_TYPE == "منطق") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[CLASS-GLOBAL-BOOL (" + SYNTAX[p] + ")] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" " + Global_ID[SYNTAX[p]] + " ");
@@ -2595,22 +2743,26 @@ string CheckForSyntax(
     // -----------------------------------
 
     else if (substr_utf8(SYNTAX[p], 0, 1) == "\"") {
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة نص هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
-      if (!IsValidStringFormat(SYNTAX[p], o_tokens))
+      if (!IsValidStringFormat(SYNTAX[p], o_tokens)) {
         ErrorCode("ليس بنص صحيح ' " + SYNTAX[p] + " ' ", o_tokens);
+      }
 
       if (OBJECTIF_TYPE == "عدد") {
         // if(DEBUG)DEBUG_MESSAGE("[STRING_MSG (" + SYNTAX[p] + ").ToInt] ",
         // o_tokens); // DEBUG
         ErrorCode("لا يمكن تحويل نص إلى عدد ' " + SYNTAX[p] + " ' ", o_tokens);
       } else if (OBJECTIF_TYPE == "نص") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[STRING_MSG (" + SYNTAX[p] + ")] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" wxT(" + SYNTAX[p] + ") ");
@@ -2618,8 +2770,9 @@ string CheckForSyntax(
       } else if (OBJECTIF_TYPE == "منطق") {
         ErrorCode("لا يمكن تحويل نص إلى منطق ' " + SYNTAX[p] + " ' ", o_tokens);
       } else if (OBJECTIF_TYPE == "C++") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[C++ نص (" + SYNTAX[p] + ")] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" wxT(" + SYNTAX[p] + ") ");
@@ -2636,24 +2789,28 @@ string CheckForSyntax(
     // -----------------------------------
 
     else if (IsValidDigit(SYNTAX[p], true, o_tokens)) {
-      if (p > 0)
-        if (!CAN_ADD_DIGIT_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_DIGIT_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن إضافة رقم هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
       if (OBJECTIF_TYPE == "عدد") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[DIGIT " + SYNTAX[p] + "] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + SYNTAX[p] + " ");
         // *** *** *** *** *** ***
       } else if (OBJECTIF_TYPE == "نص") {
         if (ACCEPT_INT_TO_STRING) {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[DIGIT (" + SYNTAX[p] + ").ToString] ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" alifcore_IntToString(" + SYNTAX[p] + ") ");
@@ -2666,8 +2823,9 @@ string CheckForSyntax(
         ErrorCode("لا يمكن تحويل رقم إلى منطق ' " + SYNTAX[p] + " ' ",
                   o_tokens);
       } else if (OBJECTIF_TYPE == "C++") {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[C++ رقم (" + SYNTAX[p] + ")] ", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         CPP_CODE.append(" " + SYNTAX[p] + " ");
@@ -2688,41 +2846,48 @@ string CheckForSyntax(
              L_FUN_IS_SET[std::make_pair(TMP_WIN_OR_CLASS,
                                          SYNTAX[p])]) // call الدالة (a, b)
     {
-      if (p > 0)
-        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1]))
+      if (p > 0) {
+        if (!CAN_ADD_VAR_HERE(SYNTAX[p - 1])) {
           ErrorCode("لا يمكن وضع دالة هنا ' " + SYNTAX[p - 1] + " " +
                         SYNTAX[p] + " ' ",
                     o_tokens);
+        }
+      }
 
-      if (!IsInsideFunction)
+      if (!IsInsideFunction) {
         ErrorCode("يجب مناداة على الدالة من داخل دالة ' " + SYNTAX[p] + "()' ",
                   o_tokens);
+      }
 
-      if (SYNTAX[p + 1] == "")
+      if (SYNTAX[p + 1].empty()) {
         ErrorCode("يجب اضافه '(' بعد ' " + SYNTAX[p] + " ' ", o_tokens);
+      }
 
-      if (SYNTAX[p + 1] != "(")
+      if (SYNTAX[p + 1] != "(") {
         ErrorCode("أمر غير معروف ' " + SYNTAX[p + 1] + " ' ", o_tokens);
+      }
 
       bool ThisIsClassFunction = false;
-      if (CLASS_FUN_IS_SET[std::make_pair(TMP_WIN_OR_CLASS, SYNTAX[p])])
+      if (CLASS_FUN_IS_SET[std::make_pair(TMP_WIN_OR_CLASS, SYNTAX[p])]) {
         ThisIsClassFunction = true;
+      }
 
-      if (ThisIsClassFunction)
+      if (ThisIsClassFunction) {
         ErrorCode("ggggggggggggggg' " + SYNTAX[p + 1] + " ' ", o_tokens);
+      }
 
       int TMP_FUN_LONG = p + 2; // a + b + 'p'fun ( c + (1 * 2) ) + c
       int OPEN_PARENTIZE = 0;
 
       while (TMP_FUN_LONG <= SYNTAX_LONG) {
         if (SYNTAX[TMP_FUN_LONG] ==
-            "(") // مفتوح inside الدالة args : fun( a + (b))
+            "(") { // مفتوح inside الدالة args : fun( a + (b))
           OPEN_PARENTIZE++;
-        else if (SYNTAX[TMP_FUN_LONG] == ")" &&
-                 OPEN_PARENTIZE > 0) // Close inside الدالة args
+        } else if (SYNTAX[TMP_FUN_LONG] == ")" &&
+                   OPEN_PARENTIZE > 0) { // Close inside الدالة args
           OPEN_PARENTIZE--;
-        else if (SYNTAX[TMP_FUN_LONG] == ")" &&
-                 OPEN_PARENTIZE < 1) // Close final الدالة call
+        } else if (SYNTAX[TMP_FUN_LONG] == ")" &&
+                   OPEN_PARENTIZE < 1) // Close final الدالة call
         {
           if (TMP_FUN_LONG < SYNTAX_LONG) {
             // a = fun( a + (b)) + 123
@@ -2742,10 +2907,11 @@ string CheckForSyntax(
             }
           } else if (TMP_FUN_LONG == SYNTAX_LONG) {
             // a = fun( a + (b))
-            if (SYNTAX[TMP_FUN_LONG] != ")") // double check!
+            if (SYNTAX[TMP_FUN_LONG] != ")") { // double check!
               ErrorCode("يجب إنهاء نداء الدالة ' " + SYNTAX[p] +
                             "()' بالإشارة ')' ",
                         o_tokens);
+            }
           }
 
           break;
@@ -2754,15 +2920,16 @@ string CheckForSyntax(
         TMP_FUN_LONG++;
       }
 
-      if (SYNTAX[TMP_FUN_LONG] != ")") // Double check!
+      if (SYNTAX[TMP_FUN_LONG] != ")") { // Double check!
         ErrorCode("يجب إنهاء نداء الدالة ' " + SYNTAX[p] + "()' بالإشارة ')' ",
                   o_tokens);
+      }
       // ErrorCode("===== |" + SYNTAX[TMP_FUN_LONG - 1] + "| =====", o_tokens);
 
-      string TempToken[1024];
+      std::string TempToken[1024];
       int TempTokenCount = 0;
       for (int i = p + 2; i <= TMP_FUN_LONG; i++) {
-        if (SYNTAX[i] != "") {
+        if (!SYNTAX[i].empty()) {
           TempToken[TempTokenCount] = SYNTAX[i];
           TempTokenCount++;
         }
@@ -2771,36 +2938,39 @@ string CheckForSyntax(
       bool IS_LOCAL_FUN = false;
       IS_LOCAL_FUN = L_FUN_IS_SET[std::make_pair(TMP_WIN_OR_CLASS, SYNTAX[p])];
 
-      string FUN_TYPE;
+      std::string FUN_TYPE;
 
       if (IS_LOCAL_FUN) {
         FUN_TYPE = L_FUN_TYPE[std::make_pair(TMP_WIN_OR_CLASS, SYNTAX[p])];
 
-        if (FUN_TYPE == "عادم")
+        if (FUN_TYPE == "عادم") {
           ErrorCode("الدالة المحلية ' " + SYNTAX[p] +
                         "()' من نوع عادم, لدى لا يمكن تحويلها إلى " +
                         OBJECTIF_TYPE,
                     o_tokens);
+        }
       } else {
         FUN_TYPE = G_FUN_TYPE[(SYNTAX[p])];
 
-        if (FUN_TYPE == "عادم")
+        if (FUN_TYPE == "عادم") {
           ErrorCode("الدالة العامة ' " + SYNTAX[p] +
                         "()' من نوع عادم, لدى لا يمكن تحويل إلى " +
                         OBJECTIF_TYPE,
                     o_tokens);
+        }
       }
 
-      string CG_BUFFER;
+      std::string CG_BUFFER;
 
       if (OBJECTIF_TYPE == "عدد") {
         if (FUN_TYPE == "عدد") {
           if (IS_LOCAL_FUN) {
             // Call a local fun int
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-LOCAL-FUNCTION-INT ' " + SYNTAX[p] + " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -2819,10 +2989,11 @@ string CheckForSyntax(
           } else {
             // Call a Global fun int
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-GLOBAL-FUNCTION-INT ' " + SYNTAX[p] +
                                 " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -2839,23 +3010,25 @@ string CheckForSyntax(
             // *** *** *** *** *** ***
           }
         } else if (FUN_TYPE == "نص") {
-          if (IS_LOCAL_FUN)
+          if (IS_LOCAL_FUN) {
             ErrorCode("لا يمكن تحويل الدالة المحلية ' " + SYNTAX[p] +
                           "()' من نص إلى عدد ",
                       o_tokens);
-          else
+          } else {
             ErrorCode("لا يمكن تحويل الدالة العامة ' " + SYNTAX[p] +
                           "()' من نص إلى عدد ",
                       o_tokens);
+          }
         } else if (FUN_TYPE == "منطق") {
-          if (IS_LOCAL_FUN)
+          if (IS_LOCAL_FUN) {
             ErrorCode("لا يمكن تحويل الدالة المحلية ' " + SYNTAX[p] +
                           "()' من منطق إلى عدد ",
                       o_tokens);
-          else
+          } else {
             ErrorCode("لا يمكن تحويل الدالة العامة ' " + SYNTAX[p] +
                           "()' من منطق إلى عدد ",
                       o_tokens);
+          }
         } else {
           ErrorCode("علة : نوع المستهدف غير معروف ' " + OBJECTIF_TYPE +
                         " ' ل ' " + SYNTAX[p] + "()' ",
@@ -2866,10 +3039,11 @@ string CheckForSyntax(
           if (IS_LOCAL_FUN) {
             // Call a local fun int.ToString
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-LOCAL-FUNCTION-INT.ToString ' " + SYNTAX[p] +
                                 " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -2889,10 +3063,11 @@ string CheckForSyntax(
           } else {
             // Call a Global fun int.ToString
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-GLOBAL-FUNCTION-INT.ToString ' " +
                                 SYNTAX[p] + " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -2913,10 +3088,11 @@ string CheckForSyntax(
           if (IS_LOCAL_FUN) {
             // Call a local fun string
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-LOCAL-FUNCTION-STRING ' " + SYNTAX[p] +
                                 " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -2933,15 +3109,17 @@ string CheckForSyntax(
             CG_BUFFER.append(" ) ");
             // *** *** *** *** *** ***
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(" ) ", o_tokens); // DEBUG
+            }
           } else {
             // Call a Global fun int
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-GLOBAL-FUNCTION-STRING ' " + SYNTAX[p] +
                                 " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -2958,14 +3136,15 @@ string CheckForSyntax(
             // *** *** *** *** *** ***
           }
         } else if (FUN_TYPE == "منطق") {
-          if (IS_LOCAL_FUN)
+          if (IS_LOCAL_FUN) {
             ErrorCode("لا يمكن تحويل الدالة المحلية ' " + SYNTAX[p] +
                           "()' من منطق إلى نص ",
                       o_tokens);
-          else
+          } else {
             ErrorCode("لا يمكن تحويل الدالة العامة ' " + SYNTAX[p] +
                           "()' من منطق إلى نص ",
                       o_tokens);
+          }
         } else {
           ErrorCode("علة : نوع المستهدف غير معروف ' " + OBJECTIF_TYPE +
                         " ' ل ' " + SYNTAX[p] + "()' ",
@@ -2973,31 +3152,34 @@ string CheckForSyntax(
         }
       } else if (OBJECTIF_TYPE == "منطق") {
         if (FUN_TYPE == "عدد") {
-          if (IS_LOCAL_FUN)
+          if (IS_LOCAL_FUN) {
             ErrorCode("لا يمكن تحويل الدالة المحلية ' " + SYNTAX[p] +
                           "()' من عدد إلى منطق ",
                       o_tokens);
-          else
+          } else {
             ErrorCode("لا يمكن تحويل الدالة العامة ' " + SYNTAX[p] +
                           "()' من عدد إلى منطق ",
                       o_tokens);
+          }
         } else if (FUN_TYPE == "نص") {
-          if (IS_LOCAL_FUN)
+          if (IS_LOCAL_FUN) {
             ErrorCode("لا يمكن تحويل الدالة المحلية ' " + SYNTAX[p] +
                           "()' من نص إلى منطق ",
                       o_tokens);
-          else
+          } else {
             ErrorCode("لا يمكن تحويل الدالة العامة ' " + SYNTAX[p] +
                           "()' من نص إلى منطق ",
                       o_tokens);
+          }
         } else if (FUN_TYPE == "منطق") {
           if (IS_LOCAL_FUN) {
             // Call a local fun bool
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-LOCAL-FUNCTION-BOOL ' " + SYNTAX[p] +
                                 " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -3016,10 +3198,11 @@ string CheckForSyntax(
           } else {
             // Call a Global fun bool
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[CALL-GLOBAL-FUNCTION-BOOL ' " + SYNTAX[p] +
                                 " '] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Buffer
@@ -3049,10 +3232,11 @@ string CheckForSyntax(
 
           // Call a local fun xType
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ CALL-LOCAL-FUNCTION-xType ' " + SYNTAX[p] +
                               " '] (",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Buffer
@@ -3071,10 +3255,11 @@ string CheckForSyntax(
         } else {
           // Call a Global fun xType
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[C++ CALL-GLOBAL-FUNCTION-xType ' " + SYNTAX[p] +
                               " '] (",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Buffer
@@ -3114,11 +3299,11 @@ string CheckForSyntax(
       // abc = Control:Option()				| ctr:disable()
       // abc = Control:Option					| ctr:text
 
-      string CTR_WIN;
-      string CTR_CONTROL;
-      string CTR_OPTION;
-      string CTR_OPTION_TYPE;
-      string CTR_OPTION_CPP_END;
+      std::string CTR_WIN;
+      std::string CTR_CONTROL;
+      std::string CTR_OPTION;
+      std::string CTR_OPTION_TYPE;
+      std::string CTR_OPTION_CPP_END;
       // int CTR_ARG;
       int CTR_LAST_TOKEN_NUMBER;
 
@@ -3129,22 +3314,26 @@ string CheckForSyntax(
         // abc = Window:Control:Option()		| win:ctr:disable()
         // abc = Window:Control:Option			| win:ctr:text
 
-        if (SYNTAX[p + 1] != ":")
+        if (SYNTAX[p + 1] != ":") {
           ErrorCode("يجب اضافه ' : ' بعد ' " + SYNTAX[p] + " ' ", o_tokens);
+        }
 
-        if (SYNTAX[p + 2] == "")
+        if (SYNTAX[p + 2].empty()) {
           ErrorCode("يجب اضافه عضو تابع ل ' " + SYNTAX[p] + " ' بعد ':' ",
                     o_tokens);
+        }
 
-        if (SYNTAX[p + 3] == "")
+        if (SYNTAX[p + 3].empty()) {
           ErrorCode("يجب اضافه ':' أو '()' بعد ' " + SYNTAX[p] + " " +
                         SYNTAX[p + 1] + " " + SYNTAX[p + 2] + " ' ",
                     o_tokens);
+        }
 
-        if (SYNTAX[p + 3] != "(" && SYNTAX[p + 3] != ":")
+        if (SYNTAX[p + 3] != "(" && SYNTAX[p + 3] != ":") {
           ErrorCode("أمر غير معروف ' " + SYNTAX[p + 3] +
                         " ', يجب اضافه ':' أو '()' ",
                     o_tokens);
+        }
 
         if (SYNTAX[p + 3] == "(") {
           // ---------------------------------------------------------------------------------
@@ -3170,29 +3359,32 @@ string CheckForSyntax(
           // -----------------------
 
           else if (L_FUN_IS_SET[std::make_pair(SYNTAX[p], SYNTAX[p + 2])]) {
-            if (SYNTAX[p + 3] != "(")
+            if (SYNTAX[p + 3] != "(") {
               ErrorCode("من اجل نداء الدالة ' " + SYNTAX[p + 2] +
                             " ' يجب اضافه '()' بعد ' " + SYNTAX[p] + " " +
                             SYNTAX[p + 1] + " " + SYNTAX[p + 2] + " ' ",
                         o_tokens);
+            }
 
-            string FUN_TYPE;
-            string CPP_END;
+            std::string FUN_TYPE;
+            std::string CPP_END;
 
             FUN_TYPE = L_FUN_TYPE[std::make_pair(TMP_WIN_OR_CLASS, SYNTAX[p])];
 
-            if (FUN_TYPE == "عادم")
+            if (FUN_TYPE == "عادم") {
               ErrorCode("الدالة المحلية ' " + SYNTAX[p] +
                             "()' من نوع عادم, لدى لا يمكن تحويلها إلى " +
                             OBJECTIF_TYPE,
                         o_tokens);
+            }
 
             if (OBJECTIF_TYPE == "عدد") {
               if (FUN_TYPE == "عدد") {
-                if (DEBUG)
+                if (DEBUG) {
                   DEBUG_MESSAGE(" [WIN'" + SYNTAX[p] + " ':LOCAL_INT_FUNC'" +
                                     SYNTAX[p + 2] + " '( ",
                                 o_tokens); // DEBUG
+                }
 
                 // *** Generate Code ***
                 // Buffer
@@ -3207,10 +3399,11 @@ string CheckForSyntax(
               }
             } else if (OBJECTIF_TYPE == "نص") {
               if (FUN_TYPE == "نص") {
-                if (DEBUG)
+                if (DEBUG) {
                   DEBUG_MESSAGE(" [WIN'" + SYNTAX[p] + " ':LOCAL_STRING_FUNC'" +
                                     SYNTAX[p + 2] + " '( ",
                                 o_tokens); // DEBUG
+                }
 
                 // *** Generate Code ***
                 // Buffer
@@ -3219,10 +3412,11 @@ string CheckForSyntax(
                                 "->FUNCTION_" + ID[SYNTAX[p + 2]] + "( ");
                 // *** *** *** *** *** ***
               } else if (FUN_TYPE == "عدد") {
-                if (DEBUG)
+                if (DEBUG) {
                   DEBUG_MESSAGE(" [WIN'" + SYNTAX[p] + " ':LOCAL_INT_FUNC'" +
                                     SYNTAX[p + 2] + " '().ToString( ",
                                 o_tokens); // DEBUG
+                }
 
                 // *** Generate Code ***
                 // Buffer
@@ -3238,10 +3432,11 @@ string CheckForSyntax(
               }
             } else if (OBJECTIF_TYPE == "منطق") {
               if (FUN_TYPE == "منطق") {
-                if (DEBUG)
+                if (DEBUG) {
                   DEBUG_MESSAGE(" [WIN'" + SYNTAX[p] + " ':LOCAL_BOOL_FUNC'" +
                                     SYNTAX[p + 2] + " '( ",
                                 o_tokens); // DEBUG
+                }
 
                 // *** Generate Code ***
                 // Buffer
@@ -3254,10 +3449,11 @@ string CheckForSyntax(
                               "()' من " + FUN_TYPE + " إلى منطق ",
                           o_tokens);
               }
-            } else
+            } else {
               ErrorCode("علة : نوع المستهدف غير معروف ' " + OBJECTIF_TYPE +
                             " ' ل ' " + SYNTAX[p + 2] + " ' ",
                         o_tokens);
+            }
 
             // abc = (p)Window:local_func(a, b) + x + y
 
@@ -3267,13 +3463,13 @@ string CheckForSyntax(
             // Get Local Function Args
             while (TMP_FUN_LONG <= SYNTAX_LONG) {
               if (SYNTAX[TMP_FUN_LONG] ==
-                  "(") // مفتوح inside الدالة args : fun( a + (b))
+                  "(") { // مفتوح inside الدالة args : fun( a + (b))
                 OPEN_PARENTIZE++;
-              else if (SYNTAX[TMP_FUN_LONG] == ")" &&
-                       OPEN_PARENTIZE > 0) // Close inside الدالة args
+              } else if (SYNTAX[TMP_FUN_LONG] == ")" &&
+                         OPEN_PARENTIZE > 0) { // Close inside الدالة args
                 OPEN_PARENTIZE--;
-              else if (SYNTAX[TMP_FUN_LONG] == ")" &&
-                       OPEN_PARENTIZE < 1) // Close final الدالة call
+              } else if (SYNTAX[TMP_FUN_LONG] == ")" &&
+                         OPEN_PARENTIZE < 1) // Close final الدالة call
               {
                 if (TMP_FUN_LONG < SYNTAX_LONG) {
                   // abc = fun( a + (b)) + 123
@@ -3294,10 +3490,11 @@ string CheckForSyntax(
                 } else if (TMP_FUN_LONG == SYNTAX_LONG) {
                   // a = fun( a + (b))
                   if (SYNTAX[TMP_FUN_LONG] != ")" ||
-                      SYNTAX[SYNTAX_LONG] != ")") // double check!
+                      SYNTAX[SYNTAX_LONG] != ")") { // double check!
                     ErrorCode("يجب إنهاء نداء الدالة ' " + SYNTAX[p + 2] +
                                   "()' بالإشارة ')' ",
                               o_tokens);
+                  }
                 }
 
                 break;
@@ -3306,15 +3503,16 @@ string CheckForSyntax(
               TMP_FUN_LONG++;
             }
 
-            if (SYNTAX[TMP_FUN_LONG] != ")") // Double check!
+            if (SYNTAX[TMP_FUN_LONG] != ")") { // Double check!
               ErrorCode("يجب إنهاء نداء الدالة ' " + SYNTAX[p + 2] +
                             "()' بالإشارة ')' ",
                         o_tokens);
+            }
 
-            string TempToken[1024];
+            std::string TempToken[1024];
             int TempTokenCount = 0;
             for (int i = p + 4; i <= TMP_FUN_LONG; i++) {
-              if (SYNTAX[i] != "") {
+              if (!SYNTAX[i].empty()) {
                 TempToken[TempTokenCount] = SYNTAX[i];
                 TempTokenCount++;
               }
@@ -3325,8 +3523,9 @@ string CheckForSyntax(
                 false, SYNTAX[p], SYNTAX[p + 2], 0, TheWindow, TheFunction,
                 TempToken, (TempTokenCount - 1), o_tokens));
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(" )] \n\n", o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             CPP_CODE.append(" ) " + CPP_END + " ");
@@ -3338,11 +3537,12 @@ string CheckForSyntax(
             continue;
           }
           // ---------------------------------------------------------------------------------
-          else
+          else {
             ErrorCode("النافذة ' " + SYNTAX[p] +
                           " ' لا تحتوي على دالة محليه بإسم ' " + SYNTAX[p + 2] +
                           " ' ",
                       o_tokens);
+          }
 
           // Exception!
           continue;
@@ -3450,11 +3650,12 @@ string CheckForSyntax(
           // abc = Window:Control:Option()	| win:ctr:disable()
           // abc = Window:Control:Option		| win:ctr:text
 
-          if (!CONTROL_IS_SET[std::make_pair(SYNTAX[p], SYNTAX[p + 2])])
+          if (!CONTROL_IS_SET[std::make_pair(SYNTAX[p], SYNTAX[p + 2])]) {
             ErrorCode("النافذة ' " + SYNTAX[p] +
                           " ' لا تحتوي على اداه باسم ' " + SYNTAX[p + 2] +
                           " ' ",
                       o_tokens);
+          }
 
           // if (SYNTAX[p + 5] == "")
           // ErrorCode("يجب اضافه '=' أو '()' بعد ' " + SYNTAX[p] + " : " +
@@ -3465,7 +3666,8 @@ string CheckForSyntax(
 
           // if (SYNTAX[p + 6] == "")
           // ErrorCode("يجب اضافه قيمة بعد ' " + SYNTAX[p] + " : " + SYNTAX[p +
-          // 2] + " : " + SYNTAX[p + 4] + " " + SYNTAX[p + 6] + " ' ", o_tokens);
+          // 2] + " : " + SYNTAX[p + 4] + " " + SYNTAX[p + 6] + " ' ",
+          // o_tokens);
 
           CTR_WIN = SYNTAX[p];
           CTR_CONTROL = SYNTAX[p + 2];
@@ -3486,16 +3688,19 @@ string CheckForSyntax(
         // abc = Control:Option()		| ctr:disable()
         // abc = Control:Option			| ctr:text
 
-        if (SYNTAX[p + 1] == "")
+        if (SYNTAX[p + 1].empty()) {
           ErrorCode("يجب اضافة ':' بعد ' " + SYNTAX[p] + " ' ", o_tokens);
+        }
 
-        if (SYNTAX[p + 1] != ":")
+        if (SYNTAX[p + 1] != ":") {
           ErrorCode("أمر غير معروف ' " + SYNTAX[p + 1] +
                         " ', يجب اضافة ':' بعد ' " + SYNTAX[p] + " ' ",
                     o_tokens);
+        }
 
-        if (SYNTAX[p + 2] == "")
+        if (SYNTAX[p + 2].empty()) {
           ErrorCode("يجب اضافة خاصية بعد ' " + SYNTAX[p] + " : ' ", o_tokens);
+        }
 
         // if (SYNTAX[p + 3] == "")
         // ErrorCode("يجب اضافة '=' أو '()' بعد ' " + SYNTAX[p] + " : " +
@@ -3528,17 +3733,19 @@ string CheckForSyntax(
       if (CTR_OPTION == "نص") // abc = Control:نص
       {
         // GetValue not working Label, need
-        string GetValueFix = "GetValue";
-        if (CONTROL_TYPE[std::make_pair(CTR_WIN, CTR_CONTROL)] == "ملصق")
+        std::string GetValueFix = "GetValue";
+        if (CONTROL_TYPE[std::make_pair(CTR_WIN, CTR_CONTROL)] == "ملصق") {
           GetValueFix = "GetLabelText";
+        }
 
         CTR_OPTION_TYPE = "نص";
 
         if (OBJECTIF_TYPE == "عدد") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" [WIN'" + CTR_WIN + " ':CTR'" + CTR_CONTROL +
                               " ':OPTION'" + CTR_OPTION + "(Text).ToInt()]' ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" (alifcore_StringToInt(OBJ_CTR_" + ID[CTR_WIN] +
@@ -3546,10 +3753,11 @@ string CheckForSyntax(
                           "())) ");
           // *** *** *** *** *** ***
         } else if (OBJECTIF_TYPE == "نص") {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" [WIN'" + CTR_WIN + " ':CTR'" + CTR_CONTROL +
                               " ':OPTION'" + CTR_OPTION + "(Text)]' ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           CPP_CODE.append(" (OBJ_CTR_" + ID[CTR_WIN] + "_" +
@@ -3579,10 +3787,11 @@ string CheckForSyntax(
 
     else {
       // if(DEBUG)DEBUG_MESSAGE(" \n \n *** \n TMP_WIN_OR_CLASS : " +
-      // TMP_WIN_OR_CLASS + " \n", o_tokens); if(DEBUG)DEBUG_MESSAGE("TmpFunction
-      // : " + TmpFunction + " \n *** \n", o_tokens);
+      // TMP_WIN_OR_CLASS + " \n", o_tokens);
+      // if(DEBUG)DEBUG_MESSAGE("TmpFunction : " + TmpFunction + " \n *** \n",
+      // o_tokens);
 
-      if (Control_ID[SYNTAX[p]] != "") {
+      if (!Control_ID[SYNTAX[p]].empty()) {
         // show error description
         // when, (no-win) CTR:OPTION
         // in global area.
@@ -3602,21 +3811,25 @@ string CheckForSyntax(
       } else {
 
         // L_VAR_TYPE[std::make_pair(TMP_WIN_OR_CLASS + TmpFunction, SYNTAX[p])]
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("TMP_WIN_OR_CLASS '" + TMP_WIN_OR_CLASS + "'\n ",
                         o_tokens); // DEBUG
-        if (DEBUG)
+        }
+        if (DEBUG) {
           DEBUG_MESSAGE("TmpFunction '" + TmpFunction + "'\n ",
                         o_tokens); // DEBUG
-        if (DEBUG)
+        }
+        if (DEBUG) {
           DEBUG_MESSAGE("SYNTAX[p] '" + SYNTAX[p] + "'\n ", o_tokens); // DEBUG
+        }
         ErrorCode("بناء الجملة غير مفهوم : ' " + SYNTAX[p] + " ' ", o_tokens);
       }
     }
   }
 
-  if (ALIF_PARENTHESIS_STATUS > 0 && !IS_IF_SYNTAX)
+  if (ALIF_PARENTHESIS_STATUS > 0 && !IS_IF_SYNTAX) {
     ErrorCode("غلق قوس مفقود ')' ", o_tokens);
+  }
 
   IS_IF_SYNTAX = false;
 
@@ -3625,33 +3838,26 @@ string CheckForSyntax(
 
 // ====================================================
 
-string CHECK_CALL_FUN_ARG(
-    bool CALL_FUN_GLOBAL,
-    string CALL_WIN_OR_CLASS, // win1/class1 { fun1(int a) } | win2 { fun2{ عدد
-                              // b; fun1(b) } } ==> win1
-    string CALL_FUN, // win1 { fun1(int a) } | win2 { fun2{ عدد b; fun1(b) } }
-                     // ==> fun1
-    int CALL_IS_CLASS, // 0 = non class, 1 constructor, 2 = الدالة member, ل
-                       // Message when new obj
-    string FROM_WIN_OR_CLASS, // win1 { fun1(int a) } | win2 { fun2{ عدد b;
-                              // fun1(b) } } ==> win2
-    string FROM_FUN, // win1 { fun1(int a) } | win2 { fun2{ عدد b; fun1(b) } }
-                     // ==> fun2
-    string SYNTAX[1024], int SYNTAX_LONG, CLASS_TOKEN *o_tokens) {
+auto CHECK_CALL_FUN_ARG(bool CALL_FUN_GLOBAL,
+                        const std::string &CALL_WIN_OR_CLASS,
+                        const std::string &CALL_FUN, int CALL_IS_CLASS,
+                        const std::string &FROM_WIN_OR_CLASS,
+                        const std::string &FROM_FUN, std::string SYNTAX[1024],
+                        int SYNTAX_LONG, CLASS_TOKEN *o_tokens) -> std::string {
   // SYNTAX[]			: 	1+1, b*2, 	("test" + s)
   // G_FUN_ARG_TYPE 	: 	INT, 	INT, 	STRING
 
   int CURRENT_ARG_NUMBER = 0;
 
   int p = 0;
-  string ARG[1024];
+  std::string ARG[1024];
   int ARG_LONG = 1;
 
   ARG[0] = "=";
 
   int CALL_ARG_TOTAL = 0;
 
-  string CPP_CODE;
+  std::string CPP_CODE;
 
   // if(DEBUG)DEBUG_MESSAGE("_---_|" + IntToString(G_FUN_ARG_TOTAL[CALL_FUN]) +
   // "\n" + IntToString(SYNTAX_LONG) + "|_---_", o_tokens); // DEBUG
@@ -3663,14 +3869,16 @@ string CHECK_CALL_FUN_ARG(
     CALL_ARG_TOTAL = G_FUN_ARG_TOTAL[CALL_FUN];
 
     // check args
-    if (CALL_ARG_TOTAL > 0 && SYNTAX_LONG < 1)
+    if (CALL_ARG_TOTAL > 0 && SYNTAX_LONG < 1) {
       ErrorCode("الدالة العامة ' " + CALL_FUN + "()' تأخد " +
                     IntToString(CALL_ARG_TOTAL) + " خاصية",
                 o_tokens);
+    }
 
     // الدالة العامة () without args
-    if (CALL_ARG_TOTAL == 0 && SYNTAX_LONG == 0)
+    if (CALL_ARG_TOTAL == 0 && SYNTAX_LONG == 0) {
       return "";
+    }
   } else {
     // Call Local Fun
 
@@ -3678,14 +3886,16 @@ string CHECK_CALL_FUN_ARG(
         L_FUN_ARG_TOTAL[std::make_pair(CALL_WIN_OR_CLASS, CALL_FUN)];
 
     // check args
-    if (CALL_ARG_TOTAL > 0 && SYNTAX_LONG < 1)
+    if (CALL_ARG_TOTAL > 0 && SYNTAX_LONG < 1) {
       ErrorCode("الدالة المحلية ' " + CALL_FUN + "()' تأخد " +
                     IntToString(CALL_ARG_TOTAL) + " خاصية",
                 o_tokens);
+    }
 
     // الدالة المحلية () without args
-    if (CALL_ARG_TOTAL == 0 && SYNTAX_LONG == 0)
+    if (CALL_ARG_TOTAL == 0 && SYNTAX_LONG == 0) {
       return "";
+    }
   }
 
   // الدالة (int a, عدد b) with args
@@ -3701,23 +3911,25 @@ string CHECK_CALL_FUN_ARG(
       ARG_LONG++;
     } else {
       // if(DEBUG)DEBUG_MESSAGE("-[" +
-      // CONVERT_STRING_ARRAY_TO_STRING(ARG,ARG_LONG) + "]-", o_tokens); // DEBUG
-      // ErrorCode("|G_FUN_ARG_TYPE TmpFunction: " + TmpFunction + " p : " +
-      // IntToString(p) + "|", o_tokens );
+      // CONVERT_STRING_ARRAY_TO_STRING(ARG,ARG_LONG) + "]-", o_tokens); //
+      // DEBUG ErrorCode("|G_FUN_ARG_TYPE TmpFunction: " + TmpFunction + " p : "
+      // + IntToString(p) + "|", o_tokens );
 
-      if (ARG_LONG < 2) // الدالة ( , ...) ['0'] =, [1] 'user arg', [2] null ل
-                        // incrumentation
+      if (ARG_LONG < 2) { // الدالة ( , ...) ['0'] =, [1] 'user arg', [2] null ل
+                          // incrumentation
         ErrorCode("إحدى الخصائص فارغة", o_tokens);
+      }
 
       if (CALL_FUN_GLOBAL) {
         // نداء a الدالة العامة ( ... check ARG n ...)
 
         // الدالة (a,a,a) ل (a,a)
-        if ((CURRENT_ARG_NUMBER + 1) > CALL_ARG_TOTAL)
+        if ((CURRENT_ARG_NUMBER + 1) > CALL_ARG_TOTAL) {
           ErrorCode("خصائص أكثر من الازم، الدالة العامة ' " + CALL_FUN +
                         "()' تأخد فقط " + IntToString(CALL_ARG_TOTAL) +
                         " خاصية ",
                     o_tokens);
+        }
 
         // Current خاصية OBJECTIF_TYPE
         CPP_CODE.append(CheckForSyntax(
@@ -3740,22 +3952,23 @@ string CHECK_CALL_FUN_ARG(
 
         // الدالة (a,a,a) ل (a,a)
         if ((CURRENT_ARG_NUMBER + 1) > CALL_ARG_TOTAL) {
-          if (CALL_IS_CLASS == 1) // constructor
+          if (CALL_IS_CLASS == 1) { // constructor
             ErrorCode("خصائص أكثر من ألازم، دالة بناء الصنف ' " +
                           CALL_WIN_OR_CLASS + " ' تأخد فقط " +
                           IntToString(CALL_ARG_TOTAL) + " خاصية ",
                       o_tokens);
-          else if (CALL_IS_CLASS == 2) // الدالة member
+          } else if (CALL_IS_CLASS == 2) { // الدالة member
             ErrorCode("خصائص أكثر من ألازم، الدالة ' " + CALL_FUN +
                           " ' المنتمية للصنف ' " + CALL_WIN_OR_CLASS +
                           " ' تأخد فقط " + IntToString(CALL_ARG_TOTAL) +
                           " خاصية ",
                       o_tokens);
-          else
+          } else {
             ErrorCode("خصائص أكثر من ألازم، الدالة ' " + CALL_FUN +
                           " ' تأخد فقط " + IntToString(CALL_ARG_TOTAL) +
                           " خاصية ",
                       o_tokens);
+          }
         }
 
         // Current خاصية OBJECTIF_TYPE
@@ -3785,8 +3998,9 @@ string CHECK_CALL_FUN_ARG(
       CURRENT_ARG_NUMBER++; // Point إلى next يدعى الدالة arg
 
       if (CURRENT_ARG_NUMBER < CALL_ARG_TOTAL) {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(", ", o_tokens); // DEBUG
+        }
         CPP_CODE.append(" , ");
       }
     }
@@ -3796,31 +4010,33 @@ string CHECK_CALL_FUN_ARG(
 
   if (CALL_FUN_GLOBAL) {
     // الدالة (a,a,a) ل (a,a)
-    if (CURRENT_ARG_NUMBER < CALL_ARG_TOTAL)
+    if (CURRENT_ARG_NUMBER < CALL_ARG_TOTAL) {
       ErrorCode("خصائص قليلة, الدالة العامة ' " + CALL_FUN + "()' تأخد " +
                     IntToString(CALL_ARG_TOTAL) + " خاصية، ثم إنشاء فقط " +
                     IntToString(CURRENT_ARG_NUMBER) + " خاصية ",
                 o_tokens);
+    }
   } else {
     // الدالة (a,a,a) ل (a,a)
     if (CURRENT_ARG_NUMBER < CALL_ARG_TOTAL) {
-      if (CALL_IS_CLASS == 1) // constructor
+      if (CALL_IS_CLASS == 1) { // constructor
         ErrorCode("خصائص قليلة, دالة بناء الصنف ' " + CALL_WIN_OR_CLASS +
                       "()' تأخد " + IntToString(CALL_ARG_TOTAL) +
                       " خاصية، ثم إنشاء فقط " +
                       IntToString(CURRENT_ARG_NUMBER) + " خاصية ",
                   o_tokens);
-      else if (CALL_IS_CLASS == 2) // الدالة member
+      } else if (CALL_IS_CLASS == 2) { // الدالة member
         ErrorCode("خصائص قليلة, الدالة منتمي ' " + CALL_FUN +
                       " ' داخل الصنف ' " + CALL_WIN_OR_CLASS + "()' تأخد " +
                       IntToString(CALL_ARG_TOTAL) + " خاصية، ثم إنشاء فقط " +
                       IntToString(CURRENT_ARG_NUMBER) + " خاصية ",
                   o_tokens);
-      else
+      } else {
         ErrorCode("خصائص قليلة, الدالة المحلية ' " + CALL_FUN + "()' تأخد " +
                       IntToString(CALL_ARG_TOTAL) + " خاصية، ثم إنشاء فقط " +
                       IntToString(CURRENT_ARG_NUMBER) + " خاصية ",
                   o_tokens);
+      }
     }
   }
 
@@ -3834,60 +4050,69 @@ void FINAL_CURRENT_FILE_CODE_CHECKING(CLASS_TOKEN *o_tokens) {
   // o_tokens); // DEBUG
 
   // Function()
-  if (IsInsideFunction)
+  if (IsInsideFunction) {
     ErrorCode("يجب إغلاق الدالة : " + TheFunction, o_tokens);
+  }
 
   // Window()
-  if (IsInsideWindow)
+  if (IsInsideWindow) {
     ErrorCode("يجب إغلاق النافذة : " + TheWindow, o_tokens);
+  }
 
   // Class()
-  if (IsInsideClass)
+  if (IsInsideClass) {
     ErrorCode("يجب إغلاق الصنف : " + TheClass, o_tokens);
+  }
 
   // IF
-  if (ALIF_IF_STATUS > 0)
+  if (ALIF_IF_STATUS > 0) {
     ErrorCode("مازال هناك " + IntToString(ALIF_IF_STATUS) +
                   " شروط مازالت مفتوحه",
               o_tokens);
+  }
 
   // WHILE
-  if (ALIF_LOOP_STATUS > 0)
+  if (ALIF_LOOP_STATUS > 0) {
     ErrorCode("مازال هناك " + IntToString(ALIF_LOOP_STATUS) +
                   " كلما مازالت مفتوحه",
               o_tokens);
+  }
 
   // #Alif
-  if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE])
+  if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE]) {
     ErrorCode("يجب الإعلان عن علم ألف اولا، المرجو اضافة ' #ألف ' في الأعلى",
               o_tokens);
+  }
 }
 
 // ====================================================
 
 void FINAL_APPLICATION_CODE_CHECKING(CLASS_TOKEN *o_tokens, bool FIRST_FILE) {
   if (FIRST_FILE) {
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("FINAL_APPLICATION_CODE_CHECKING()... \n",
                     o_tokens); // DEBUG
+    }
 
     // Main Window()
     // if (!MAIN_WIN_IS_SET && !CONTROL_WIN_IS_SET["رئيسية"])
     // ErrorCode("النافذة الرئيسية غير موجودة", o_tokens);
 
-    // TODO: IDE dont catch the error log.
+    // TODO(aboualiaa): IDE dont catch the error log.
 
     if (APP_TYPE == "PC_GUI") {
-      if (!MAIN_WIN_IS_SET)
+      if (!MAIN_WIN_IS_SET) {
         ErrorCode("هذا التطبيق ذي واجهة رسومية، لكن النافذة الرئيسية غير "
                   "محددة، هل نسيت ' نافذة رئيسية ' ؟",
                   o_tokens);
+      }
     }
 
     // #Alif
-    if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE])
+    if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE]) {
       ErrorCode("يجب الإعلان عن علم ألف اولا، المرجو اضافة ' #ألف ' في الأعلى",
                 o_tokens);
+    }
   }
 }
 

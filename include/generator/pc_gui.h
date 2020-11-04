@@ -6,16 +6,18 @@
 #define ALIFC_PC_GUI_H
 #include <string>
 
-void cpp_AddScript(std::string FUN, std::string NEW_CODE);
+void cpp_AddScript(const std::string &FUN, const std::string &NEW_CODE);
 std::string CG_WINX_LOAD();
 std::string CG_APP_DESTROY();
-std::string CG_WIN_SHOW(std::string WIN);
-std::string CG_WIN_CENTER(std::string WIN);
-std::string CG_WIN_HIDE(std::string WIN);
-std::string CG_WIN_DESTROY(std::string WIN);
-std::string CG_WIN_MEMBER(std::string WIN, std::string MEMBER_CODE);
+std::string CG_WIN_SHOW(const std::string &WIN);
+std::string CG_WIN_CENTER(const std::string &WIN);
+std::string CG_WIN_HIDE(const std::string &WIN);
+std::string CG_WIN_DESTROY(const std::string &WIN);
+std::string CG_WIN_MEMBER(const std::string &WIN,
+                          const std::string &MEMBER_CODE);
 std::string AlifJavaScript_Bridge_SendRequest();
-std::string AlifJavaScript_Bridge_OnNewWindowSendRequest(std::string WVObjName);
+std::string
+AlifJavaScript_Bridge_OnNewWindowSendRequest(const std::string &WVObjName);
 std::string Generate_AlifJavaScript();
 void CG_INITIALIZATION();
 std::string CG_WINX_CODE();

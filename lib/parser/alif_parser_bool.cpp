@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_bool(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_bool(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   //منطق
 
   // bool A = true
@@ -283,7 +283,7 @@ void parser_bool(string Token[2048], CLASS_TOKEN *o_tokens) {
       }
     }
 
-    string WIN_OR_CLASS;
+    std::string WIN_OR_CLASS;
     if (IsInsideClass)
       WIN_OR_CLASS = TheClass;
     else

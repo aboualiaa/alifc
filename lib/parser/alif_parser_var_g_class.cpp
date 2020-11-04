@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_VarGlobalClass(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_VarGlobalClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // Global Class var
   // g1 = 1 + 2

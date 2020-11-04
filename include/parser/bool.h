@@ -18,6 +18,6 @@
 
 // ----------------------------------
 
-void parser_bool(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_bool(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_BOOL_H

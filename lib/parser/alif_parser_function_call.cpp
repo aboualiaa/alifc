@@ -18,46 +18,52 @@
 
 // ----------------------------------
 
-void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_FunctionCall(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // *myfunction(a, b, c..)
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return;
+  }
 
   // --- Check for errors ---------------------------------------
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("لايمكن مناداة على دالة من خارج دالة '" + Token[1] + "()' ",
               o_tokens);
+  }
 
-  if (Token[2] == "")
+  if (Token[2].empty()) {
     ErrorCode("يجب اضافه '(' بعد اسم الدالة ' " + Token[1] + " ' ", o_tokens);
+  }
 
-  if (Token[2] != "(")
+  if (Token[2] != "(") {
     ErrorCode("من أجل نداء الدالة العامة ' " + Token[1] +
                   "() ' يجب إضافة الإشارة ' ( ' قبل  ' " + Token[2] + " ' ",
-              o_tokens); // TODO: Whats is this?
+              o_tokens); // TODO(aboualiaa): Whats is this?
+  }
 
-  if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+  if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
     ErrorCode("يجب انهاء السطر بالإشارة ')' ", o_tokens);
+  }
 
   // --- Set current parent ---------------------------------------
 
-  string CurrentParent = "";
+  std::string CurrentParent;
 
-  if (IsInsideClass)
+  if (IsInsideClass) {
     CurrentParent = TheClass;
-  else if (IsInsideWindow)
+  } else if (IsInsideWindow) {
     CurrentParent = TheWindow;
+  }
 
   // --- Initializing ---------------------------------------------
 
   bool CallClassFun = false;
   bool CallGlobalFun = false;
-  string FuncParent = "";
-  string FunName = "";
-  string FunType = "";
+  std::string FuncParent;
+  std::string FunName;
+  std::string FunType;
 
   // --- Identify -------------------------------------------------
 
@@ -70,8 +76,9 @@ void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
     FunType = L_FUN_TYPE[std::make_pair(CurrentParent, Token[1])];
 
     // Debug
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("Call Local-function [" + Token[1] + "] (", o_tokens);
+    }
 
   } else if (CLASS_FUN_IS_SET[std::make_pair(CurrentParent, Token[1])]) {
 
@@ -83,8 +90,9 @@ void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
     FunType = CLASS_FUN_TYPE[std::make_pair(CurrentParent, Token[1])];
 
     // Debug
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("Call Class-function [" + Token[1] + "] (", o_tokens);
+    }
 
   } else if (G_FUN_IS_SET[(Token[1])]) {
 
@@ -95,8 +103,9 @@ void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
     FunType = G_FUN_TYPE[(Token[1])];
 
     // Debug
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("Call Global-function [" + Token[1] + "] (", o_tokens);
+    }
 
   } else {
 
@@ -106,10 +115,11 @@ void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // --- Check -------------------------------------------------
 
-  if (IsDataType(FunType))
+  if (IsDataType(FunType)) {
     ErrorCode("الدالة المحلية ' " + FunName + "()' من نوع " + FunType +
                   ", لذلك أنت بحاجة إلى متغير للحصول على قيمة الرجوع",
               o_tokens);
+  }
 
   // --- ARGV -------------------------------------------------
 
@@ -120,7 +130,7 @@ void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
 
       // ... [a, b + 2, c(...), d*x)]
 
-      if (Token[p] != "") {
+      if (!Token[p].empty()) {
 
         TempToken[TempTokenCount] = Token[p];
         TempTokenCount++;
@@ -128,13 +138,14 @@ void parser_FunctionCall(string Token[2048], CLASS_TOKEN *o_tokens) {
     }
 
     ScriptSyntaxBuffer = CHECK_CALL_FUN_ARG(
-        CallGlobalFun, FuncParent, FunName, CallClassFun, CurrentParent,
-        TheFunction, TempToken, (TempTokenCount - 1), o_tokens);
+        CallGlobalFun, FuncParent, FunName, static_cast<int>(CallClassFun),
+        CurrentParent, TheFunction, TempToken, (TempTokenCount - 1), o_tokens);
   }
 
   // DEBUG
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(") ", o_tokens);
+  }
 
   // --- Gen. Code -------------------------------------------------
 

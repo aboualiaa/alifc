@@ -10,4 +10,4 @@
 
 #include <string>
 
-std::string CODE_GENERATOR_GET_PHONE_ANDROID() { return ""; }
+auto CODE_GENERATOR_GET_PHONE_ANDROID() -> std::string { return ""; }

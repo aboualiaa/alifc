@@ -7,11 +7,11 @@
 #pragma once
 #define UNICODE
 #define _UNICODE
-using namespace std;
+
 // ----------------------------------
-#include <chrono> // Wait..
+#include <chrono>  // Wait..
 #include <sstream> // system, stringstream
-#include <thread> // Wait..
+#include <thread>  // Wait..
 // ----------------------------------
 
 void CLEAN() {

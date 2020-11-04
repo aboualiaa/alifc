@@ -24,18 +24,17 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef UTF8_FOR_CPP_UNCHECKED_H_2675DCD0_9480_4c0c_B92A_CC14C027B731
-#define UTF8_FOR_CPP_UNCHECKED_H_2675DCD0_9480_4c0c_B92A_CC14C027B731
+#ifndef _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_UNCHECKED_H
+#define _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_UNCHECKED_H
 
 #include "core.h"
 
-namespace utf8 {
-namespace unchecked {
+namespace utf8::unchecked {
 template <typename octet_iterator>
-octet_iterator append(uint32_t cp, octet_iterator result) {
-  if (cp < 0x80) // one octet
+auto append(uint32_t cp, octet_iterator result) -> octet_iterator {
+  if (cp < 0x80) { // one octet
     *(result++) = static_cast<uint8_t>(cp);
-  else if (cp < 0x800) { // two octets
+  } else if (cp < 0x800) { // two octets
     *(result++) = static_cast<uint8_t>((cp >> 6) | 0xc0);
     *(result++) = static_cast<uint8_t>((cp & 0x3f) | 0x80);
   } else if (cp < 0x10000) { // three octets
@@ -51,7 +50,7 @@ octet_iterator append(uint32_t cp, octet_iterator result) {
   return result;
 }
 
-template <typename octet_iterator> uint32_t next(octet_iterator &it) {
+template <typename octet_iterator> auto next(octet_iterator &it) -> uint32_t {
   uint32_t cp = utf8::internal::mask8(*it);
   typename std::iterator_traits<octet_iterator>::difference_type length =
       utf8::internal::sequence_length(it);
@@ -82,13 +81,15 @@ template <typename octet_iterator> uint32_t next(octet_iterator &it) {
   return cp;
 }
 
-template <typename octet_iterator> uint32_t peek_next(octet_iterator it) {
+template <typename octet_iterator>
+auto peek_next(octet_iterator it) -> uint32_t {
   return utf8::unchecked::next(it);
 }
 
-template <typename octet_iterator> uint32_t prior(octet_iterator &it) {
-  while (utf8::internal::is_trail(*(--it)))
+template <typename octet_iterator> auto prior(octet_iterator &it) -> uint32_t {
+  while (utf8::internal::is_trail(*(--it))) {
     ;
+  }
   octet_iterator temp = it;
   return utf8::unchecked::next(temp);
 }
@@ -96,28 +97,30 @@ template <typename octet_iterator> uint32_t prior(octet_iterator &it) {
 // Deprecated in versions that include prior, but only for the sake of
 // consistency (see utf8::previous)
 template <typename octet_iterator>
-inline uint32_t previous(octet_iterator &it) {
+inline auto previous(octet_iterator &it) -> uint32_t {
   return utf8::unchecked::prior(it);
 }
 
 template <typename octet_iterator, typename distance_type>
 void advance(octet_iterator &it, distance_type n) {
-  for (distance_type i = 0; i < n; ++i)
+  for (distance_type i = 0; i < n; ++i) {
     utf8::unchecked::next(it);
+  }
 }
 
 template <typename octet_iterator>
-typename std::iterator_traits<octet_iterator>::difference_type
-distance(octet_iterator first, octet_iterator last) {
+auto distance(octet_iterator first, octet_iterator last) ->
+    typename std::iterator_traits<octet_iterator>::difference_type {
   typename std::iterator_traits<octet_iterator>::difference_type dist;
-  for (dist = 0; first < last; ++dist)
+  for (dist = 0; first < last; ++dist) {
     utf8::unchecked::next(first);
+  }
   return dist;
 }
 
 template <typename u16bit_iterator, typename octet_iterator>
-octet_iterator utf16to8(u16bit_iterator start, u16bit_iterator end,
-                        octet_iterator result) {
+auto utf16to8(u16bit_iterator start, u16bit_iterator end, octet_iterator result)
+    -> octet_iterator {
   while (start != end) {
     uint32_t cp = utf8::internal::mask16(*start++);
     // Take care of surrogate pairs first
@@ -131,34 +134,37 @@ octet_iterator utf16to8(u16bit_iterator start, u16bit_iterator end,
 }
 
 template <typename u16bit_iterator, typename octet_iterator>
-u16bit_iterator utf8to16(octet_iterator start, octet_iterator end,
-                         u16bit_iterator result) {
+auto utf8to16(octet_iterator start, octet_iterator end, u16bit_iterator result)
+    -> u16bit_iterator {
   while (start < end) {
     uint32_t cp = utf8::unchecked::next(start);
     if (cp > 0xffff) { // make a surrogate pair
       *result++ = static_cast<uint16_t>((cp >> 10) + internal::LEAD_OFFSET);
       *result++ =
           static_cast<uint16_t>((cp & 0x3ff) + internal::TRAIL_SURROGATE_MIN);
-    } else
+    } else {
       *result++ = static_cast<uint16_t>(cp);
+    }
   }
   return result;
 }
 
 template <typename octet_iterator, typename u32bit_iterator>
-octet_iterator utf32to8(u32bit_iterator start, u32bit_iterator end,
-                        octet_iterator result) {
-  while (start != end)
+auto utf32to8(u32bit_iterator start, u32bit_iterator end, octet_iterator result)
+    -> octet_iterator {
+  while (start != end) {
     result = utf8::unchecked::append(*(start++), result);
+  }
 
   return result;
 }
 
 template <typename octet_iterator, typename u32bit_iterator>
-u32bit_iterator utf8to32(octet_iterator start, octet_iterator end,
-                         u32bit_iterator result) {
-  while (start < end)
+auto utf8to32(octet_iterator start, octet_iterator end, u32bit_iterator result)
+    -> u32bit_iterator {
+  while (start < end) {
     (*result++) = utf8::unchecked::next(start);
+  }
 
   return result;
 }
@@ -173,34 +179,35 @@ public:
   iterator() {}
   explicit iterator(const octet_iterator &octet_it) : it(octet_it) {}
   // the default "big three" are OK
-  octet_iterator base() const { return it; }
-  uint32_t operator*() const {
+  auto base() const -> octet_iterator { return it; }
+  auto operator*() const -> uint32_t {
     octet_iterator temp = it;
     return utf8::unchecked::next(temp);
   }
-  bool operator==(const iterator &rhs) const { return (it == rhs.it); }
-  bool operator!=(const iterator &rhs) const { return !(operator==(rhs)); }
-  iterator &operator++() {
+  auto operator==(const iterator &rhs) const -> bool { return (it == rhs.it); }
+  auto operator!=(const iterator &rhs) const -> bool {
+    return !(operator==(rhs));
+  }
+  auto operator++() -> iterator & {
     ::std::advance(it, utf8::internal::sequence_length(it));
     return *this;
   }
-  iterator operator++(int) {
+  auto operator++(int) -> iterator {
     iterator temp = *this;
     ::std::advance(it, utf8::internal::sequence_length(it));
     return temp;
   }
-  iterator &operator--() {
+  auto operator--() -> iterator & {
     utf8::unchecked::prior(it);
     return *this;
   }
-  iterator operator--(int) {
+  auto operator--(int) -> iterator {
     iterator temp = *this;
     utf8::unchecked::prior(it);
     return temp;
   }
 }; // class iterator
 
-} // namespace unchecked
-} // namespace utf8
+} // namespace utf8::unchecked
 
-#endif // header guard
+#endif // _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_UNCHECKED_H

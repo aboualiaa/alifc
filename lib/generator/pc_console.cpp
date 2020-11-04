@@ -10,4 +10,4 @@
 
 #include <string>
 
-std::string CODE_GENERATOR_GET_PC_CONSOLE() { return ""; }
+auto CODE_GENERATOR_GET_PC_CONSOLE() -> std::string { return ""; }

@@ -74,7 +74,7 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
     // so Crash in convert loop fucntion like "CONVERT_STRING_ARRAY_TO_STRING()"
     // Move from 'unsigned' to 'int' !
 
-    string Token[2048];
+    std::string Token[2048];
 
     // Clear TempToken[1024] on every line
     // this is for fixing TempToken[p + 1] --> last token from last line!
@@ -520,7 +520,7 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
             if (!AT_FOUND)
               ErrorCode("نهايه شفرة سي++ غير موجوده ' @ '", o_tokens);
 
-            string CLASS_OR_WIN;
+            std::string CLASS_OR_WIN;
             if (IsInsideClass)
               CLASS_OR_WIN = TheClass;
             else
@@ -628,7 +628,7 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
           if (!AT_FOUND)
             ErrorCode("نهايه شفرة سي++ غير موجوده ' @ '", o_tokens);
 
-          string CLASS_OR_WIN;
+          std::string CLASS_OR_WIN;
           if (IsInsideClass)
             CLASS_OR_WIN = TheClass;
           else

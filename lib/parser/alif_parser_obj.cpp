@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_Obj(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // كائن
 
   if (!o_tokens->TOKENS_PREDEFINED)
@@ -49,9 +49,9 @@ void parser_Obj(string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // C++, allow create Obj on global, global-class, local, but using it only on
   // func.
-  string OBJ_ID;
+  std::string OBJ_ID;
   bool IS_GLOBAL_OBJ = false;
-  string WIN_OR_CLASS; // Needed by CheckForSyntax()
+  std::string WIN_OR_CLASS; // Needed by CheckForSyntax()
 
   if (IsInsideClass) {
     if (OBJ_IS_SET[std::make_pair(TheClass + TheFunction, Token[1])]) {
@@ -144,7 +144,7 @@ void parser_Obj(string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   */
 
-  string TK_CLASS = OBJ_CLASS[std::make_pair(OBJ_ID, Token[1])];
+  std::string TK_CLASS = OBJ_CLASS[std::make_pair(OBJ_ID, Token[1])];
 
   if (!CLASS_G_VAR_IS_SET[std::make_pair(TK_CLASS, Token[3])] &&
       !CLASS_FUN_IS_SET[std::make_pair(TK_CLASS, Token[3])])
@@ -152,7 +152,7 @@ void parser_Obj(string Token[2048], CLASS_TOKEN *o_tokens) {
                   Token[3] + " ' ",
               o_tokens);
 
-  string MEMBER_TYPE;
+  std::string MEMBER_TYPE;
 
   if (CLASS_G_VAR_IS_SET[std::make_pair(TK_CLASS, Token[3])]) {
     // Var member

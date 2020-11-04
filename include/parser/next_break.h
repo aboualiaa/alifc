@@ -5,6 +5,6 @@
 #ifndef ALIFC_NEXT_BREAK_H
 #define ALIFC_NEXT_BREAK_H
 
-void parser_NextBreak(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_NextBreak(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_NEXT_BREAK_H

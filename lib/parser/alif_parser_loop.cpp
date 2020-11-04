@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_While(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_While(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // كلما
 
   if (!o_tokens->TOKENS_PREDEFINED)
@@ -27,7 +27,7 @@ void parser_While(string Token[2048], CLASS_TOKEN *o_tokens) {
   if (!IsInsideFunction)
     ErrorCode("يجب استعمال كلما داخل دالة", o_tokens);
 
-  string PART[1024];
+  std::string PART[1024];
   int PART_TOTAL;
 
   PART[0] = "=";
@@ -61,7 +61,7 @@ void parser_While(string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   // *** *** *** *** *** ***
 
-  string OBJECTIF_TYPE = "عادم";
+  std::string OBJECTIF_TYPE = "عادم";
 
   bool PART_A;
   bool PART_B;
@@ -69,10 +69,10 @@ void parser_While(string Token[2048], CLASS_TOKEN *o_tokens) {
   PART_A = false;
   PART_B = false;
 
-  string PART_A_OBJECTIF_TYPE;
+  std::string PART_A_OBJECTIF_TYPE;
   PART_A_OBJECTIF_TYPE = "";
 
-  string IF_SYNTAX_BUFFER;
+  std::string IF_SYNTAX_BUFFER;
   IF_SYNTAX_BUFFER = "";
 
   for (int p = Start; p <= o_tokens->TOTAL[o_tokens->Line];

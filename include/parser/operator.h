@@ -5,6 +5,6 @@
 #ifndef ALIFC_OPERATOR_H
 #define ALIFC_OPERATOR_H
 
-void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_TwoPointOperator(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_OPERATOR_H

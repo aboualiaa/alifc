@@ -5,6 +5,6 @@
 #ifndef ALIFC_VAR_G_CLASS_H
 #define ALIFC_VAR_G_CLASS_H
 
-void parser_VarGlobalClass(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_VarGlobalClass(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_VAR_G_CLASS_H

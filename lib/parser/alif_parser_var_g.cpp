@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_VarGlobal(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_VarGlobal(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // Global var
   // _g1 = 1 + 2
@@ -35,7 +35,7 @@ void parser_VarGlobal(string Token[2048], CLASS_TOKEN *o_tokens) {
   // ErrorCode("Using vars must set outside window for global, or inside
   // function for local.", o_tokens);
 
-  string G_VAR_WITHOUT_;
+  std::string G_VAR_WITHOUT_;
 
   if (substr_utf8(Token[1], 0, 1) == "_")
     G_VAR_WITHOUT_ =

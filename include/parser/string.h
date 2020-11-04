@@ -5,6 +5,6 @@
 #ifndef ALIFC_STRING_H
 #define ALIFC_STRING_H
 
-void parser_String(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_STRING_H

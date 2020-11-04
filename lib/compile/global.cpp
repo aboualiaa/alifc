@@ -10,11 +10,13 @@
 
 #include "general/global.h"
 
-void CompileAddExtra_Compile(std::string cmd) {
+void CompileAddExtra_Compile(const std::string &cmd) {
   Compile_ExtraCompile.append(cmd);
 }
 
-void CompileAddExtra_Link(std::string cmd) { Compile_ExtraLink.append(cmd); }
+void CompileAddExtra_Link(const std::string &cmd) {
+  Compile_ExtraLink.append(cmd);
+}
 
 void PythonSetEnvirenment() {
 
@@ -26,7 +28,7 @@ void PythonSetEnvirenment() {
   // python3.5
   // -------------------------------
 
-  // TODO: if thos var are empty, then get python paths by cmd.
+  // TODO(aboualiaa): if thos var are empty, then get python paths by cmd.
 
   std::string buffer = " -I\"" + PythonInclude_path + "\" ";
   CompileAddExtra_Compile(buffer);

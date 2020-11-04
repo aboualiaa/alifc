@@ -61,14 +61,14 @@ void ALIF_VAR_INITIALIZATION_FOR_NEW_SOURCE_FILE(bool FIRST_FILE) {
 // ------------------------------------------------------
 
 void ALIF_LIB_SETTING() {
-  ifstream FILE_STREAM(PATH_FULL_LIB_SETTING.c_str());
+  std::ifstream FILE_STREAM(PATH_FULL_LIB_SETTING.c_str());
 
   if (!FILE_STREAM.is_open()) {
     ALIF_ERROR("ERROR [F001]: Could not open " + PATH_FULL_LIB_SETTING);
     exit(EXIT_FAILURE);
   }
 
-  string LINE8;
+  std::string LINE8;
 
   while (getline(FILE_STREAM, LINE8)) {
     // ------------------------------------------------------
@@ -88,7 +88,7 @@ void ALIF_LIB_SETTING() {
 
     size_t LINE_FIX_LAST_POS = LINE8.find_last_not_of("\r\n");
 
-    if (LINE_FIX_LAST_POS != string::npos) {
+    if (LINE_FIX_LAST_POS != std::string::npos) {
       LINE8.substr(0, LINE_FIX_LAST_POS + 1).swap(LINE8);
     }
 
@@ -114,7 +114,7 @@ void ALIF_LIB_SETTING() {
   FILE_STREAM.close();
 }
 
-void ADD_TOKEN(string TOKEN_CHAR, bool NEW_TOKEN, bool NEW_TOKEN_AFTER,
+void ADD_TOKEN(std::string TOKEN_CHAR, bool NEW_TOKEN, bool NEW_TOKEN_AFTER,
                int REAL_CHAR_NUMBER, CLASS_TOKEN *o_tokens) {
   if (NEW_TOKEN) {
     // New Token
@@ -169,8 +169,8 @@ void ADD_TOKEN(string TOKEN_CHAR, bool NEW_TOKEN, bool NEW_TOKEN_AFTER,
   }
 }
 
-void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
-                     bool TOKENS_ARE_PREDININED) {
+void AlifLexerParser(std::string FILE_NAME, std::string FILE_TYPE,
+                     bool FIRST_FILE, bool TOKENS_ARE_PREDININED) {
   // ------------------------------------------------------
   // Create new object of tokens class
   // referenced here in this func by ref &
@@ -191,7 +191,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
   // ErrorCode("خطأ في كتابة إسم الملف: "+ Token[4], o_tokens);
 
   int POS = FILE_NAME.find_last_of(".");
-  string EXTENTION;
+  std::string EXTENTION;
 
   // Get extention
   if (POS > 0)
@@ -406,7 +406,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
   // Read Source file (ANSI File name)
   // ------------------------------------------------------
 
-  ifstream FILE_STREAM(OBJ_CLASS_TOKEN.PATH_FULL_SOURCE.c_str());
+  std::ifstream FILE_STREAM(OBJ_CLASS_TOKEN.PATH_FULL_SOURCE.c_str());
 
   if (!FILE_STREAM.is_open()) {
     ALIF_ERROR("ERROR [F001]: Could not open " +
@@ -416,7 +416,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
 
   // ------------------------------------------------------
 
-  string LINE8;
+  std::string LINE8;
 
   bool INSIDE_STRING_CPP = false;
 
@@ -441,7 +441,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
 
     size_t LINE_FIX_LAST_POS = LINE8.find_last_not_of("\r\n");
 
-    if (LINE_FIX_LAST_POS != string::npos) {
+    if (LINE_FIX_LAST_POS != std::string::npos) {
       LINE8.substr(0, LINE_FIX_LAST_POS + 1).swap(LINE8);
     }
 
@@ -467,7 +467,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
 
     int CHAR_NUMBER = 0;
     int LINE_CHAR_TOTAL = 0;
-    string Char;
+    std::string Char;
     bool INSIDE_STRING = false;
 
     OBJ_CLASS_TOKEN.TOTAL[OBJ_CLASS_TOKEN.TOTAL_LINES] = 0;
@@ -527,7 +527,7 @@ void AlifLexerParser(string FILE_NAME, string FILE_TYPE, bool FIRST_FILE,
           (Char == "@" &&
            (substr_utf8(LINE8, CHAR_NUMBER + 1, 1) != "@"))) // Skip '@@'
       {
-        string CompletChar = "";
+        std::string CompletChar = "";
 
         if (substr_utf8(LINE8, CHAR_NUMBER + 1, 1) == "س")
           CompletChar = "_س_";

@@ -4,14 +4,14 @@
 // ----------------------------------
 // Alif Programming Language
 // ==================================
-#pragma once
+
 #define UNICODE
 #define _UNICODE
-using namespace std;
+
 // ----------------------------------
-#include <chrono> // Wait..
+#include <chrono>  // Wait..
 #include <sstream> // system, stringstream
-#include <thread> // Wait..
+#include <thread>  // Wait..
 // ----------------------------------
 
 // TODO: in linux.. maybe GTK2 need bcs is shared !

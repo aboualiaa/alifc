@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_TwoPointOperator(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // :
 
   // ---------------------------------------------------------------------------------
@@ -34,11 +34,13 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
   // Control:Option()				| ctr:disable()
   // Control:Option = a			| ctr:text = "abc"
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال الاداة داخل دالة", o_tokens);
+  }
 
   // int ARG;
   // string WIN, CONTROL, OPTION, OPTION_TYPE;
@@ -47,17 +49,17 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
   // OPTION = "";
   // ARG = 0;
 
-  string CTR_WIN;
-  string CTR_CONTROL;
-  string CTR_OPTION;
-  string CTR_OPTION_TYPE;
-  string CTR_OPTION_CPP_END;
+  std::string CTR_WIN;
+  std::string CTR_CONTROL;
+  std::string CTR_OPTION;
+  std::string CTR_OPTION_TYPE;
+  std::string CTR_OPTION_CPP_END;
   int CTR_ARG;
   // int CTR_OPERATOR_POSITION;
 
-  // TODO: main:center() not work if main set only by code !
+  // TODO(aboualiaa): main:center() not work if main set only by code !
 
-  // TODO: devision, must allow '/' and '\'
+  // TODO(aboualiaa): devision, must allow '/' and '\'
 
   if (CONTROL_WIN_IS_SET[Token[1]] || WIN_IS_SET[Token[1]] ||
       (Token[1] == "رئيسية" && MAIN_WIN_IS_SET)) {
@@ -67,21 +69,25 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
     // Window:Control:Option()		| win:ctr:disable()
     // Window:Control:Option = a	| win:ctr:text = "abc"
 
-    if (Token[2] != ":")
+    if (Token[2] != ":") {
       ErrorCode("يجب اضافه ' : ' بعد ' " + Token[1] + " ' ", o_tokens);
+    }
 
-    if (Token[3] == "")
+    if (Token[3].empty()) {
       ErrorCode("يجب اضافه عضو تابع ل ' " + Token[1] + " ' بعد ':' ", o_tokens);
+    }
 
-    if (Token[4] == "")
+    if (Token[4].empty()) {
       ErrorCode("يجب اضافه ':' أو '()' أو '=' بعد ' " + Token[1] + " " +
                     Token[2] + " " + Token[3] + " ' ",
                 o_tokens);
+    }
 
-    if (Token[4] != "(" && Token[4] != ":" && Token[4] != "=")
+    if (Token[4] != "(" && Token[4] != ":" && Token[4] != "=") {
       ErrorCode("أمر غير معروف ' " + Token[4] +
                     " ', يجب اضافه ':' أو '()' أو '=' ",
                 o_tokens);
+    }
 
     if (Token[4] == "(") {
       // ---------------------------------------------------------------------------------
@@ -98,112 +104,132 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
       if (Token[3] == "إظهار") {
         // Window:Show()
 
-        if (Token[5] == "")
+        if (Token[5].empty()) {
           ErrorCode("يجب اضافه ')' في النهاية", o_tokens);
+        }
 
-        if (Token[5] != ")")
+        if (Token[5] != ")") {
           ErrorCode("أمر غير معروف ' " + Token[5] +
                         " ', على كل حال اظهار لا تحتاج ايت خاصيه",
                     o_tokens);
+        }
 
-        if (Token[6] != "")
+        if (!Token[6].empty()) {
           ErrorCode("أمر غير معروف ' " + Token[6] + " ' ", o_tokens);
+        }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[WIN'" + Token[1] + " ':OPT'" +
                             Token[3] + " '(CPP_WIN_SHOW)] \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Window:Show()
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           CPP_GLOBAL_FUN.append(CG_WIN_SHOW(Token[1]));
-        else
+        } else {
           cpp_AddScript(TheFunction, CG_WIN_SHOW(Token[1]));
+        }
         // *** *** *** *** *** ***
 
         return; // continue;
       } else if (Token[3] == "إخفاء") {
         // Window:Hide()
 
-        if (Token[5] == "")
+        if (Token[5] == "") {
           ErrorCode("يجب اضافه ')' في النهاية", o_tokens);
+        }
 
-        if (Token[5] != ")")
+        if (Token[5] != ")") {
           ErrorCode("أمر غير معروف ' " + Token[5] +
                         " ', على كل حال اخفاء لا تحتاج ايت خاصيه",
                     o_tokens);
+        }
 
-        if (Token[6] != "")
+        if (Token[6] != "") {
           ErrorCode("أمر غير معروف ' " + Token[6] + " ' ", o_tokens);
+        }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[WIN'" + Token[1] + " ':OPT'" +
                             Token[3] + " '(CPP_WIN_HIDE)] \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Window:Hide()
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           CPP_GLOBAL_FUN.append(CG_WIN_HIDE(Token[1]));
-        else
+        } else {
           cpp_AddScript(TheFunction, CG_WIN_HIDE(Token[1]));
+        }
         // *** *** *** *** *** ***
 
         return; // continue;
       } else if (Token[3] == "تدمير") {
         // Window:Destroy()
 
-        if (Token[5] == "")
+        if (Token[5] == "") {
           ErrorCode("يجب اضافه ')' في النهاية", o_tokens);
+        }
 
-        if (Token[5] != ")")
+        if (Token[5] != ")") {
           ErrorCode("أمر غير معروف ' " + Token[5] +
                         " ', على كل حال تدمير لا تحتاج ايت خاصيه",
                     o_tokens);
+        }
 
-        if (Token[6] != "")
+        if (Token[6] != "") {
           ErrorCode("أمر غير معروف ' " + Token[6] + " ' ", o_tokens);
+        }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[WIN'" + Token[1] + " ':OPT'" +
                             Token[3] + " '(CPP_WIN_DESTROY)] \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Window:Destroy()
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           CPP_GLOBAL_FUN.append(CG_WIN_DESTROY(Token[1]));
-        else
+        } else {
           cpp_AddScript(TheFunction, CG_WIN_DESTROY(Token[1]));
+        }
         // *** *** *** *** *** ***
 
         return; // continue;
       } else if (Token[3] == "منتصف") {
         // Window:Center()
 
-        if (Token[5] == "")
+        if (Token[5] == "") {
           ErrorCode("يجب اضافه ')' في النهاية", o_tokens);
+        }
 
-        if (Token[5] != ")")
+        if (Token[5] != ")") {
           ErrorCode("أمر غير معروف ' " + Token[5] +
                         " ', على كل حال منتصف لا تحتاج ايت خاصيه",
                     o_tokens);
+        }
 
-        if (Token[6] != "")
+        if (Token[6] != "") {
           ErrorCode("أمر غير معروف ' " + Token[6] + " ' ", o_tokens);
+        }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[WIN'" + Token[1] + " ':OPT'" +
                             Token[3] + " '(Center)] \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Window:Center()
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           CPP_GLOBAL_FUN.append(CG_WIN_CENTER(Token[1]));
-        else
+        } else {
           cpp_AddScript(TheFunction, CG_WIN_CENTER(Token[1]));
+        }
         // *** *** *** *** *** ***
 
         return; // continue;
@@ -214,25 +240,28 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
       // -----------------------
 
       else if (L_FUN_IS_SET[std::make_pair(Token[1], Token[3])]) {
-        if (Token[4] != "(")
+        if (Token[4] != "(") {
           ErrorCode("من اجل نداء الدالة ' " + Token[3] +
                         " ' يجب اضافه '()' بعد ' " + Token[1] + " " + Token[2] +
                         " " + Token[3] + " ' ",
                     o_tokens);
+        }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[WIN'" + Token[1] + " ':LOCAL_FUNC'" +
                             Token[3] + " '( ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           // Call other win local_func from global func
           CPP_GLOBAL_FUN.append(CG_WIN_MEMBER(Token[1], ID[Token[3]] + " ("));
-        else
+        } else {
           // Call other win local_func from local func
           cpp_AddScript(TheFunction,
                         CG_WIN_MEMBER(Token[1], ID[Token[3]] + " ("));
+        }
         // *** *** *** *** *** ***
 
         TempTokenCount = 0;
@@ -250,25 +279,28 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
             false, TheWindow, Token[1], 0, TheWindow, TheFunction, TempToken,
             (TempTokenCount - 1), o_tokens);
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(" )] \n\n", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           // Call other win-local_func from global func
           CPP_GLOBAL_FUN.append(ScriptSyntaxBuffer + " ); \n } \n");
-        else
+        } else {
           // Call other win-local_func from local func
           cpp_AddScript(TheFunction, ScriptSyntaxBuffer + " ); \n } \n");
+        }
         // *** *** *** *** *** ***
 
         return; // continue;
       }
       // ---------------------------------------------------------------------------------
-      else
+      else {
         ErrorCode("النافذة ' " + Token[1] +
                       " ' لا تحتوي على دالة محليه بإسم ' " + Token[3] + " ' ",
                   o_tokens);
+      }
 
       // Exception!
       return; // continue;
@@ -287,29 +319,32 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
 
       // bool A = Window:Is_Show
 
-      if (Token[5] == "")
+      if (Token[5] == "") {
         ErrorCode("يجب اضافه قيمة بعد '=' ", o_tokens);
+      }
 
-      string OBJECTIF_TYPE;
-      string VALUE_CPP_END;
+      std::string OBJECTIF_TYPE;
+      std::string VALUE_CPP_END;
 
       if (Token[3] == "عنوان") {
         // Window:Title =
 
         OBJECTIF_TYPE = "نص";
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[WIN'" + Token[1] + " ':VALUE'" +
                             Token[3] + "(SetWindowTitle)' = ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           // Window : Title =
           CPP_GLOBAL_FUN.append(CG_WIN_MEMBER(Token[1], "SetLabel( "));
-        else
+        } else {
           // Window : Title =
           cpp_AddScript(TheFunction, CG_WIN_MEMBER(Token[1], "SetLabel( "));
+        }
         // *** *** *** *** *** ***
         VALUE_CPP_END =
             " ); } \n"; // Need close [if (WINDOW_IS_CONSTRUCTION_...]
@@ -377,12 +412,13 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
                          o_tokens);
 
       // *** Generate Code ***
-      if (!IsInsideWindow)
+      if (!IsInsideWindow) {
         // Window : Option =
         CPP_GLOBAL_FUN.append(ScriptSyntaxBuffer + VALUE_CPP_END);
-      else
+      } else {
         // Window : Option =
         cpp_AddScript(TheFunction, ScriptSyntaxBuffer + VALUE_CPP_END);
+      }
       // *** *** *** *** *** ***
 
       return; // continue;
@@ -394,23 +430,27 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
       // Window:Control:Option()		| win:ctr:disable()
       // Window:Control:Option = a	| win:ctr:text = "abc"
 
-      if (!CONTROL_IS_SET[std::make_pair(Token[1], Token[3])])
+      if (!CONTROL_IS_SET[std::make_pair(Token[1], Token[3])]) {
         ErrorCode("النافذة ' " + Token[1] + " ' لا تحتوي على اداه باسم ' " +
                       Token[3] + " ' ",
                   o_tokens);
+      }
 
-      if (Token[6] == "")
+      if (Token[6] == "") {
         ErrorCode("يجب اضافه '=' أو '()' بعد ' " + Token[1] + " : " + Token[3] +
                       " : " + Token[5] + " ' ",
                   o_tokens);
+      }
 
-      if (Token[6] != "=" && Token[6] != "(")
+      if (Token[6] != "=" && Token[6] != "(") {
         ErrorCode("أمر غير معروف ' " + Token[6] + " ' ", o_tokens);
+      }
 
-      if (Token[7] == "")
+      if (Token[7] == "") {
         ErrorCode("يجب اضافه قيمة بعد ' " + Token[1] + " : " + Token[3] +
                       " : " + Token[5] + " " + Token[6] + " ' ",
                   o_tokens);
+      }
 
       CTR_WIN = Token[1];
       CTR_CONTROL = Token[3];
@@ -430,29 +470,35 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
     // Control:Option()				| ctr:disable()
     // Control:Option = a			| ctr:text = "abc"
 
-    if (Token[2] == "")
+    if (Token[2].empty()) {
       ErrorCode("يجب اضافة ':' بعد ' " + Token[1] + " ' ", o_tokens);
+    }
 
-    if (Token[2] != ":")
+    if (Token[2] != ":") {
       ErrorCode("أمر غير معروف ' " + Token[2] + " ', يجب اضافة ':' بعد ' " +
                     Token[1] + " ' ",
                 o_tokens);
+    }
 
-    if (Token[3] == "")
+    if (Token[3].empty()) {
       ErrorCode("يجب اضافة خاصية بعد ' " + Token[1] + " : ' ", o_tokens);
+    }
 
-    if (Token[4] == "")
+    if (Token[4].empty()) {
       ErrorCode("يجب اضافة '=' أو '()' بعد ' " + Token[1] + " : " + Token[3] +
                     " ' ",
                 o_tokens);
+    }
 
-    if (Token[4] != "=" && Token[4] != "(")
+    if (Token[4] != "=" && Token[4] != "(") {
       ErrorCode("أمر غير معروف ' " + Token[6] + " ' ", o_tokens);
+    }
 
-    if (Token[5] == "")
+    if (Token[5].empty()) {
       ErrorCode("يجب اضافة قيمة بعد ' " + Token[1] + " : " + Token[3] + " " +
                     Token[4] + " ' ",
                 o_tokens);
+    }
 
     CTR_WIN = TheWindow;
     CTR_CONTROL = Token[1];
@@ -480,29 +526,32 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
     {
       CTR_OPTION_TYPE = "نص";
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[WIN'" + CTR_WIN + " ':CTR'" + CTR_CONTROL +
                           " ':VALUE'" + CTR_OPTION + "(Text)(String)' = ",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // CTR : Label =
 
       // SetLabel not working on Linux.. tray SetValue
-      string SetValueFix = "SetValue";
-      if (CONTROL_TYPE[std::make_pair(CTR_WIN, CTR_CONTROL)] == "ملصق")
+      std::string SetValueFix = "SetValue";
+      if (CONTROL_TYPE[std::make_pair(CTR_WIN, CTR_CONTROL)] == "ملصق") {
         SetValueFix = "SetLabel";
+      }
 
-      if (!IsInsideWindow)
+      if (!IsInsideWindow) {
         CPP_GLOBAL_FUN.append(" if (WINDOW_IS_CONSTRUCTION_" + ID[CTR_WIN] +
                               ") { OBJ_CTR_" + ID[CTR_WIN] + "_" +
                               Control_ID[CTR_CONTROL] + "->" + SetValueFix +
                               "( "); // SetLabel
-      else
+      } else {
         cpp_AddScript(TheFunction,
                       " if (WINDOW_IS_CONSTRUCTION_" + ID[CTR_WIN] +
                           ") { OBJ_CTR_" + ID[CTR_WIN] + "_" +
                           Control_ID[CTR_CONTROL] + "->" + SetValueFix + "( ");
+      }
       // *** *** *** *** *** ***
       CTR_OPTION_CPP_END = " ); } \n";
       // *** *** *** *** *** ***
@@ -520,26 +569,28 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
     if (CTR_OPTION == "تجميد") {
       CTR_OPTION_TYPE = "عادم"; // Exception!
 
-      if (Token[CTR_ARG + 1] != ")")
+      if (Token[CTR_ARG + 1] != ")") {
         ErrorCode("أمر غير معروف ' " + Token[CTR_ARG + 1] +
                       " ', على كل حال تجميد لا تحتاج ايت خاصيه",
                   o_tokens);
+      }
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[WIN'" + CTR_WIN + " ':CTR'" + CTR_CONTROL +
                           " ':OPTION'" + CTR_OPTION + "(FREEZ)(VOID)']",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
 
       // *** *** *** *** *** ***
 
       return; // continue;
-    } else {
-      ErrorCode("الأداة ' " + CTR_CONTROL + " ' لا تحتوي على خاصيه باسم ' " +
-                    CTR_OPTION + " ' ",
-                o_tokens);
     }
+    ErrorCode("الأداة ' " + CTR_CONTROL + " ' لا تحتوي على خاصيه باسم ' " +
+                  CTR_OPTION + " ' ",
+              o_tokens);
+
   } else {
     // Exception !
     ErrorCode("أمر غير معروف ' " + Token[CTR_ARG] + " ' ", o_tokens);
@@ -549,7 +600,7 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
 
   TempTokenCount = 0;
   for (int p = CTR_ARG; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-    if (Token[p] != "") {
+    if (!Token[p].empty()) {
       TempToken[TempTokenCount] = Token[p];
       TempTokenCount++;
     }
@@ -571,17 +622,17 @@ void parser_TwoPointOperator(string Token[2048], CLASS_TOKEN *o_tokens) {
                      TheFunction,          // TMP_FUNCTION_NAME
                      o_tokens);
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
+  }
 
   // *** Generate Code ***
-  if (!IsInsideWindow)
+  if (!IsInsideWindow) {
     // Control : Option '=' أو '(' ...
     CPP_GLOBAL_FUN.append(ScriptSyntaxBuffer + CTR_OPTION_CPP_END);
-  else
+  } else {
     // Control : Option '=' أو '(' ...
     cpp_AddScript(TheFunction, ScriptSyntaxBuffer + CTR_OPTION_CPP_END);
-  // *** *** *** *** *** ***
-
-  return; // continue;
+  }
+  // continue;
 }

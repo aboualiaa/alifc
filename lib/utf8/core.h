@@ -24,8 +24,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef UTF8_FOR_CPP_CORE_H_2675DCD0_9480_4c0c_B92A_CC14C027B731
-#define UTF8_FOR_CPP_CORE_H_2675DCD0_9480_4c0c_B92A_CC14C027B731
+#ifndef _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_CORE_H
+#define _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_CORE_H
 
 #include <iterator>
 
@@ -33,9 +33,9 @@ namespace utf8 {
 // The typedefs for 8-bit, 16-bit and 32-bit unsigned integers
 // You may need to change them to match your system.
 // These typedefs have the same names as ones from cstdint, or boost/cstdint
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
+using uint8_t = unsigned char;
+using uint16_t = unsigned short;
+using uint32_t = unsigned int;
 
 // Helper code - not intended to be directly called by the library users. May be
 // changed at any time
@@ -54,59 +54,64 @@ const uint32_t SURROGATE_OFFSET =
 // Maximum valid value for a Unicode code point
 const uint32_t CODE_POINT_MAX = 0x0010ffffu;
 
-template <typename octet_type> inline uint8_t mask8(octet_type oc) {
+template <typename octet_type> inline auto mask8(octet_type oc) -> uint8_t {
   return static_cast<uint8_t>(0xff & oc);
 }
-template <typename u16_type> inline uint16_t mask16(u16_type oc) {
+template <typename u16_type> inline auto mask16(u16_type oc) -> uint16_t {
   return static_cast<uint16_t>(0xffff & oc);
 }
-template <typename octet_type> inline bool is_trail(octet_type oc) {
+template <typename octet_type> inline auto is_trail(octet_type oc) -> bool {
   return ((utf8::internal::mask8(oc) >> 6) == 0x2);
 }
 
-template <typename u16> inline bool is_lead_surrogate(u16 cp) {
+template <typename u16> inline auto is_lead_surrogate(u16 cp) -> bool {
   return (cp >= LEAD_SURROGATE_MIN && cp <= LEAD_SURROGATE_MAX);
 }
 
-template <typename u16> inline bool is_trail_surrogate(u16 cp) {
+template <typename u16> inline auto is_trail_surrogate(u16 cp) -> bool {
   return (cp >= TRAIL_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
 }
 
-template <typename u16> inline bool is_surrogate(u16 cp) {
+template <typename u16> inline auto is_surrogate(u16 cp) -> bool {
   return (cp >= LEAD_SURROGATE_MIN && cp <= TRAIL_SURROGATE_MAX);
 }
 
-template <typename u32> inline bool is_code_point_valid(u32 cp) {
+template <typename u32> inline auto is_code_point_valid(u32 cp) -> bool {
   return (cp <= CODE_POINT_MAX && !utf8::internal::is_surrogate(cp));
 }
 
 template <typename octet_iterator>
-inline typename std::iterator_traits<octet_iterator>::difference_type
-sequence_length(octet_iterator lead_it) {
+inline auto sequence_length(octet_iterator lead_it) ->
+    typename std::iterator_traits<octet_iterator>::difference_type {
   uint8_t lead = utf8::internal::mask8(*lead_it);
-  if (lead < 0x80)
+  if (lead < 0x80) {
     return 1;
-  else if ((lead >> 5) == 0x6)
+  } else if ((lead >> 5) == 0x6) {
     return 2;
-  else if ((lead >> 4) == 0xe)
+  } else if ((lead >> 4) == 0xe) {
     return 3;
-  else if ((lead >> 3) == 0x1e)
+  } else if ((lead >> 3) == 0x1e) {
     return 4;
-  else
+  } else {
     return 0;
+  }
 }
 
 template <typename octet_difference_type>
-inline bool is_overlong_sequence(uint32_t cp, octet_difference_type length) {
+inline auto is_overlong_sequence(uint32_t cp, octet_difference_type length)
+    -> bool {
   if (cp < 0x80) {
-    if (length != 1)
+    if (length != 1) {
       return true;
+    }
   } else if (cp < 0x800) {
-    if (length != 2)
+    if (length != 2) {
       return true;
+    }
   } else if (cp < 0x10000) {
-    if (length != 3)
+    if (length != 3) {
       return true;
+    }
   }
 
   return false;
@@ -123,12 +128,14 @@ enum utf_error {
 
 /// Helper for get_sequence_x
 template <typename octet_iterator>
-utf_error increase_safely(octet_iterator &it, octet_iterator end) {
-  if (++it == end)
+auto increase_safely(octet_iterator &it, octet_iterator end) -> utf_error {
+  if (++it == end) {
     return NOT_ENOUGH_ROOM;
+  }
 
-  if (!utf8::internal::is_trail(*it))
+  if (!utf8::internal::is_trail(*it)) {
     return INCOMPLETE_SEQUENCE;
+  }
 
   return UTF8_OK;
 }
@@ -142,10 +149,11 @@ utf_error increase_safely(octet_iterator &it, octet_iterator end) {
 
 /// get_sequence_x functions decode utf-8 sequences of the length x
 template <typename octet_iterator>
-utf_error get_sequence_1(octet_iterator &it, octet_iterator end,
-                         uint32_t &code_point) {
-  if (it == end)
+auto get_sequence_1(octet_iterator &it, octet_iterator end,
+                    uint32_t &code_point) -> utf_error {
+  if (it == end) {
     return NOT_ENOUGH_ROOM;
+  }
 
   code_point = utf8::internal::mask8(*it);
 
@@ -153,10 +161,11 @@ utf_error get_sequence_1(octet_iterator &it, octet_iterator end,
 }
 
 template <typename octet_iterator>
-utf_error get_sequence_2(octet_iterator &it, octet_iterator end,
-                         uint32_t &code_point) {
-  if (it == end)
+auto get_sequence_2(octet_iterator &it, octet_iterator end,
+                    uint32_t &code_point) -> utf_error {
+  if (it == end) {
     return NOT_ENOUGH_ROOM;
+  }
 
   code_point = utf8::internal::mask8(*it);
 
@@ -168,10 +177,11 @@ utf_error get_sequence_2(octet_iterator &it, octet_iterator end,
 }
 
 template <typename octet_iterator>
-utf_error get_sequence_3(octet_iterator &it, octet_iterator end,
-                         uint32_t &code_point) {
-  if (it == end)
+auto get_sequence_3(octet_iterator &it, octet_iterator end,
+                    uint32_t &code_point) -> utf_error {
+  if (it == end) {
     return NOT_ENOUGH_ROOM;
+  }
 
   code_point = utf8::internal::mask8(*it);
 
@@ -188,10 +198,11 @@ utf_error get_sequence_3(octet_iterator &it, octet_iterator end,
 }
 
 template <typename octet_iterator>
-utf_error get_sequence_4(octet_iterator &it, octet_iterator end,
-                         uint32_t &code_point) {
-  if (it == end)
+auto get_sequence_4(octet_iterator &it, octet_iterator end,
+                    uint32_t &code_point) -> utf_error {
+  if (it == end) {
     return NOT_ENOUGH_ROOM;
+  }
 
   code_point = utf8::internal::mask8(*it);
 
@@ -214,16 +225,16 @@ utf_error get_sequence_4(octet_iterator &it, octet_iterator end,
 #undef UTF8_CPP_INCREASE_AND_RETURN_ON_ERROR
 
 template <typename octet_iterator>
-utf_error validate_next(octet_iterator &it, octet_iterator end,
-                        uint32_t &code_point) {
+auto validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_point)
+    -> utf_error {
   // Save the original value of it so we can go back in case of failure
   // Of course, it does not make much sense with i.e. stream iterators
   octet_iterator original_it = it;
 
   uint32_t cp = 0;
   // Determine the sequence length based on the lead octet
-  typedef typename std::iterator_traits<octet_iterator>::difference_type
-      octet_difference_type;
+  using octet_difference_type =
+      typename std::iterator_traits<octet_iterator>::difference_type;
   const octet_difference_type length = utf8::internal::sequence_length(it);
 
   // Get trail octets and calculate the code point
@@ -253,10 +264,12 @@ utf_error validate_next(octet_iterator &it, octet_iterator end,
         code_point = cp;
         ++it;
         return UTF8_OK;
-      } else
+      } else {
         err = OVERLONG_SEQUENCE;
-    } else
+      }
+    } else {
       err = INVALID_CODE_POINT;
+    }
   }
 
   // Failure branch - restore the original value of the iterator
@@ -265,7 +278,7 @@ utf_error validate_next(octet_iterator &it, octet_iterator end,
 }
 
 template <typename octet_iterator>
-inline utf_error validate_next(octet_iterator &it, octet_iterator end) {
+inline auto validate_next(octet_iterator &it, octet_iterator end) -> utf_error {
   uint32_t ignored;
   return utf8::internal::validate_next(it, end, ignored);
 }
@@ -278,35 +291,37 @@ inline utf_error validate_next(octet_iterator &it, octet_iterator end) {
 const uint8_t bom[] = {0xef, 0xbb, 0xbf};
 
 template <typename octet_iterator>
-octet_iterator find_invalid(octet_iterator start, octet_iterator end) {
+auto find_invalid(octet_iterator start, octet_iterator end) -> octet_iterator {
   octet_iterator result = start;
   while (result != end) {
     utf8::internal::utf_error err_code =
         utf8::internal::validate_next(result, end);
-    if (err_code != internal::UTF8_OK)
+    if (err_code != internal::UTF8_OK) {
       return result;
+    }
   }
   return result;
 }
 
 template <typename octet_iterator>
-inline bool is_valid(octet_iterator start, octet_iterator end) {
+inline auto is_valid(octet_iterator start, octet_iterator end) -> bool {
   return (utf8::find_invalid(start, end) == end);
 }
 
 template <typename octet_iterator>
-inline bool starts_with_bom(octet_iterator it, octet_iterator end) {
+inline auto starts_with_bom(octet_iterator it, octet_iterator end) -> bool {
   return (((it != end) && (utf8::internal::mask8(*it++)) == bom[0]) &&
           ((it != end) && (utf8::internal::mask8(*it++)) == bom[1]) &&
           ((it != end) && (utf8::internal::mask8(*it)) == bom[2]));
 }
 
 // Deprecated in release 2.3
-template <typename octet_iterator> inline bool is_bom(octet_iterator it) {
+template <typename octet_iterator>
+inline auto is_bom(octet_iterator it) -> bool {
   return ((utf8::internal::mask8(*it++)) == bom[0] &&
           (utf8::internal::mask8(*it++)) == bom[1] &&
           (utf8::internal::mask8(*it)) == bom[2]);
 }
 } // namespace utf8
 
-#endif // header guard
+#endif // _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_CORE_H

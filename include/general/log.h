@@ -21,10 +21,10 @@
 // Alif Programming Language
 // ==================================
 
-void ALIF_ERROR(std::string ERROR_DESCRIPTION);
-void DEBUG_MESSAGE(std::string MESSAGE, CLASS_TOKEN *o_tokens);
-void LogMessage(std::string MESSAGE);
+void ALIF_ERROR(const std::string &ERROR_DESCRIPTION);
+void DEBUG_MESSAGE(const std::string &MESSAGE, CLASS_TOKEN *o_tokens);
+void LogMessage(const std::string &MESSAGE);
 void PATH_FULL_LOG_SAVE();
-void ErrorCode(std::string ERROR_DESCRIPTION, CLASS_TOKEN *o_tokens);
+void ErrorCode(const std::string &ERROR_DESCRIPTION, CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_LOG_H

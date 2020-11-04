@@ -5,6 +5,6 @@
 #ifndef ALIFC_IF_ELSE_H
 #define ALIFC_IF_ELSE_H
 
-void parser_IfElse(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_IfElse(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_IF_ELSE_H

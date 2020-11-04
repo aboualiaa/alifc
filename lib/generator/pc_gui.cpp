@@ -18,8 +18,6 @@
 #include "general/global.h"
 #include "generator/generator.h"
 
-using namespace std;
-
 /*
 void Script(string Code){
 
@@ -58,7 +56,7 @@ NEW_CODE;
 }
 */
 
-void cpp_AddScript(string FUN, string NEW_CODE) {
+void cpp_AddScript(const std::string &FUN, const std::string &NEW_CODE) {
   if (IsInsideClass) {
     // Local Class Function
     CPP_CLASS.append(NEW_CODE);
@@ -81,9 +79,9 @@ void cpp_AddScript(string FUN, string NEW_CODE) {
 // WinX Load()
 // ----------------------------------
 
-string CG_WINX_LOAD() {
-  string CODE;
-  string BUFFER;
+auto CG_WINX_LOAD() -> std::string {
+  std::string CODE;
+  std::string BUFFER;
 
   for (int i = 1; i <= WIN_TOTAL; i++) {
     BUFFER = R"(
@@ -114,9 +112,9 @@ void WINDOW_LOAD_)" +
 // Application Destroy()
 // ----------------------------------
 
-string CG_APP_DESTROY() {
-  string CODE;
-  string BUFFER;
+auto CG_APP_DESTROY() -> std::string {
+  std::string CODE;
+  std::string BUFFER;
 
   BUFFER = R"(
 	// ------------------------------------------------
@@ -169,30 +167,30 @@ string CG_APP_DESTROY() {
 // Window Show ()
 // ----------------------------------
 
-string CG_WIN_SHOW(string WIN) {
-  string CODE = R"(
+auto CG_WIN_SHOW(const std::string &WIN) -> std::string {
+  std::string CODE = R"(
 	// -------------------------------
 	// Win Show ()" +
-                WIN + R"()
+                     WIN + R"()
 	// -------------------------------
 	if (!WINDOW_IS_CONSTRUCTION_)" +
-                ID[WIN] + R"()
+                     ID[WIN] + R"()
 	{
 		OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"( = new CLASS_WINDOW_)" + ID[WIN] + R"(();
+                     ID[WIN] + R"( = new CLASS_WINDOW_)" + ID[WIN] + R"(();
 		OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"(->SetLayoutDirection(wxLayout_RightToLeft);
+                     ID[WIN] + R"(->SetLayoutDirection(wxLayout_RightToLeft);
 		WINDOW_IS_CONSTRUCTION_)" +
-                ID[WIN] + R"( = true;
+                     ID[WIN] + R"( = true;
 	}
 	OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"(->Show(true);
+                     ID[WIN] + R"(->Show(true);
 	OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"(->SetFocus();
+                     ID[WIN] + R"(->SetFocus();
 	WINDOW_IS_SHOW_)" +
-                ID[WIN] + R"( = true;
+                     ID[WIN] + R"( = true;
 	WINDOW_LOAD_)" +
-                ID[WIN] + R"(();
+                     ID[WIN] + R"(();
 	// -------------------------------		
 				)";
 
@@ -203,17 +201,17 @@ string CG_WIN_SHOW(string WIN) {
 // Window Center ()
 // ----------------------------------
 
-string CG_WIN_CENTER(string WIN) {
-  string CODE = R"(
+auto CG_WIN_CENTER(const std::string &WIN) -> std::string {
+  std::string CODE = R"(
 	// -------------------------------
 	// Win Center ()" +
-                WIN + R"()
+                     WIN + R"()
 	// -------------------------------
 	if (WINDOW_IS_CONSTRUCTION_)" +
-                ID[WIN] + R"()
+                     ID[WIN] + R"()
 	{
 		OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"(->Center();
+                     ID[WIN] + R"(->Center();
 	}
 	// -------------------------------		
 	)";
@@ -225,18 +223,18 @@ string CG_WIN_CENTER(string WIN) {
 // Window Hide ()
 // ----------------------------------
 
-string CG_WIN_HIDE(string WIN) {
-  string CODE = R"(
+auto CG_WIN_HIDE(const std::string &WIN) -> std::string {
+  std::string CODE = R"(
 	// -----------------------------------------------
 	// Win Hide
 	// -----------------------------------------------
 	if (WINDOW_IS_SHOW_)" +
-                ID[WIN] + R"()
+                     ID[WIN] + R"()
 	{
 		OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"(->Show(false);
+                     ID[WIN] + R"(->Show(false);
 		WINDOW_IS_SHOW_)" +
-                ID[WIN] + R"( = false;
+                     ID[WIN] + R"( = false;
 	}
 	// -----------------------------------------------		
 				)";
@@ -248,8 +246,8 @@ string CG_WIN_HIDE(string WIN) {
 // Window Destroy ()
 // ----------------------------------
 
-string CG_WIN_DESTROY(string WIN) {
-  string CODE =
+auto CG_WIN_DESTROY(const std::string &WIN) -> std::string {
+  std::string CODE =
       R"(
 	// -----------------------------------------------
 	// Win Destroy
@@ -278,18 +276,19 @@ string CG_WIN_DESTROY(string WIN) {
 // Window : members
 // ----------------------------------
 
-string CG_WIN_MEMBER(string WIN, string MEMBER_CODE) {
+auto CG_WIN_MEMBER(const std::string &WIN, const std::string &MEMBER_CODE)
+    -> std::string {
   // Used by Operator:xx:yy
 
-  string CODE = R"(
+  std::string CODE = R"(
 	// -----------------------------------------------
 	// Win Members
 	// -----------------------------------------------
 	if (WINDOW_IS_CONSTRUCTION_)" +
-                ID[WIN] + R"()
+                     ID[WIN] + R"()
 	{
 		OBJ_CLASS_WINDOW_)" +
-                ID[WIN] + R"(->)" + MEMBER_CODE + R"( )";
+                     ID[WIN] + R"(->)" + MEMBER_CODE + R"( )";
 
   return CODE;
 }
@@ -320,7 +319,7 @@ string CG_CONTROL_MEMBER(string WIN, string CONTROL, string MEMBER_CODE)
 // AlifJavaScript Generator
 // ----------------------------------
 
-string AlifJavaScript_Bridge_SendRequest() {
+auto AlifJavaScript_Bridge_SendRequest() -> std::string {
 
 #ifdef _WIN32
   return " window.open(link); ";
@@ -332,7 +331,8 @@ string AlifJavaScript_Bridge_SendRequest() {
 #endif
 }
 
-string AlifJavaScript_Bridge_OnNewWindowSendRequest(string WVObjName) {
+auto AlifJavaScript_Bridge_OnNewWindowSendRequest(const std::string &WVObjName)
+    -> std::string {
 
 #ifdef _WIN32
   return " this->AlifJavaScriptBridge(evt.GetURL()); ";
@@ -343,31 +343,31 @@ string AlifJavaScript_Bridge_OnNewWindowSendRequest(string WVObjName) {
 #endif
 }
 
-string Generate_AlifJavaScript() {
+auto Generate_AlifJavaScript() -> std::string {
 
-  // TODO: So, instead of generate JS code of global Var/Func
+  // TODO(aboualiaa): So, instead of generate JS code of global Var/Func
   // for eache window..  we can create JS bool CheckGlobal()
   // this is for minimize generated JS code.
 
   // Generate all AlifJavaScript functions
 
-  string ScriptFunctions = "";
-  string WindowName = "";
-  string FunctionName = "";
-  string WebUI_obj_name = "";
+  std::string ScriptFunctions;
+  std::string WindowName;
+  std::string FunctionName;
+  std::string WebUI_obj_name;
 
   // --- Global Vars loop ----------------------------------------------------
 
-  string ScriptBuffer_GlobalVarsCallCondition = "";
+  std::string ScriptBuffer_GlobalVarsCallCondition;
 
   for (int g = 0; g < G_VAR_TOTAL; g++) {
 
     // FunctionName = "";
-    string GlobalVarName = G_VAR_NAMES[g];
-    string GlobalVarType = G_VAR_TYPE[GlobalVarName];
+    std::string GlobalVarName = G_VAR_NAMES[g];
+    std::string GlobalVarType = G_VAR_TYPE[GlobalVarName];
 
-    string Return = "";
-    string Return_end = " ; ";
+    std::string Return;
+    std::string Return_end = " ; ";
 
     // Global Var return type
     if (GlobalVarType == "منطق") {
@@ -401,17 +401,17 @@ string Generate_AlifJavaScript() {
   // --- Global Functions loop
   // ----------------------------------------------------
 
-  string ScriptBuffer_GlobalFuncCallCondition = "";
+  std::string ScriptBuffer_GlobalFuncCallCondition;
 
   for (int f = 0; f < Global_TotalFucntion; f++) {
 
     FunctionName = Global_FunctionNames[f];
 
-    string FunctionType = G_FUN_TYPE[FunctionName];
-    string FunctionARGS = IntToString(G_FUN_ARG_TOTAL[FunctionName]);
+    std::string FunctionType = G_FUN_TYPE[FunctionName];
+    std::string FunctionARGS = IntToString(G_FUN_ARG_TOTAL[FunctionName]);
 
-    string Return = "";
-    string Return_end = " ; ";
+    std::string Return;
+    std::string Return_end = " ; ";
 
     // Function return type
     if (FunctionType == "عادم") {
@@ -430,13 +430,13 @@ string Generate_AlifJavaScript() {
                "معروف\"));return; // ";
     }
 
-    string ARG_Call = "";
+    std::string ARG_Call;
     int ARG_Total = G_FUN_ARG_TOTAL[FunctionName];
 
     // ARG loop
     for (int a = 0; a < ARG_Total; a++) { // arg loop
 
-      string Type = G_FUN_ARG_TYPE[std::make_pair(FunctionName, a)];
+      std::string Type = G_FUN_ARG_TYPE[std::make_pair(FunctionName, a)];
 
       if (Type == "عدد") {
         ARG_Call.append(" alifcore_StringToInt(Tokens[" + IntToString(a + 1) +
@@ -451,8 +451,9 @@ string Generate_AlifJavaScript() {
                  "معروف\"));return; // ";
       }
 
-      if ((a + 1) < ARG_Total)
+      if ((a + 1) < ARG_Total) {
         ARG_Call.append(" , ");
+      }
     }
 
     ScriptBuffer_GlobalFuncCallCondition.append(
@@ -490,8 +491,8 @@ string Generate_AlifJavaScript() {
     // ALIF_ERROR("continue -> " + WindowName);
     // exit(EXIT_FAILURE);
 
-    string ScriptBuffer = "";
-    string ScriptBuffer_FunctionCallCondition = "";
+    std::string ScriptBuffer;
+    std::string ScriptBuffer_FunctionCallCondition;
 
     FunctionName = "";
     WebUI_obj_name =
@@ -549,19 +550,20 @@ string Generate_AlifJavaScript() {
 
       FunctionName = Win_FunctionNames[std::make_pair(WindowName, f)];
 
-      if (FunctionName == "رئيسية")
+      if (FunctionName == "رئيسية") {
         continue;
+      }
 
-      string FunctionType =
+      std::string FunctionType =
           L_FUN_TYPE[std::make_pair(WindowName, FunctionName)];
-      string FunctionARGS = IntToString(
+      std::string FunctionARGS = IntToString(
           L_FUN_ARG_TOTAL[std::make_pair(WindowName, FunctionName)]);
 
       // ALIF_ERROR("FunctionARGS -> " + FunctionARGS);
       // exit(EXIT_FAILURE);
 
-      string Return = "";
-      string Return_end = " ; ";
+      std::string Return;
+      std::string Return_end = " ; ";
 
       // Function return type
       if (FunctionType == "عادم") {
@@ -580,13 +582,13 @@ string Generate_AlifJavaScript() {
                  "معروف\"));return; // ";
       }
 
-      string ARG_Call = "";
+      std::string ARG_Call;
       int ARG_Total = L_FUN_ARG_TOTAL[std::make_pair(WindowName, FunctionName)];
 
       // ARG loop
       for (int a = 0; a < ARG_Total; a++) { // arg loop
 
-        string Type =
+        std::string Type =
             L_FUN_ARG_TYPE[std::make_pair(WindowName + FunctionName, a)];
 
         if (Type == "عدد") {
@@ -602,8 +604,9 @@ string Generate_AlifJavaScript() {
                    "معروف\"));return; // ";
         }
 
-        if ((a + 1) < ARG_Total)
+        if ((a + 1) < ARG_Total) {
           ARG_Call.append(" , ");
+        }
       }
 
       ScriptBuffer_FunctionCallCondition.append(
@@ -727,9 +730,9 @@ void CG_INITIALIZATION() {
 // C++ CODE INITIALIZATION
 // ----------------------------------
 
-string CG_WINX_CODE() {
-  string CODE;
-  string BUFFER;
+auto CG_WINX_CODE() -> std::string {
+  std::string CODE;
+  std::string BUFFER;
 
   for (int i = 1; i <= WIN_TOTAL; i++) {
     BUFFER =
@@ -862,11 +865,11 @@ END_EVENT_TABLE()
 // C++ CODE
 // -----------------------------------------------------------
 
-// TODO: So, when tray GetValue() of control of destroyed Win
+// TODO(aboualiaa): So, when tray GetValue() of control of destroyed Win
 // the app not continue the fucntion... so, solution is be sure
 // the windows is constructed before control:GetValue() [ MyControl:نص ]
 
-string CODE_GENERATOR_GET_PC_GUI() {
+auto CODE_GENERATOR_GET_PC_GUI() -> std::string {
   return R"(
 // ------------------------------------------------
 // Generated by Alif Compiler )" +

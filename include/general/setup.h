@@ -47,17 +47,17 @@ std::string GET_WORKING_PATH_WIN32() {
 
 #endif
 
-string GET_WORKING_PATH();
+std::string GET_WORKING_PATH();
 
-string GET_PATH_WITHOUT_FILE(string PATH);
+std::string GET_PATH_WITHOUT_FILE(std::string PATH);
 
-bool IS_PATH(string PATH_OR_FILE);
+bool IS_PATH(std::string PATH_OR_FILE);
 
-string GET_PATH_WITHOUT_LAST_SEPARATION(string PATH);
+std::string GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH);
 
 int Temp_File_Rand();
 
-bool CHECK_FILE_EXISTE(string PATH);
+bool CHECK_FILE_EXISTE(std::string PATH);
 
 bool CHECK_SETUP();
 

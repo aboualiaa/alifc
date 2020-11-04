@@ -18,34 +18,38 @@
 
 // ----------------------------------
 
-void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Return(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // إرجاع
   // func int ()
   // return 1 + 2
 
   // Note: Parsing Local var must be first, and global after.
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال ' إرجاع ' داخل دالة", o_tokens);
+  }
 
   if (TheFunction_TYPE == "عادم") {
     // ErrorCode("لا يمكن استعمال ' إرجاع ' في دالة من نوع عادم", o_tokens);
 
-    if (Token[2] != "")
+    if (!Token[2].empty()) {
       ErrorCode("لا يمكن إرجاع قيمة، لأن الدالة ' " + TheFunction +
                     " ' من نوع عادم، المرجو عدم كتابة أي شيئ بعد ' إرجاع '، أو "
                     "تغيير نوع الدالة",
                 o_tokens);
+    }
 
     if (IsInsideClass) {
       // void return in class func
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[VOID-RETURN-CLASS-FUN] \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_CLASS.append("\n return; \n");
@@ -55,8 +59,9 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     } else if (!IsInsideWindow) {
       // void return in global func
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[VOID-RETURN-GLOBAL-FUN] \n\n", o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_GLOBAL_FUN.append("\n  return; \n");
@@ -66,9 +71,10 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     } else {
       // void return in local func
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[VOID-RETURN-LOCAL-FUN] \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       cpp_AddScript(TheFunction, "\n  return; \n");
@@ -81,10 +87,11 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     // return string
     // return bool
 
-    if (Token[2] == "")
+    if (Token[2].empty()) {
       ErrorCode("يجب اضافه قيمة بعد ' إرجاع ' لأن الدالة ' " + TheFunction +
                     " ' من نوع " + TheFunction_TYPE,
                 o_tokens);
+    }
   }
 
   // string FUN_TYPE;
@@ -93,14 +100,17 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     // return in class func
 
     if (TheFunction_TYPE == "عدد") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[RETURN-CLASS-INT] ", o_tokens); // DEBUG
+      }
     } else if (TheFunction_TYPE == "نص") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[RETURN-CLASS-STRING] ", o_tokens); // DEBUG
+      }
     } else if (TheFunction_TYPE == "منطق") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[RETURN-CLASS-BOOL] ", o_tokens); // DEBUG
+      }
     }
 
     // *** Generate Code ***
@@ -108,22 +118,26 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     // *** *** *** *** *** ***
 
     if (ALIF_IF_STATUS > 0 &&
-        RETURN_FUN[std::make_pair(TheClass, TheFunction)] == "")
+        RETURN_FUN[std::make_pair(TheClass, TheFunction)].empty()) {
       RETURN_FUN[std::make_pair(TheClass, TheFunction)] = "IF";
-    else
+    } else {
       RETURN_FUN[std::make_pair(TheClass, TheFunction)] = "OK";
+    }
   } else if (!IsInsideWindow) {
     // return in global func
 
     if (TheFunction_TYPE == "عدد") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[RETURN-GLOBAL-INT] ", o_tokens); // DEBUG
+      }
     } else if (TheFunction_TYPE == "نص") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[RETURN-GLOBAL-STRING] ", o_tokens); // DEBUG
+      }
     } else if (TheFunction_TYPE == "منطق") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[RETURN-GLOABL-BOOL] ", o_tokens); // DEBUG
+      }
     }
 
     // *** Generate Code ***
@@ -131,22 +145,27 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     CPP_GLOBAL_FUN.append("\n  return ( ");
     // *** *** *** *** *** ***
 
-    if (ALIF_IF_STATUS > 0 && RETURN_FUN[std::make_pair("", TheFunction)] == "")
+    if (ALIF_IF_STATUS > 0 &&
+        RETURN_FUN[std::make_pair("", TheFunction)].empty()) {
       RETURN_FUN[std::make_pair("", TheFunction)] = "IF";
-    else
+    } else {
       RETURN_FUN[std::make_pair("", TheFunction)] = "OK";
+    }
   } else {
     // return in local func
 
     if (TheFunction_TYPE == "عدد") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[RETURN-INT] ", o_tokens); // DEBUG
+      }
     } else if (TheFunction_TYPE == "نص") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[RETURN-STRING] ", o_tokens); // DEBUG
+      }
     } else if (TheFunction_TYPE == "منطق") {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[RETURN-BOOL] ", o_tokens); // DEBUG
+      }
     }
 
     // *** Generate Code ***
@@ -155,10 +174,11 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     // *** *** *** *** *** ***
 
     if (ALIF_IF_STATUS > 0 &&
-        RETURN_FUN[std::make_pair(TheWindow, TheFunction)] == "")
+        RETURN_FUN[std::make_pair(TheWindow, TheFunction)].empty()) {
       RETURN_FUN[std::make_pair(TheWindow, TheFunction)] = "IF";
-    else
+    } else {
       RETURN_FUN[std::make_pair(TheWindow, TheFunction)] = "OK";
+    }
   }
 
   if (Token[2] == "صحيح") {
@@ -166,16 +186,18 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     // return true.
 
     ScriptSyntaxBuffer = " true ";
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE(" [true] ", o_tokens); // DEBUG
+    }
 
   } else if (Token[2] == "خطأ") {
     // Return Syntax
     // return false.
 
     ScriptSyntaxBuffer = " false ";
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE(" [false] ", o_tokens); // DEBUG
+    }
   } else {
 
     // Return Syntax
@@ -185,17 +207,18 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
     TempTokenCount = 1;
 
     for (int p = 2; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-      if (Token[p] != "") {
+      if (!Token[p].empty()) {
         TempToken[TempTokenCount] = Token[p];
         TempTokenCount++;
       }
     }
 
-    string WIN_OR_CLASS;
-    if (IsInsideClass)
+    std::string WIN_OR_CLASS;
+    if (IsInsideClass) {
       WIN_OR_CLASS = TheClass;
-    else
+    } else {
       WIN_OR_CLASS = TheWindow;
+    }
 
     ScriptSyntaxBuffer =
         CheckForSyntax(TheFunction_TYPE, // OBJECTIF_TYPE
@@ -233,8 +256,9 @@ void parser_Return(string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   // *** *** *** *** *** ***
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
+  }
 
   return; // continue;
 }

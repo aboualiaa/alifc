@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_Int(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Int(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // عدد
 
   if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction)
@@ -282,7 +282,7 @@ void parser_Int(string Token[2048], CLASS_TOKEN *o_tokens) {
       }
     }
 
-    string WIN_OR_CLASS;
+    std::string WIN_OR_CLASS;
     if (IsInsideClass)
       WIN_OR_CLASS = TheClass;
     else

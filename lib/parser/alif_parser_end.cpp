@@ -17,28 +17,33 @@
 
 // ----------------------------------
 
-void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_End(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // نهاية
 
-  if (Token[2] == "")
+  if (Token[2].empty()) {
     ErrorCode("نهايه من دون تحديد المستهدف", o_tokens);
+  }
 
-  if (Token[3] != "")
+  if (!Token[3].empty()) {
     ErrorCode("أمر غير معروف : ' " + Token[3] + " ' ", o_tokens);
+  }
 
   if (Token[2] == "دالة") {
-    if (!IsInsideFunction)
+    if (!IsInsideFunction) {
       ErrorCode("يجب استعمال نهايه داخل داله", o_tokens);
+    }
 
-    if (ALIF_IF_STATUS > 0)
+    if (ALIF_IF_STATUS > 0) {
       ErrorCode("مازال هناك " + IntToString(ALIF_IF_STATUS) +
                     " شروط مازالت مفتوحه",
                 o_tokens);
+    }
 
-    if (ALIF_LOOP_STATUS > 0)
+    if (ALIF_LOOP_STATUS > 0) {
       ErrorCode("مازال هناك " + IntToString(ALIF_LOOP_STATUS) +
                     " كلما مازالت مفتوحه",
                 o_tokens);
+    }
 
     if (IsInsideClass) {
       if (!o_tokens->TOKENS_PREDEFINED) {
@@ -47,16 +52,19 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
         return;                   // continue;
       }
 
-      if (RETURN_FUN[std::make_pair(TheClass, TheFunction)] == "")
+      if (RETURN_FUN[std::make_pair(TheClass, TheFunction)].empty()) {
         ErrorCode("يجب تعيين إرجاع للدالة ' " + TheFunction + " ' ", o_tokens);
+      }
 
-      if (RETURN_FUN[std::make_pair(TheClass, TheFunction)] == "IF")
+      if (RETURN_FUN[std::make_pair(TheClass, TheFunction)] == "IF") {
         ErrorCode("لقد عينت إرجاع مشروطه للدالة ' " + TheFunction + " ' ",
                   o_tokens);
+      }
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[END CLASS-FUNCTION] {" + TheFunction + "} \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // End Class Func()
@@ -69,16 +77,19 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
         return;                   // continue;
       }
 
-      if (RETURN_FUN[std::make_pair("", TheFunction)] == "")
+      if (RETURN_FUN[std::make_pair("", TheFunction)].empty()) {
         ErrorCode("يجب تعيين إرجاع للدالة ' " + TheFunction + " ' ", o_tokens);
+      }
 
-      if (RETURN_FUN[std::make_pair("", TheFunction)] == "IF")
+      if (RETURN_FUN[std::make_pair("", TheFunction)] == "IF") {
         ErrorCode("لقد عينت إرجاع مشروطه للدالة ' " + TheFunction + " ' ",
                   o_tokens);
+      }
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[END GLOBAL-FUNCTION] {" + TheFunction + "} \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // End Global Func()
@@ -91,20 +102,24 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
         return;                   // continue;
       }
 
-      if (RETURN_FUN[std::make_pair(TheWindow, TheFunction)] == "")
+      if (RETURN_FUN[std::make_pair(TheWindow, TheFunction)].empty()) {
         ErrorCode("يجب تعيين إرجاع للدالة ' " + TheFunction + " ' ", o_tokens);
-      if (RETURN_FUN[std::make_pair(TheWindow, TheFunction)] == "IF")
+      }
+      if (RETURN_FUN[std::make_pair(TheWindow, TheFunction)] == "IF") {
         ErrorCode("لقد عينت إرجاع مشروطه للدالة ' " + TheFunction + " ' ",
                   o_tokens);
+      }
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[END FUNCTION] {" + TheFunction + "} \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // End Local Func()
-      if (TheFunction != "رئيسية")
+      if (TheFunction != "رئيسية") {
         CPP_FUN.append(" \n } \n");
+      }
       // *** *** *** *** *** ***
     }
 
@@ -112,63 +127,73 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
     TheFunction = "";
     return; // continue;
   } else if (Token[2] == "إذا") {
-    if (!o_tokens->TOKENS_PREDEFINED)
+    if (!o_tokens->TOKENS_PREDEFINED) {
       return; // continue;
+    }
 
-    if (ALIF_IF_STATUS < 1)
+    if (ALIF_IF_STATUS < 1) {
       ErrorCode("بدايه الشرط غير موجود", o_tokens);
+    }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[END IF " + IntToString(ALIF_IF_STATUS) + "] \n\n",
                     o_tokens); // DEBUG
+    }
 
     if (IsInsideClass) {
       // just for fixing this ...
       // *** Generate Code ***
       CPP_CLASS.append("\n } \n ");
       // *** *** *** *** *** ***
-    } else if (!IsInsideWindow)
+    } else if (!IsInsideWindow) {
       // global func
       CPP_GLOBAL_FUN.append("\n } \n ");
-    else
+    } else {
       // local func
       cpp_AddScript(TheFunction, "\n } \n ");
+    }
     // *** *** *** *** *** ***
 
     ALIF_IF_STATUS--;
     return; // continue;
   } else if (Token[2] == "كلما") {
-    if (!o_tokens->TOKENS_PREDEFINED)
+    if (!o_tokens->TOKENS_PREDEFINED) {
       return; // continue;
+    }
 
-    if (ALIF_LOOP_STATUS < 1)
+    if (ALIF_LOOP_STATUS < 1) {
       ErrorCode("بدايه كلما غير موجود", o_tokens);
+    }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[END LOOP " + IntToString(ALIF_LOOP_STATUS) + "] \n\n",
                     o_tokens); // DEBUG
+    }
 
     if (IsInsideClass) {
       // just for fixing this ...
       // *** Generate Code ***
       CPP_CLASS.append("\n } \n ");
       // *** *** *** *** *** ***
-    } else if (!IsInsideWindow)
+    } else if (!IsInsideWindow) {
       // global func
       CPP_GLOBAL_FUN.append("\n } \n ");
-    else
+    } else {
       // local func
       cpp_AddScript(TheFunction, "\n } \n ");
+    }
     // *** *** *** *** *** ***
 
     ALIF_LOOP_STATUS--;
     return; // continue;
   } else if (Token[2] == "نافذة") {
-    if (!IsInsideWindow)
+    if (!IsInsideWindow) {
       ErrorCode("يجب ان تكون داخل داله", o_tokens);
+    }
 
-    if (IsInsideFunction)
+    if (IsInsideFunction) {
       ErrorCode("يجب اغلاق الدالة : " + TheFunction, o_tokens);
+    }
 
     if (!o_tokens->TOKENS_PREDEFINED) {
       IsInsideWindow = false; // Need by Tokens Predefined
@@ -176,18 +201,21 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
       return;                 // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[END WINDOW] {" + TheWindow + "} \n\n", o_tokens); // DEBUG
+    }
 
     IsInsideWindow = false;
     TheWindow = "";
     return; // continue;
   } else if (Token[2] == "صنف") {
-    if (!IsInsideClass)
+    if (!IsInsideClass) {
       ErrorCode("يجب أن تكون داخل صنف", o_tokens);
+    }
 
-    if (IsInsideFunction)
+    if (IsInsideFunction) {
       ErrorCode("يجب اغلاق الدالة : " + TheFunction, o_tokens);
+    }
 
     if (!o_tokens->TOKENS_PREDEFINED) {
       IsInsideClass = false; // Need by Tokens Predefined
@@ -195,8 +223,9 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
       return;                // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[END CLASS] {" + TheClass + "} \n\n", o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     /*
@@ -220,8 +249,9 @@ void parser_End(string Token[2048], CLASS_TOKEN *o_tokens) {
       ErrorCode("أمر غير معروف : ' " + Token[2] +
                     " '، هل تقصد ' نهاية إذا ' ؟ ",
                 o_tokens);
-    } else
+    } else {
       ErrorCode("أمر غير معروف : ' " + Token[2] + " ' ", o_tokens);
+    }
 
     // TODO: More doyo mean ?!
   }

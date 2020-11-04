@@ -14,30 +14,34 @@
 #include "general/global.h"
 
 void CLEAN() {
-  if (DEBUG)
+  if (DEBUG) {
     return;
+  }
 
-  string CLEAR_CMD = string("rm -rf \"") + PATH_FULL_CPP + string("\" ");
+  std::string CLEAR_CMD =
+      std::string("rm -rf \"") + PATH_FULL_CPP + std::string("\" ");
   if (system(CLEAR_CMD.c_str()) != 0) {
     // cout << endl << "Warning: Can't clean CPP temp file. " << endl;
   }
 
-  CLEAR_CMD = string("rm -rf \"") + PATH_FULL_OBJ + string("\" ");
+  CLEAR_CMD = std::string("rm -rf \"") + PATH_FULL_OBJ + std::string("\" ");
   if (system(CLEAR_CMD.c_str()) != 0) {
     // cout << endl << "Warning: Can't clean OBJ temp file. " << endl;
   }
 
-  CLEAR_CMD = string("rm -rf \"") + PATH_FULL_CPP + string(".log\" ");
+  CLEAR_CMD = std::string("rm -rf \"") + PATH_FULL_CPP + std::string(".log\" ");
   if (system(CLEAR_CMD.c_str()) != 0) {
     // cout << endl << "Warning: Can't clean compile log temp file. " << endl;
   }
 
-  CLEAR_CMD = string("rm -rf \"") + PATH_FULL_BIN_TMP + string(".log\" ");
+  CLEAR_CMD =
+      std::string("rm -rf \"") + PATH_FULL_BIN_TMP + std::string(".log\" ");
   if (system(CLEAR_CMD.c_str()) != 0) {
     // cout << endl << "Warning: Can't clean link log temp file. " << endl;
   }
 
-  CLEAR_CMD = string("rm -rf \"") + PATH_FULL_BIN_TMP + string(".strip.log\" ");
+  CLEAR_CMD = std::string("rm -rf \"") + PATH_FULL_BIN_TMP +
+              std::string(".strip.log\" ");
   if (system(CLEAR_CMD.c_str()) != 0) {
     // cout << endl << "Warning: Can't clean strip log temp file. " << endl;
   }
@@ -47,7 +51,7 @@ void CLEAN() {
 
 void COMPILE_MAC_64BIT() // string RAND, string PATH_FULL_ICO, string APP_PLIST)
 {
-  string MAC_CMD;
+  std::string MAC_CMD;
 
   // ------------------------------------------------------
   // macOS Compile
@@ -79,11 +83,12 @@ void COMPILE_MAC_64BIT() // string RAND, string PATH_FULL_ICO, string APP_PLIST)
             PATH_FULL_CPP + ".log\" ";
 
   if (system(MAC_CMD.c_str()) != 0) {
-    cout << endl << "ERROR [CORE001]: Can't compile generated code. " << endl;
+    std::cout << std::endl
+              << "ERROR [CORE001]: Can't compile generated code. " << std::endl;
     exit(EXIT_FAILURE);
   }
 
-  // TODO: Read log for error..
+  // TODO(aboualiaa): Read log for error..
 
   // ------------------------------------------------------
   // Resource
@@ -96,10 +101,11 @@ void COMPILE_MAC_64BIT() // string RAND, string PATH_FULL_ICO, string APP_PLIST)
   // Link
   // ------------------------------------------------------
 
-  string GUI_CMD = "";
+  std::string GUI_CMD;
 
-  if (APP_TYPE == "PC_GUI")
+  if (APP_TYPE == "PC_GUI") {
     GUI_CMD = " ............. ";
+  }
 
   // clang++ -m64 -mmacosx-version-min=10.9 -o "alifstudio" "alifstudio.o"
   // -L"/Library/Application Support/Aliflang/Alif_Lib_WX/lib" -framework IOKit
@@ -135,7 +141,8 @@ void COMPILE_MAC_64BIT() // string RAND, string PATH_FULL_ICO, string APP_PLIST)
             PATH_FULL_BIN_TMP + ".log\" ";
 
   if (system(MAC_CMD.c_str()) != 0) {
-    cout << endl << "ERROR [CORE001]: Can't Link generated code. " << endl;
+    std::cout << std::endl
+              << "ERROR [CORE001]: Can't Link generated code. " << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -147,7 +154,7 @@ void COMPILE_MAC_64BIT() // string RAND, string PATH_FULL_ICO, string APP_PLIST)
             ".strip.log\" ";
 
   if (system(MAC_CMD.c_str()) != 0) {
-    cout << endl << "ERROR [CORE001]: Can't Strip. " << endl;
+    std::cout << std::endl << "ERROR [CORE001]: Can't Strip. " << std::endl;
     exit(EXIT_FAILURE);
   }
 

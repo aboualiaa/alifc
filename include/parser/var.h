@@ -5,6 +5,6 @@
 #ifndef ALIFC_VAR_H
 #define ALIFC_VAR_H
 
-void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_Var(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_VAR_H

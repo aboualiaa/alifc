@@ -5,6 +5,6 @@
 #ifndef ALIFC_FUNCTION_H
 #define ALIFC_FUNCTION_H
 
-void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_Function(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_FUNCTION_H

@@ -14,20 +14,18 @@
 #include "core/core.h"
 #include "general/global.h"
 
-using namespace std;
-
 #ifdef _WIN32
 
 #include <direct.h> // getcwd (Get current working directory)
 #define GetCurrentDir _getcwd
 
-#include <windows.h> // Get Working Path by Win32 API
 #include <string>
+#include <windows.h> // Get Working Path by Win32 API
 
 //#include <w32api.h>
 //#include <Winbase.h>
+#include <stdlib.h>  // Get Temp envirenemt by Win32 API getenv()
 #include <windows.h> // Get Absolute Path by Win32 API
-#include <stdlib.h> // Get Temp envirenemt by Win32 API getenv()
 
 std::string GET_WORKING_PATH_WIN32() {
   char working_directory[MAX_PATH + 1];
@@ -48,7 +46,7 @@ std::string GET_WORKING_PATH_WIN32() {
 
 #endif
 
-string GET_WORKING_PATH() {
+std::string GET_WORKING_PATH() {
   // https://msdn.microsoft.com/en-us/library/sf98bd4y.aspx
 
   char *buffer;
@@ -63,7 +61,7 @@ string GET_WORKING_PATH() {
   }
 }
 
-string GET_PATH_WITHOUT_FILE(string PATH) {
+std::string GET_PATH_WITHOUT_FILE(std::string PATH) {
   // In: /abc/def/test.xx
   // Out: /abc/def/
 
@@ -85,7 +83,7 @@ string GET_PATH_WITHOUT_FILE(string PATH) {
   }
 }
 
-bool IS_PATH(string PATH_OR_FILE) {
+bool IS_PATH(std::string PATH_OR_FILE) {
   // 'myfile.x'               --> false.
   // '/abc/test/myfile.x'     --> true.
 
@@ -101,11 +99,11 @@ bool IS_PATH(string PATH_OR_FILE) {
     return true;
 }
 
-string GET_PATH_WITHOUT_LAST_SEPARATION(string PATH) {
+std::string GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH) {
   // In : '/abc/test/folder/'
   // Out : '/abc/test/folder'
 
-  string Last_Char = PATH.substr(PATH.length() - 1); // PATH.back()
+  std::string Last_Char = PATH.substr(PATH.length() - 1); // PATH.back()
 
 #ifdef _WIN32
   if (Last_Char == "\\")
@@ -143,7 +141,7 @@ bool CHECK_FOLDER_EXISTE(string PATH)
 }
 */
 
-bool CHECK_FILE_EXISTE(string PATH) {
+bool CHECK_FILE_EXISTE(std::string PATH) {
   /*
   string::iterator end_it = utf8::find_invalid(PATH.begin(), PATH.end());
 
@@ -234,22 +232,24 @@ bool CHECK_SETUP() // string ARGV_0, string OUTPUT)
   // alif_1.0-1.pkg
   //		/usr/local/bin/alif
   //		/Library/Application
-  //Support/Aliflang/Alif_Compiler/aliflib/aliflib.inf 		/Library/Application
-  //Support/Aliflang/Alif_Compiler/linux_alif_version.inf 		/Library/Application
-  //Support/Aliflang/Alif_Compiler/Alif_Arabic_Programming_Language
+  // Support/Aliflang/Alif_Compiler/aliflib/aliflib.inf
+  // /Library/Application Support/Aliflang/Alif_Compiler/linux_alif_version.inf
+  // /Library/Application
+  // Support/Aliflang/Alif_Compiler/Alif_Arabic_Programming_Language
   //		/Library/Application Support/Aliflang/Alif_Compiler/alif.icns
   //		/Library/Application Support/Aliflang/Alif_Compiler/Info.plist
 
   // aliflibwx_3.1-1.pkg
   //		/Library/Application
-  //Support/Aliflang/Alif_Lib_WX/include/[wx][boost][utf8] 		/Library/Application
-  //Support/Aliflang/Alif_Lib_WX/lib/[.a] 		/Library/Application
-  //Support/Aliflang/Alif_Lib_WX/linux_aliflibwx_version.inf
+  // Support/Aliflang/Alif_Lib_WX/include/[wx][boost][utf8]
+  // /Library/Application Support/Aliflang/Alif_Lib_WX/lib/[.a]
+  // /Library/Application
+  // Support/Aliflang/Alif_Lib_WX/linux_aliflibwx_version.inf
 
   // alifstudio_1.0-1.pkg
   //		/Applications/Alif Studio.app
   //		/Library/Application
-  //Support/Aliflang/Alif_Studio/linux_alifstudio_version.inf
+  // Support/Aliflang/Alif_Studio/linux_alifstudio_version.inf
   //		/Library/Application Support/Aliflang/Alif_Studio/alifstudio.png
   //		/Library/Application Support/Aliflang/Alif_Studio/mupdate
 

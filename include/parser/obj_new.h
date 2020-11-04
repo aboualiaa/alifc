@@ -5,6 +5,6 @@
 #ifndef ALIFC_OBJ_NEW_H
 #define ALIFC_OBJ_NEW_H
 
-void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_ObjNew(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_OBJ_NEW_H

@@ -17,6 +17,6 @@
 
 // ----------------------------------
 
-void parser_Class(string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_Class(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
 #endif // ALIFC_CLASS_H

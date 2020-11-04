@@ -238,8 +238,8 @@ o_tokens); } else { FormatedHTML.append(Line);
   return FormatedHTML;
 }
 
-void HTML_to_c(string sHTMLPath, string sCPath, string VarName,
-               string WindowName, CLASS_TOKEN *o_tokens) {
+void HTML_to_c(std::string sHTMLPath, std::string sCPath, std::string VarName,
+               std::string WindowName, CLASS_TOKEN *o_tokens) {
   // This function can be completly replace in c++20 by <embed>
   // In: test.html
   // Out: test.c -> const test_content = "..test.html..";
@@ -250,11 +250,12 @@ void HTML_to_c(string sHTMLPath, string sCPath, string VarName,
   sHTML << rBuffer.rdbuf();
 
   // --- HTML to C++ -------------------
-  string sHTMLCode = "<!-- Alif compiler " + VERSION + " - HTML Start --> \n" +
-                     // --- Get formated AlifJavaScript ---
-                     GetFormatedHTML(sHTML.str(), WindowName, o_tokens)
-                     // sHTML.str()
-                     + " \n<!-- Alif compiler " + VERSION + " - HTML End -->";
+  std::string sHTMLCode =
+      "<!-- Alif compiler " + VERSION + " - HTML Start --> \n" +
+      // --- Get formated AlifJavaScript ---
+      GetFormatedHTML(sHTML.str(), WindowName, o_tokens)
+      // sHTML.str()
+      + " \n<!-- Alif compiler " + VERSION + " - HTML End -->";
 
   // string::size_type pos = 0;
   // while ((pos = sHTMLCode.find('\"', pos)) != string::npos){
@@ -262,19 +263,20 @@ void HTML_to_c(string sHTMLPath, string sCPath, string VarName,
   //    pos += 2;
   //}
 
-  string cppCode_start =
+  std::string cppCode_start =
       "static const wxString " + VarName + " = wxT( R\"V0G0N( \n\n";
-  string cppCode_end = "\n\n )V0G0N\" );";
-  string cppCode = R"(
+  std::string cppCode_end = "\n\n )V0G0N\" );";
+  std::string cppCode = R"(
 		// --- Const HTML script --------------------------
-		)" +
-                   cppCode_start + sHTMLCode + cppCode_end + R"(
+		)" + cppCode_start +
+                        sHTMLCode + cppCode_end + R"(
 		// ------------------------------------------------
 		wxCharBuffer )" +
-                   VarName + R"(_CharBuffer = )" + VarName + R"(.ToUTF8();
+                        VarName + R"(_CharBuffer = )" + VarName + R"(.ToUTF8();
 		wxMemoryFSHandler::AddFile(")" +
-                   VarName + R"(.htm", )" + VarName +
-                   R"(_CharBuffer, strlen()" + VarName + R"(_CharBuffer ) );
+                        VarName + R"(.htm", )" + VarName +
+                        R"(_CharBuffer, strlen()" + VarName +
+                        R"(_CharBuffer ) );
 	)";
 
   // --- Write -----------------------
@@ -282,7 +284,7 @@ void HTML_to_c(string sHTMLPath, string sCPath, string VarName,
   cFile << cppCode;
 }
 
-void parser_NewWindowWeb(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // #واجهة_ويب رئيسية "UI_WEB_1"
   // #window_web MyWindow "MyFile.html"
@@ -365,13 +367,14 @@ void parser_NewWindowWeb(string Token[2048], CLASS_TOKEN *o_tokens) {
     // New Web Window -> WebUI construction
     CBUFER_ID = "ID_CTR_" + ID["رئيسية"] + "_" + Control_ID["AlifUIWeb"];
     CBUFER_OBJ = "OBJ_CTR_" + ID["رئيسية"] + "_" + Control_ID["AlifUIWeb"];
-    string CBUFER_VarName = ID["رئيسية"] + "_ConstHTML";
+    std::string CBUFER_VarName = ID["رئيسية"] + "_ConstHTML";
     CPP_ID_DECLARATION.append(" int " + CBUFER_ID +
                               " = ALIFCORE_ID_GENERATOR(); \n");
     CPP_OBJ_DECLARATION.append(" wxWebView* " + CBUFER_OBJ + "; \n");
     // New Web Window -> WebUI HTML
-    string PATH_FULL_HTML_CPP = PATH_TEMP + SEPARATION + "alifcompiler_html_" +
-                                ID["رئيسية"] + "_" + RANDOM + ".cpp";
+    std::string PATH_FULL_HTML_CPP = PATH_TEMP + SEPARATION +
+                                     "alifcompiler_html_" + ID["رئيسية"] + "_" +
+                                     RANDOM + ".cpp";
     HTML_to_c(PATH_FULL_WINDOW_WEB, PATH_FULL_HTML_CPP, CBUFER_VarName,
               "رئيسية", o_tokens);
     CPP_WINDOW[std::make_pair("رئيسية", "CTR_CONSTRUCTOR")] =
@@ -487,13 +490,14 @@ void parser_NewWindowWeb(string Token[2048], CLASS_TOKEN *o_tokens) {
     // New Web Window -> WebUI construction
     CBUFER_ID = "ID_CTR_" + ID[Token[3]] + "_" + Control_ID["AlifUIWeb"];
     CBUFER_OBJ = "OBJ_CTR_" + ID[Token[3]] + "_" + Control_ID["AlifUIWeb"];
-    string CBUFER_VarName = ID[Token[3]] + "_ConstHTML";
+    std::string CBUFER_VarName = ID[Token[3]] + "_ConstHTML";
     CPP_ID_DECLARATION.append(" int " + CBUFER_ID +
                               " = ALIFCORE_ID_GENERATOR(); \n");
     CPP_OBJ_DECLARATION.append(" wxWebView* " + CBUFER_OBJ + "; \n");
     // New Web Window -> WebUI HTML
-    string PATH_FULL_HTML_CPP = PATH_TEMP + SEPARATION + "alifcompiler_html_" +
-                                ID[Token[3]] + "_" + RANDOM + ".cpp";
+    std::string PATH_FULL_HTML_CPP = PATH_TEMP + SEPARATION +
+                                     "alifcompiler_html_" + ID[Token[3]] + "_" +
+                                     RANDOM + ".cpp";
     HTML_to_c(PATH_FULL_WINDOW_WEB, PATH_FULL_HTML_CPP, CBUFER_VarName,
               Token[3], o_tokens);
     CPP_WINDOW[std::make_pair(Token[3], "CTR_CONSTRUCTOR")] =
@@ -574,7 +578,7 @@ void parser_NewWindowWeb(string Token[2048], CLASS_TOKEN *o_tokens) {
   TheWindow = "";
 }
 
-void parser_NewWindow(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_NewWindow(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   if (IsInsideWindow)
     ErrorCode("لا يمكن انشاء نافدة داخل نافدة، النافذة الحالية : " + TheWindow,

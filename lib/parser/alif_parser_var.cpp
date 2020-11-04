@@ -20,33 +20,39 @@
 #include <map> // vector
 // ----------------------------------
 
-void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Var(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // Local var
   // a = 1 + 2
 
   // Note: Parsing Local var must be first, and global after.
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال المتغير داخل دالة ' " + Token[1] + " ' ", o_tokens);
+  }
 
-  if (Token[2] == ":")
+  if (Token[2] == ":") {
     ErrorCode("ليس كائن ' " + Token[1] + " ' ", o_tokens);
+  }
 
-  if (Token[2] != "=")
+  if (Token[2] != "=") {
     ErrorCode("يجب اضافة ' = ' بعد اسم المتغير", o_tokens);
+  }
 
-  if (Token[3] == "")
+  if (Token[3].empty()) {
     ErrorCode("يجب اضافه قيمة بعد ' = ' ", o_tokens);
+  }
 
-  string CLASS_OR_WIN;
-  if (IsInsideClass)
+  std::string CLASS_OR_WIN;
+  if (IsInsideClass) {
     CLASS_OR_WIN = TheClass;
-  else
+  } else {
     CLASS_OR_WIN = TheWindow;
+  }
 
   if (L_VAR_TYPE[std::make_pair(CLASS_OR_WIN + TheFunction, Token[1])] ==
       "عدد") {
@@ -54,9 +60,10 @@ void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
     // == "ثابت") ErrorCode("لا يمكن تغيير قيمة المتغير ' " + Token[1] + " '
     // لأنه من نوع ثابت ", o_tokens);
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("		[LOCAL-INT (" + Token[1] + ")] = ",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Local INT = ...
@@ -76,9 +83,10 @@ void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
     // == "ثابت") ErrorCode("لا يمكن تغيير قيمة المتغير ' " + Token[1] + " '
     // لأنه من نوع ثابت ", o_tokens);
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("		[LOCAL-STRING (" + Token[1] + ")] = ",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Local STRING = ...
@@ -98,9 +106,10 @@ void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
     // == "ثابت") ErrorCode("لا يمكن تغيير قيمة المتغير ' " + Token[1] + " '
     // لأنه من نوع ثابت ", o_tokens);
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("		[LOCAL-BOOL (" + Token[1] + ")] = ",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Local BOOL = ...
@@ -134,7 +143,7 @@ void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
   TempTokenCount = 0;
 
   for (int p = 2; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-    if (Token[p] != "") {
+    if (!Token[p].empty()) {
       TempToken[TempTokenCount] = Token[p];
       TempTokenCount++;
     }
@@ -160,8 +169,9 @@ void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
                      TheFunction,          // TMP_FUNCTION_NAME
                      o_tokens);
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
+  }
 
   // *** Generate Code ***
   // Local A = ...
@@ -176,5 +186,5 @@ void parser_Var(string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   // *** *** *** *** *** ***
 
-  return; // continue;
+  // continue;
 }

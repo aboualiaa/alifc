@@ -17,45 +17,53 @@
 #include <string>
 // ----------------------------------
 
-void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Function(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
   //دالة
 
   int FUN_POS = 1;
 
-  if (IsInsideFunction)
+  if (IsInsideFunction) {
     ErrorCode("لا يمكن انشاء دالة داخل دالة، الدالة الحالية : " + TheFunction,
               o_tokens);
+  }
 
-  if (Token[FUN_POS + 1] == "")
+  if (Token[FUN_POS + 1].empty()) {
     ErrorCode("يجب اعطاء اسم لهته الدالة الجديدة", o_tokens);
+  }
 
   if (Token[FUN_POS + 1] == "رئيسية") // دالة رئيسية
   {
-    if (!IsInsideWindow)
+    if (!IsInsideWindow) {
       ErrorCode("لا يمكن انشاء دالة رئيسية في المجال العام، بل يجب انشائها "
                 "داخل نافذة أو داخل صنف",
                 o_tokens);
+    }
 
-    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(")
+    if (!Token[FUN_POS + 2].empty() && Token[FUN_POS + 2] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 2] + " ' ", o_tokens);
+    }
 
     if (Token[FUN_POS + 2] == "(") {
-      if (Token[FUN_POS + 3] == "")
+      if (Token[FUN_POS + 3].empty()) {
         ErrorCode("يجب اغلاق القوس ')' ", o_tokens);
+      }
 
-      if (Token[FUN_POS + 3] != ")")
+      if (Token[FUN_POS + 3] != ")") {
         ErrorCode("الدالة الرئيسية لا تقبل الخصائص", o_tokens);
+      }
 
-      if (Token[FUN_POS + 4] != "")
+      if (!Token[FUN_POS + 4].empty()) {
         ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 4] + " ' ", o_tokens);
+      }
     }
 
     if (!o_tokens->TOKENS_PREDEFINED) {
-      if (MAIN_FUN_IS_SET[TheWindow])
+      if (MAIN_FUN_IS_SET[TheWindow]) {
         ErrorCode("الدالة الرئيسية تم انشاؤها مسبقا في السطر : " +
                       MAIN_FUN_AT_LINE[TheWindow],
                   o_tokens);
+      }
 
       MAIN_FUN_IS_SET[TheWindow] = true;
       MAIN_FUN_AT_LINE[TheWindow] = IntToString(o_tokens->Line);
@@ -76,8 +84,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
     Win_CurrentTotalFucntion++;
     Win_TotalFucntion[TheWindow] = Win_CurrentTotalFucntion;
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[FUNCTION] [MAIN] \n\n", o_tokens); // DEBUG
+    }
 
     return; // continue;
   } else if (Token[FUN_POS + 1] ==
@@ -88,30 +97,36 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
     // Control Function
     // --------------------------
 
-    if (!IsInsideWindow)
+    if (!IsInsideWindow) {
       ErrorCode("يجب استعمال هذه الخاصيه داخل النافذه ' " + Token[FUN_POS + 1] +
                     " ' ",
                 o_tokens);
+    }
 
-    if (Token[FUN_POS + 2] == "")
+    if (Token[FUN_POS + 2] == "") {
       ErrorCode("يجب تحديد اسم الاداة", o_tokens);
+    }
 
-    if (!CONTROL_IS_SET[std::make_pair(TheWindow, Token[FUN_POS + 2])])
+    if (!CONTROL_IS_SET[std::make_pair(TheWindow, Token[FUN_POS + 2])]) {
       ErrorCode("النافذة ' " + TheWindow + " ' لا تحتوي على أداة باسم ' " +
                     Token[FUN_POS + 2] + " ' ",
                 o_tokens);
+    }
 
-    if (Token[FUN_POS + 3] != "" && Token[FUN_POS + 3] != "(")
+    if (Token[FUN_POS + 3] != "" && Token[FUN_POS + 3] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 3] + " ' ", o_tokens);
+    }
 
     if (Token[FUN_POS + 3] == "(") {
-      if (Token[FUN_POS + 4] != ")")
+      if (Token[FUN_POS + 4] != ")") {
         ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 4] +
                       " ', However Control Function didnt need args! ",
                   o_tokens);
+      }
 
-      if (Token[FUN_POS + 5] != "")
+      if (Token[FUN_POS + 5] != "") {
         ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 5] + " ' ", o_tokens);
+      }
     }
 
     if (!o_tokens->TOKENS_PREDEFINED) {
@@ -129,10 +144,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
 
     if (Token[FUN_POS + 1] == "نقر") // || Token[FUN_POS + 1] == "فارة_نقر")
     {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[FUNCTION] [Mouse_Click] [" + Token[FUN_POS + 2] +
                           "] \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // Control Function ()
@@ -173,11 +189,13 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
     // Type Function
     // --------------------------
 
-    if (Token[FUN_POS + 2] == "")
+    if (Token[FUN_POS + 2].empty()) {
       ErrorCode("يجب تحديد اسم الداله", o_tokens);
+    }
 
-    if (Token[FUN_POS + 3] != "" && Token[FUN_POS + 3] != "(")
+    if (Token[FUN_POS + 3] != "" && Token[FUN_POS + 3] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 3] + " ' ", o_tokens);
+    }
 
     if (Token[FUN_POS + 3] == "") // دالة TYPE MyFunctionName
     {
@@ -194,10 +212,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_INT] [" +
                               Token[FUN_POS + 2] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Global INT Func(void)
@@ -218,10 +237,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_INT] [" +
                               Token[FUN_POS + 2] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Local INT Func(void)
@@ -256,10 +276,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_STRING] [" +
                               Token[FUN_POS + 2] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Global String Func(void)
@@ -280,10 +301,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_STRING] [" +
                               Token[FUN_POS + 2] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Local String Func(void)
@@ -319,10 +341,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_BOOL] [" +
                               Token[FUN_POS + 2] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Global BOOL Func(void)
@@ -343,10 +366,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_BOOL] [" +
                               Token[FUN_POS + 2] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Local BOOL Func(void)
@@ -371,14 +395,16 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
       }
     } else if (Token[FUN_POS + 3] == "(") // دالة TYPE MyFunctionName ( ???
     {
-      if (Token[FUN_POS + 4] == "")
+      if (Token[FUN_POS + 4] == "") {
         ErrorCode("سطر غير كامل المرجو اضافة ')' ", o_tokens);
+      }
 
       if (Token[FUN_POS + 4] == ")") // دالة TYPE MyFunctionName ()
       {
-        if (Token[FUN_POS + 5] != "")
+        if (Token[FUN_POS + 5] != "") {
           ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 5] + " ' ",
                     o_tokens);
+        }
 
         if (Token[FUN_POS + 1] == "عدد") {
           if (!IsInsideWindow) {
@@ -393,10 +419,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Global INT Func(void)
@@ -417,10 +444,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Local INT Func(void)
@@ -456,10 +484,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_STRING] [" +
                                 Token[FUN_POS + 2] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Global String Func(void)
@@ -480,10 +509,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_STRING] [" +
                                 Token[FUN_POS + 2] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Local String Func(void)
@@ -519,10 +549,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Global bool Func(void)
@@ -543,10 +574,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Local INT Func(void)
@@ -571,8 +603,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
         }
       } else // دالة TYPE MyFunctionName (...)
       {
-        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
           ErrorCode("يجب انهاء السطر بالإشارة ')' ", o_tokens);
+        }
 
         TempTokenCount = 0;
         for (int p = 5; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
@@ -601,10 +634,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] ( ",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Global INT Func(...)
@@ -637,10 +671,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] ( ",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Local INT Func(...)
@@ -658,8 +693,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
                                      TheWindow, Token[FUN_POS + 2], o_tokens);
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" ) \n\n", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           if (!IsInsideWindow) {
@@ -705,10 +741,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_STRING] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Global String Func(...)
@@ -743,10 +780,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_STRING] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Local String Func(...)
@@ -765,8 +803,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
                                      TheWindow, Token[FUN_POS + 2], o_tokens);
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" ) \n\n", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           if (!IsInsideWindow) {
@@ -811,10 +850,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("[GLOBAL-FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] ( ",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Global BOOL Func(...)
@@ -847,10 +887,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] ( ",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Local BOOL Func(...)
@@ -868,8 +909,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
                                      TheWindow, Token[FUN_POS + 2], o_tokens);
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" ) \n\n", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           if (!IsInsideWindow) {
@@ -900,11 +942,13 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
     }
   } else // void : دالة MyFunctionName (???) // void
   {
-    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(")
+    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 2] + " ' ", o_tokens);
+    }
 
-    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(")
+    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 2] + " ' ", o_tokens);
+    }
 
     if (Token[FUN_POS + 2] == "") // دالة MyFunctionName
     {
@@ -921,9 +965,10 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
           return; // continue;
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[GLOBAL-FUNCTION] [" + Token[FUN_POS + 1] + "] \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Global VOID Func(void)
@@ -946,9 +991,10 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
           return; // continue;
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("	[FUNCTION] [" + Token[FUN_POS + 1] + "] \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Local VOID Func(void)
@@ -976,9 +1022,10 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
     {
       if (Token[FUN_POS + 3] == ")") // دالة MyFunctionName ()
       {
-        if (Token[FUN_POS + 4] != "")
+        if (Token[FUN_POS + 4] != "") {
           ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 4] + " ' ",
                     o_tokens);
+        }
 
         if (!IsInsideWindow) {
           if (!o_tokens->TOKENS_PREDEFINED) {
@@ -993,10 +1040,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-FUNCTION] [" + Token[FUN_POS + 1] +
                               "] () \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Global VOID Func(void)
@@ -1019,10 +1067,11 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[FUNCTION] [" + Token[FUN_POS + 1] +
                               "] () \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Local VOID Func(void)
@@ -1048,8 +1097,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
         return; // continue;
       } else    // دالة MyFunctionName (...)
       {
-        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
           ErrorCode("يجب انهاء السطر بالإشارة ')' ", o_tokens);
+        }
 
         TempTokenCount = 0;
         for (int p = 4; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
@@ -1078,9 +1128,10 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[GLOBAL-FUNCTION] [" + Token[FUN_POS + 1] + "] ( ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Global VOID Func(...)
@@ -1115,9 +1166,10 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[FUNCTION] [" + Token[FUN_POS + 1] + "] ( ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Local VOID Func(...)
@@ -1136,8 +1188,9 @@ void parser_Function(string Token[2048], CLASS_TOKEN *o_tokens) {
                                    TheWindow, Token[FUN_POS + 1], o_tokens);
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(" ) \n\n", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         if (!IsInsideWindow) {

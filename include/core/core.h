@@ -18,11 +18,13 @@ int ID_GENERATOR();
 bool replace(std::string &str, const std::string &from, const std::string &to);
 bool replace_end(std::string &str, const std::string &from,
                  const std::string &to);
-string substr_utf8(string originalString, int Position, int MaxLen);
-string IntToString(int INT_VAL);
-string CONVERT_STRING_ARRAY_TO_STRING(string STRING_ARRAY_VAL[1024], int LONG);
-string CONVERT_WCHAT_T_TO_STRING(wchar_t *WCHART_T_VAL);
-string CONVERT_CHAR_TO_STRING(char *CHART_VAL);
+std::string substr_utf8(const std::string &originalString, int Position,
+                        int MaxLen);
+std::string IntToString(int INT_VAL);
+std::string CONVERT_STRING_ARRAY_TO_STRING(std::string STRING_ARRAY_VAL[1024],
+                                           int LONG);
+std::string CONVERT_WCHAT_T_TO_STRING(wchar_t *WCHART_T_VAL);
+std::string CONVERT_CHAR_TO_STRING(char *CHART_VAL);
 
 int useconst = 0;
 int zeroterminated = 0;
@@ -32,7 +34,7 @@ int BinaryToC_myfgetc(FILE *f);
 char *BinaryToC_str2upr(char *s);
 
 void BinaryToC_process(const char *ifname, const char *ofname);
-void BinaryToC(string FileIn, string FileOut);
+void BinaryToC(const std::string &FileIn, const std::string &FileOut);
 
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                                         "abcdefghijklmnopqrstuvwxyz"
@@ -42,88 +44,90 @@ static inline bool is_base64(unsigned char c);
 
 std::string base64_encode(unsigned char const *bytes_to_encode,
                           unsigned int in_len);
-string BinaryToBase64(string FileIn);
+std::string BinaryToBase64(const std::string &FileIn);
 
-static std::map<string, string> ID;           // abc[var] = V1000
-static std::map<string, string> Global_ID;    // abc[var] = G_V1000
-static std::map<string, string> Control_ID;   // abc[var] = C_V1000
-static std::map<string, string> Obj_ID;       // abc[var] = OBJ_V1000
-static std::map<string, string> GlobalObj_ID; // abc[var] = G_OBJ_V1000
+static std::map<std::string, std::string> ID;         // abc[var] = V1000
+static std::map<std::string, std::string> Global_ID;  // abc[var] = G_V1000
+static std::map<std::string, std::string> Control_ID; // abc[var] = C_V1000
+static std::map<std::string, std::string> Obj_ID;     // abc[var] = OBJ_V1000
+static std::map<std::string, std::string>
+    GlobalObj_ID; // abc[var] = G_OBJ_V1000
 
-void SET_OBJ_C_NAME(string VAR);
+void SET_OBJ_C_NAME(const std::string &VAR);
 
-void SET_GLOBAL_OBJ_C_NAME(string VAR);
+void SET_GLOBAL_OBJ_C_NAME(const std::string &VAR);
 
-void SET_C_NAME(string VAR);
+void SET_C_NAME(const std::string &VAR);
 
-void SET_GLOBAL_C_NAME(string VAR);
+void SET_GLOBAL_C_NAME(const std::string &VAR);
 
-void SET_CONTROL_C_NAME(string VAR);
+void SET_CONTROL_C_NAME(const std::string &VAR);
 
-bool IsInArray_v(const std::string &value, const std::vector<string> &array);
+bool IsInArray_v(const std::string &value,
+                 const std::vector<std::string> &array);
 
 bool IsDataType(const std::string &value);
 
-int CharCount_utf8(string LINE8, CLASS_TOKEN *o_tokens);
+int CharCount_utf8(std::string LINE8, CLASS_TOKEN *o_tokens);
 
-string GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens);
+std::string GET_REAL_LINE_MID(int START, int TOKEN_POSITION,
+                              CLASS_TOKEN *o_tokens);
 
-bool IsValidStringFormat(string STRING, CLASS_TOKEN *o_tokens);
+bool IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens);
 
-string REMOVE_DOUBLE_SPACE(string LINE_BUFFER, CLASS_TOKEN *o_tokens);
+std::string REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER,
+                                CLASS_TOKEN *o_tokens);
 
-bool IsValidDigit(string DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens);
+bool IsValidDigit(const std::string &DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens);
 
-bool CAN_ADD_OPERATION_HERE(string TOKEN_LAST);
+bool CAN_ADD_OPERATION_HERE(const std::string &TOKEN_LAST);
+bool CAN_ADD_VAR_HERE(const std::string &TOKEN_LAST);
+bool CAN_ADD_FUN_HERE(const std::string &TOKEN_LAST);
+bool CAN_ADD_PARENTHESIS_OPEN_HERE(const std::string &TOKEN_LAST);
 
-bool CAN_ADD_VAR_HERE(string TOKEN_LAST);
+std::string IsValidVar_Type = "عادم";
 
-bool CAN_ADD_FUN_HERE(string TOKEN_LAST);
+bool IsValidVar(const std::string &Var, CLASS_TOKEN *o_tokens);
 
-bool CAN_ADD_PARENTHESIS_OPEN_HERE(string TOKEN_LAST);
+bool CAN_ADD_PARENTHESIS_CLOSE_HERE(const std::string &TOKEN_LAST);
+bool CAN_ADD_DIGIT_HERE(const std::string &TOKEN_LAST);
+std::string GET_TXT_FROM_STRING(const std::string &STRING,
+                                CLASS_TOKEN *o_tokens);
 
-string IsValidVar_Type = "عادم";
+void CheckForSameGlobalID(const std::string &Name, CLASS_TOKEN *o_tokens);
 
-bool IsValidVar(string Var, CLASS_TOKEN *o_tokens);
+bool IsValidName(const std::string &Name, CLASS_TOKEN *o_tokens);
 
-bool CAN_ADD_PARENTHESIS_CLOSE_HERE(string TOKEN_LAST);
+void ADD_FUN(bool GLOBAL, const std::string &WIN_NAME,
+             const std::string &FUN_NAME, const std::string &TYPE, int Line,
+             CLASS_TOKEN *o_tokens);
 
-bool CAN_ADD_DIGIT_HERE(string TOKEN_LAST);
+void SetNewVar(bool IsGlobal, const std::string &TmpWindow,
+               const std::string &TmpFunction, const std::string &VarName,
+               const std::string &VarDataType, bool IsConstant, bool IsArray,
+               int Line, CLASS_TOKEN *o_tokens);
 
-string GET_TXT_FROM_STRING(string STRING, CLASS_TOKEN *o_tokens);
+void SetNewVarClass(bool IsGlobal, bool IsPrivate, const std::string &ClassName,
+                    const std::string &FunctionName, const std::string &VarName,
+                    const std::string &VarDataType, bool IsConstant,
+                    bool IsArray, int Line, CLASS_TOKEN *o_tokens);
 
-void CheckForSameGlobalID(string Name, CLASS_TOKEN *o_tokens);
+std::string GetSyntaxDataType(std::string Token[1024], int Position,
+                              CLASS_TOKEN *o_tokens);
 
-bool IsValidName(string Name, CLASS_TOKEN *o_tokens);
+void ADD_FUN_CLASS(bool PRIVATE, const std::string &CLASS_NAME,
+                   const std::string &FUN_NAME, const std::string &TYPE,
+                   int Line, CLASS_TOKEN *o_tokens);
 
-void ADD_FUN(bool GLOBAL, string WIN_NAME, string FUN_NAME, string TYPE,
-             int Line, CLASS_TOKEN *o_tokens);
+std::string C_LAST_ARG;
 
-void SetNewVar(bool IsGlobal, string TmpWindow, string TmpFunction,
-               string VarName, string VarDataType, bool IsConstant,
-               bool IsArray, int Line, CLASS_TOKEN *o_tokens);
+auto CHECK_NEW_FUN_SYNTAX(bool GLOBAL, std::string SYNTAX[1024],
+                          int SYNTAX_LONG, const std::string &TmpWindow,
+                          const std::string &TmpFunction, CLASS_TOKEN *o_tokens)
+    -> std::string;
 
-void SetNewVarClass(bool IsGlobal, bool IsPrivate, string ClassName,
-                    string FunctionName, string VarName, string VarDataType,
-                    bool IsConstant, bool IsArray, int Line,
-                    CLASS_TOKEN *o_tokens);
-
-string GetSyntaxDataType(string Token[1024], int Position,
-                         CLASS_TOKEN *o_tokens);
-
-void ADD_FUN_CLASS(bool PRIVATE, string CLASS_NAME, string FUN_NAME,
-                   string TYPE, int Line, CLASS_TOKEN *o_tokens);
-
-string C_LAST_ARG;
-
-string
-CHECK_NEW_FUN_SYNTAX(bool GLOBAL, string SYNTAX[1024], int SYNTAX_LONG,
-                     string TmpWindow,   // fun1 { a = b + win:fun2(x) + z }
-                     string TmpFunction, // fun1 { a = b + win:fun2(x) + z }
-                     CLASS_TOKEN *o_tokens);
-
-string CheckForSyntax(
-    string OBJECTIF_TYPE,       // OBJECTIF_TYPE
+std::string CheckForSyntax(
+    const std::string &OBJECTIF_TYPE, // OBJECTIF_TYPE
     bool ACCEPT_REF_WIN_WIDGET, // Accept Using Reference إلى Window:Controls
     bool ACCEPT_REF_WIN_FUN,    // Accept Using Reference إلى Window:Function
     bool ACCEPT_REF_GLOBAL_FUN, // Accept Using Reference إلى Global Functions
@@ -132,25 +136,18 @@ string CheckForSyntax(
     bool ACCEPT_REF_LOCAL_VAR,  // Accept Using Reference إلى Local VAR
     bool ACCEPT_STR_TO_INT,     // Accept Convertion من نص إلى Int
     bool ACCEPT_INT_TO_STRING,  // Accept Convertion من عدد إلى String
-    string SYNTAX[1024],        // SYNTAX[] string
+    std::string SYNTAX[1024],   // SYNTAX[] string
     int SYNTAX_LONG,            // SYNTAX_LONG int
-    string TMP_WIN_OR_CLASS,    // a = b + win:fun(2+2) + class:fun(x)
-    string TmpFunction,         // a = b + win/class:fun(2+2)
+    const std::string &TMP_WIN_OR_CLASS, // a = b + win:fun(2+2) + class:fun(x)
+    const std::string &TmpFunction,      // a = b + win/class:fun(2+2)
     CLASS_TOKEN *o_tokens);
 
-string CHECK_CALL_FUN_ARG(
-    bool CALL_FUN_GLOBAL,
-    string CALL_WIN_OR_CLASS, // win1/class1 { fun1(int a) } | win2 { fun2{ عدد
-                              // b; fun1(b) } } ==> win1
-    string CALL_FUN, // win1 { fun1(int a) } | win2 { fun2{ عدد b; fun1(b) } }
-                     // ==> fun1
-    int CALL_IS_CLASS, // 0 = non class, 1 constructor, 2 = الدالة member, ل
-                       // Message when new obj
-    string FROM_WIN_OR_CLASS, // win1 { fun1(int a) } | win2 { fun2{ عدد b;
-                              // fun1(b) } } ==> win2
-    string FROM_FUN, // win1 { fun1(int a) } | win2 { fun2{ عدد b; fun1(b) } }
-                     // ==> fun2
-    string SYNTAX[1024], int SYNTAX_LONG, CLASS_TOKEN *o_tokens);
+auto CHECK_CALL_FUN_ARG(bool CALL_FUN_GLOBAL,
+                        const std::string &CALL_WIN_OR_CLASS,
+                        const std::string &CALL_FUN, int CALL_IS_CLASS,
+                        const std::string &FROM_WIN_OR_CLASS,
+                        const std::string &FROM_FUN, std::string SYNTAX[1024],
+                        int SYNTAX_LONG, CLASS_TOKEN *o_tokens) -> std::string;
 
 void FINAL_CURRENT_FILE_CODE_CHECKING(CLASS_TOKEN *o_tokens);
 

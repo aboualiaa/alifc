@@ -18,73 +18,84 @@
 
 // ----------------------------------
 
-void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_ObjNew(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // كائن
 
-  if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction)
+  if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction) {
     // Igiore Local func var predefinition,
     // focus only on Global var predefinition, and Class global var
     // predefinition.
     return; // continue;
+  }
 
   // كائن  الصنف_الثاني  ن  (ع, 2
   // كائن ن = الصنف_الثاني (3, ح
 
-  // TODO: Set Obj Private or Public "خاص"
+  // TODO(aboualiaa): Set Obj Private or Public "خاص"
   // int OBJ_POS = 1;
   // if (Token[1] == "خاص")
   // OBJ_POS = 2;
 
   // C++, can create obj global/class/func, but use it on func.
-  if (IsInsideWindow && !IsInsideFunction)
+  if (IsInsideWindow && !IsInsideFunction) {
     ErrorCode("يجب إنشاء الكائن الجديد داخل دالة ", o_tokens);
+  }
 
   // if (Token[2] == "")
   // ErrorCode("يجب وضع إسم الصنف بعد ' كائن '", o_tokens);
-  if (Token[2] == "")
+  if (Token[2].empty()) {
     ErrorCode("يجب وضع إسم معرف الكائن بعد ' كائن '", o_tokens);
+  }
 
   // if (Token[3] == "")
   // ErrorCode("يجب وضع إسم معرف الكائن بعد ' كائن " + Token[2] + " ' ",
   // o_tokens);
-  if (Token[3] != "=")
+  if (Token[3] != "=") {
     ErrorCode("يجب وضع إشارة '=' بعد ' كائن " + Token[2] + " ' ", o_tokens);
+  }
 
   // if (Token[4] != "" && Token[4] != "(")
   // ErrorCode("أمر غير معروف ' " + Token[4] + " ', هل تقصد ' () ' ؟ ",
   // o_tokens);
-  if (Token[4] == "")
+  if (Token[4].empty()) {
     ErrorCode("يجب وضع إسم الصنف بعد ' كائن " + Token[2] + " = '", o_tokens);
+  }
 
   // if (Token[4] == "(" && Token[5] == "")
   // ErrorCode("قوس مازال مفتوح، ربما تقصد ' () ' ", o_tokens);
-  if (Token[5] == "(" && Token[6] == "")
+  if (Token[5] == "(" && Token[6].empty()) {
     ErrorCode("قوس مازال مفتوح، ربما تقصد ' () ' ", o_tokens);
+  }
 
   if (Token[5] == "(") {
     if (Token[o_tokens->TOTAL[o_tokens->Line]] != ")" &&
-        Token[o_tokens->TOTAL[o_tokens->Line]] != "")
+        !Token[o_tokens->TOTAL[o_tokens->Line]].empty()) {
       ErrorCode("يجب انهاء السطر بالإشارة ')' '... " +
                     Token[o_tokens->TOTAL[o_tokens->Line]] + " ' ",
                 o_tokens);
+    }
   }
 
-  if (!CLASS_IS_SET[Token[4]])
+  if (!CLASS_IS_SET[Token[4]]) {
     ErrorCode("صنف غير معروف ' " + Token[4] + " ' ", o_tokens);
+  }
 
-  if (!IsValidName(Token[2], o_tokens))
+  if (!IsValidName(Token[2], o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + Token[2] + " ' ", o_tokens);
+  }
 
   // if same name as class !
-  if (Token[2] == Token[4])
+  if (Token[2] == Token[4]) {
     ErrorCode("تشابه في الاسم بين الكائن و الصنف ' " + Token[2] + " ' ",
               o_tokens);
+  }
 
-  // TODO: Is C++ Allow create Obj inside the same class ? class X { X o; }
+  // TODO(aboualiaa): Is C++ Allow create Obj inside the same class ? class X {
+  // X o; }
 
   // C++, allow create Obj on global, global-class, local, but using it only on
   // func.
-  string OBJ_ID;
+  std::string OBJ_ID;
   if (IsInsideWindow) {
     if (IsInsideFunction) {
       // Window -> Function.
@@ -94,10 +105,11 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
 
       if (!o_tokens->TOKENS_PREDEFINED) {
 
-        if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])])
+        if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])]) {
           ErrorCode("الكائن ' " + Token[2] + " ' تم انشاؤه مسبقا في السطر : " +
                         OBJ_AT_LINE[std::make_pair(OBJ_ID, Token[2])],
                     o_tokens);
+        }
       }
     } else {
       // Window.
@@ -112,10 +124,11 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
 
       if (!o_tokens->TOKENS_PREDEFINED) {
 
-        if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])])
+        if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])]) {
           ErrorCode("الكائن ' " + Token[2] + " ' تم انشاؤه مسبقا في السطر : " +
                         OBJ_AT_LINE[std::make_pair(OBJ_ID, Token[2])],
                     o_tokens);
+        }
       }
     } else {
       // Class.
@@ -128,10 +141,11 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
 
       if (!o_tokens->TOKENS_PREDEFINED) {
 
-        if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])])
+        if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])]) {
           ErrorCode("الكائن ' " + Token[2] + " ' تم انشاؤه مسبقا في السطر : " +
                         OBJ_AT_LINE[std::make_pair(OBJ_ID, Token[2])],
                     o_tokens);
+        }
       }
     }
   } else {
@@ -145,11 +159,12 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
 
     if (!o_tokens->TOKENS_PREDEFINED) {
 
-      if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])])
+      if (OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])]) {
         ErrorCode("الكائن العام ' " + Token[2] +
                       " ' تم انشاؤه مسبقا في السطر : " +
                       OBJ_AT_LINE[std::make_pair(OBJ_ID, Token[2])],
                   o_tokens);
+      }
 
       // if already any other type of global var exist
       CheckForSameGlobalID(Token[2], o_tokens);
@@ -164,7 +179,8 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
 
   // if(DEBUG)DEBUG_MESSAGE("		[NEW-OBJ] [CLASS ' " + Token[2] + " ']
   // [Generated_ID ' " + Token[3] + " '] (", o_tokens); // DEBUG
-  // if(DEBUG)DEBUG_MESSAGE("		[NEW-OBJ] [Generated_ID ' " + Token[2] + "
+  // if(DEBUG)DEBUG_MESSAGE("		[NEW-OBJ] [Generated_ID ' " + Token[2] +
+  // "
   // '] = [CLASS ' " + Token[4] + " '] (", o_tokens); // DEBUG
 
   // NOTE: Dont add '(' now,
@@ -174,10 +190,11 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
   if (IsInsideWindow) {
     // Window -> Function.
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("		[NEW-LOCAL-OBJ] [Generated_ID ' " + Token[2] +
                         " '] = [CLASS ' " + Token[4] + " '] (",
                     o_tokens); // DEBUG
+    }
 
     SET_OBJ_C_NAME(Token[2]);
     OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])] = true;
@@ -192,10 +209,11 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
     if (IsInsideFunction) {
       // Class -> Function.
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[NEW-LOCAL-CLASS-OBJ] [Generated_ID ' " +
                           Token[2] + " '] = [CLASS ' " + Token[4] + " '] (",
                       o_tokens); // DEBUG
+      }
 
       SET_OBJ_C_NAME(Token[2]);
       OBJ_IS_SET[std::make_pair(OBJ_ID, Token[2])] = true;
@@ -220,10 +238,11 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
         return; // continue;
       }
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[NEW-GLOBAL-CLASS-OBJ] [Generated_ID ' " + Token[2] +
                           " '] = [CLASS ' " + Token[4] + " '] (",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       CPP_CLASS.append("public: CLASS_" + Global_ID[Token[4]] + " " +
@@ -254,7 +273,7 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
 
       TempTokenCount = 0;
       for (int p = 6; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-        if (Token[p] != "") {
+        if (!Token[p].empty()) {
           TempToken[TempTokenCount] = Token[p];
           TempTokenCount++;
         }
@@ -267,7 +286,7 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
                                               TheWindow, TheFunction, TempToken,
                                               (TempTokenCount - 1), o_tokens);
 
-      if (ScriptSyntaxBuffer == "") {
+      if (ScriptSyntaxBuffer.empty()) {
         // CPP_CLASS_GLOBAL_OBJ.append(" ; \n");
         OBJ_GLOBAL_DECLARATION[Token[4]].append(" ; \n");
       } else {
@@ -279,16 +298,17 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
       return; // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[NEW-GLOBAL-OBJ] [Generated_ID ' " + Token[2] +
                         " '] = [CLASS ' " + Token[4] + " '] (",
                     o_tokens); // DEBUG
+    }
   }
 
   TempTokenCount = 0;
   // for (int p = 5; p <= o_tokens->TOTAL[o_tokens->Line]; p++)
   for (int p = 6; p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-    if (Token[p] != "") {
+    if (!Token[p].empty()) {
       TempToken[TempTokenCount] = Token[p];
       TempTokenCount++;
     }
@@ -301,15 +321,17 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
                                           TheWindow, TheFunction, TempToken,
                                           (TempTokenCount - 1), o_tokens);
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(") \n\n", o_tokens); // DEBUG
+  }
 
   // To fix GCC Error "which is of non-class type"
   // MyClass MyObj();  -->  MyClass MyObj;
 
   bool IS_EMPTY_ARG = true;
-  if (ScriptSyntaxBuffer != "")
+  if (!ScriptSyntaxBuffer.empty()) {
     IS_EMPTY_ARG = false;
+  }
 
   // *** Generate Code ***
   if (IsInsideClass) {
@@ -333,5 +355,5 @@ void parser_ObjNew(string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   // *** *** *** *** *** ***
 
-  return; // continue;
+  // continue;
 }

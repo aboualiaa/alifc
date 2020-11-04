@@ -18,33 +18,39 @@
 
 // ----------------------------------
 
-void parser_IfElse(string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_IfElse(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // وإلا
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال الشرط داخل دالة", o_tokens);
+  }
 
-  if (ALIF_IF_STATUS < 1)
+  if (ALIF_IF_STATUS < 1) {
     ErrorCode("لايمكن إستعمال ' وإلا ' من دون فتح شرط، ربمى تقصد ' إذا ' ",
               o_tokens);
+  }
 
-  if (Token[2] == "إذا")
+  if (Token[2] == "إذا") {
     ErrorCode("شرط غير صحيح، هل تقصد ' أو إذا ' ؟ ", o_tokens);
+  }
 
-  if (Token[2] != "")
+  if (!Token[2].empty()) {
     ErrorCode(
         "أمر غير معروف : ' " + Token[2] +
             " '، على العموم إذا كنت تقصد شرط جديد المرجو إستعمال ' إذا ' ",
         o_tokens);
+  }
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE("	[ELSE " + IntToString(ALIF_IF_STATUS) + "] \n\n",
                   o_tokens); // DEBUG
+  }
 
-  // TODO: show error when double Else
+  // TODO(aboualiaa): show error when double Else
   // if ...
   // else ...
   // else ...
@@ -60,5 +66,5 @@ void parser_IfElse(string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   // *** *** *** *** *** ***
 
-  return; // continue;
+  // continue;
 }

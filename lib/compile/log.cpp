@@ -17,7 +17,7 @@
 #include "general/global.h"
 #include "general/log.h"
 
-void ALIF_ERROR(std::string ERROR_DESCRIPTION) {
+void ALIF_ERROR(const std::string &ERROR_DESCRIPTION) {
   std::cout << std::endl << ERROR_DESCRIPTION << std::endl << std::endl;
 
   std::ofstream file;
@@ -31,7 +31,7 @@ void ALIF_ERROR(std::string ERROR_DESCRIPTION) {
   exit(EXIT_FAILURE);
 }
 
-void DEBUG_MESSAGE(std::string MESSAGE, CLASS_TOKEN *o_tokens) {
+void DEBUG_MESSAGE(const std::string &MESSAGE, CLASS_TOKEN *o_tokens) {
   LOG_MESSAGE_FULL.append(MESSAGE);
 
   if (DEBUG_PRINT_ON_SCREEN) {
@@ -39,7 +39,7 @@ void DEBUG_MESSAGE(std::string MESSAGE, CLASS_TOKEN *o_tokens) {
   }
 }
 
-void LogMessage(std::string MESSAGE) {
+void LogMessage(const std::string &MESSAGE) {
   LOG_MESSAGE_FULL.append(MESSAGE);
 
   if (DEBUG_PRINT_ON_SCREEN) {
@@ -55,34 +55,40 @@ void PATH_FULL_LOG_SAVE() {
   file.close();
 }
 
-void ErrorCode(std::string ERROR_DESCRIPTION, CLASS_TOKEN *o_tokens) {
+void ErrorCode(const std::string &ERROR_DESCRIPTION, CLASS_TOKEN *o_tokens) {
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE("\n ----------- DEBUGING ERROR ------------- \n", o_tokens);
+  }
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE("Class : " + TheClass + " \n", o_tokens);
-  if (DEBUG)
+  }
+  if (DEBUG) {
     DEBUG_MESSAGE("Win : " + TheWindow + " \n", o_tokens);
-  if (DEBUG)
+  }
+  if (DEBUG) {
     DEBUG_MESSAGE("Fun : " + TheFunction + " \n\n", o_tokens);
+  }
 
-  string ERR_MSG;
+  std::string ERR_MSG;
 
   if (SHOW_FILE_AND_LINE) {
     ERR_MSG = " الملف		: " + o_tokens->PATH_FULL_SOURCE + "\n";
 
-    if (o_tokens->Line > 0)
+    if (o_tokens->Line > 0) {
       ERR_MSG.append(" السطر		: " +
                      (boost::lexical_cast<std::string>(o_tokens->Line)) + "\n");
+    }
   }
 
   ERR_MSG.append("\n الخطأ		: " + ERROR_DESCRIPTION);
 
-  if (ERROR_PRINT_ON_SCREEN)
+  if (ERROR_PRINT_ON_SCREEN) {
     std::cout << "---| DEBUG_MESSAGE |--------------" << std::endl
               << ERR_MSG << std::endl
               << "------------------------" << std::endl;
+  }
 
   LOG_MESSAGE_FULL.append(ERR_MSG);
 

@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_GLOBAL_H
-#define ALIFC_GLOBAL_H
+#ifndef GENERAL_GLOBAL_H
+#define GENERAL_GLOBAL_H
 
 #include <map>
 #include <string>
@@ -152,4 +152,4 @@ void CompileAddExtra_Link(const std::string &cmd);
 void CompileAddExtra_Compile(const std::string &cmd);
 void PythonSetEnvirenment();
 
-#endif // ALIFC_GLOBAL_H
+#endif // GENERAL_GLOBAL_H

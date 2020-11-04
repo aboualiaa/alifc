@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_BOOL_H
-#define ALIFC_BOOL_H
+#ifndef PARSER_BOOL_H
+#define PARSER_BOOL_H
 
 #define UNICODE
 #define _UNICODE
@@ -20,4 +20,4 @@
 
 void parser_bool(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
-#endif // ALIFC_BOOL_H
+#endif // PARSER_BOOL_H

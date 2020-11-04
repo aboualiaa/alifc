@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_GENERATOR_H
-#define ALIFC_GENERATOR_H
+#ifndef GENERATOR_GENERATOR_H
+#define GENERATOR_GENERATOR_H
 
 #include <map>
 #include <string>
@@ -17,4 +17,4 @@ extern std::string CPP_GLOBAL_FUN;
 extern std::string CPP_CLASS;
 extern std::map<std::pair<std::string, std::string>, std::string> CPP_WINDOW;
 
-#endif // ALIFC_GENERATOR_H
+#endif // GENERATOR_GENERATOR_H

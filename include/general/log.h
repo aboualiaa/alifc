@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_LOG_H
-#define ALIFC_LOG_H
+#ifndef GENERAL_LOG_H
+#define GENERAL_LOG_H
 
 #include <fstream>
 #include <iostream>
@@ -27,4 +27,4 @@ void LogMessage(const std::string &MESSAGE);
 void PATH_FULL_LOG_SAVE();
 void ErrorCode(const std::string &ERROR_DESCRIPTION, CLASS_TOKEN *o_tokens);
 
-#endif // ALIFC_LOG_H
+#endif // GENERAL_LOG_H

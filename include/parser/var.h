@@ -2,9 +2,9 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_VAR_H
-#define ALIFC_VAR_H
+#ifndef PARSER_VAR_H
+#define PARSER_VAR_H
 
 void parser_Var(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
-#endif // ALIFC_VAR_H
+#endif // PARSER_VAR_H

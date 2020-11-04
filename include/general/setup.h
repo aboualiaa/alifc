@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_SETUP_H
-#define ALIFC_SETUP_H
+#ifndef GENERAL_SETUP_H
+#define GENERAL_SETUP_H
 
 // ==================================
 // (C)2019 DRAGA Hassan.
@@ -51,14 +51,10 @@ std::string GET_WORKING_PATH();
 
 std::string GET_PATH_WITHOUT_FILE(std::string PATH);
 
-bool IS_PATH(std::string PATH_OR_FILE);
-
+auto IS_PATH(std::string PATH_OR_FILE) -> bool;
 std::string GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH);
+auto Temp_File_Rand() -> int;
+auto CHECK_FILE_EXISTE(std::string PATH) -> bool;
+auto CHECK_SETUP() -> bool;
 
-int Temp_File_Rand();
-
-bool CHECK_FILE_EXISTE(std::string PATH);
-
-bool CHECK_SETUP();
-
-#endif // ALIFC_SETUP_H
+#endif // GENERAL_SETUP_H

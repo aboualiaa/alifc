@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_CONTROL_H
-#define ALIFC_CONTROL_H
+#ifndef PARSER_CONTROL_H
+#define PARSER_CONTROL_H
 
 #define UNICODE
 #define _UNICODE
@@ -18,4 +18,4 @@
 
 void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
-#endif // ALIFC_CONTROL_H
+#endif // PARSER_CONTROL_H

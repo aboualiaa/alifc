@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_CLASS_TOKEN_H
-#define ALIFC_CLASS_TOKEN_H
+#ifndef GENERAL_CLASS_TOKEN_H
+#define GENERAL_CLASS_TOKEN_H
 
 #include <map>
 #include <string>
@@ -58,4 +58,4 @@ public:
   }
 };
 
-#endif // ALIFC_CLASS_TOKEN_H
+#endif // GENERAL_CLASS_TOKEN_H

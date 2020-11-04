@@ -8,8 +8,8 @@
 // Alif Programming Language
 // ==================================
 
-#ifndef HEADERS_H
-#define HEADERS_H
+#ifndef GENERAL_HEADERS_H
+#define GENERAL_HEADERS_H
 
 #include "class_token.h"
 

@@ -2,9 +2,9 @@
 // Created by Ahmed Abou Aliaa on 04.11.20.
 //
 
-#ifndef ALIFC_IF_H
-#define ALIFC_IF_H
+#ifndef PARSER_IF_H
+#define PARSER_IF_H
 
 void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
-#endif // ALIFC_IF_H
+#endif // PARSER_IF_H

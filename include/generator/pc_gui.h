@@ -13,11 +13,11 @@ auto CG_WIN_SHOW(const std::string &WIN) -> std::string;
 auto CG_WIN_CENTER(const std::string &WIN) -> std::string;
 auto CG_WIN_HIDE(const std::string &WIN) -> std::string;
 auto CG_WIN_DESTROY(const std::string &WIN) -> std::string;
-auto CG_WIN_MEMBER(const std::string &WIN,
-                          const std::string &MEMBER_CODE) -> std::string;
+auto CG_WIN_MEMBER(const std::string &WIN, const std::string &MEMBER_CODE)
+    -> std::string;
 auto AlifJavaScript_Bridge_SendRequest() -> std::string;
-auto
-AlifJavaScript_Bridge_OnNewWindowSendRequest(const std::string &WVObjName) -> std::string;
+auto AlifJavaScript_Bridge_OnNewWindowSendRequest(const std::string &WVObjName)
+    -> std::string;
 auto Generate_AlifJavaScript() -> std::string;
 void CG_INITIALIZATION();
 auto CG_WINX_CODE() -> std::string;

@@ -8,7 +8,7 @@
 // Alif Programming Language
 // ==================================
 
-#include "../parser/alif_parser.cpp"
+#include "parser/parser.h"
 
 #include <core/core.h>
 #include <fstream>

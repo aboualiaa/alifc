@@ -13,12 +13,12 @@
 #include <sstream>
 #include <vector>
 
-#include "../lib/utf8.h"
-#include "../lib/utf8/core.h"
 #include "core/core.h"
 #include "general/global.h"
 #include "general/headers.h"
 #include "general/log.h"
+#include "utf8/core.h"
+#include "utf8/utf8.h"
 
 int Generated_ID = 10000;
 int useconst = 0;

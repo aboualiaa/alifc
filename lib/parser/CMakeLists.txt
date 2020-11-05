@@ -1,25 +1,25 @@
 add_library(parser
-            alif_parser.cpp
-            alif_parser_bool.cpp
-            alif_parser_class.cpp
-            alif_parser_control.cpp
-            alif_parser_end.cpp
-            alif_parser_function.cpp
-            alif_parser_function_call.cpp
-            alif_parser_function_class.cpp
-            alif_parser_if.cpp
-            alif_parser_if_else.cpp
-            alif_parser_int.cpp
-            alif_parser_loop.cpp
-            alif_parser_next_break.cpp
-            alif_parser_obj.cpp
-            alif_parser_obj_new.cpp
-            alif_parser_operator.cpp
-            alif_parser_return.cpp
-            alif_parser_string.cpp
-            alif_parser_var.cpp
-            alif_parser_var_g.cpp
-            alif_parser_var_g_class.cpp
-            alif_parser_window.cpp
+            parser.cpp
+            bool.cpp
+            class.cpp
+            control.cpp
+            end.cpp
+            function.cpp
+            function_call.cpp
+            function_class.cpp
+            if.cpp
+            if_else.cpp
+            int.cpp
+            loop.cpp
+            next_break.cpp
+            obj.cpp
+            obj_new.cpp
+            operator.cpp
+            return.cpp
+            string.cpp
+            var.cpp
+            var_g.cpp
+            var_g_class.cpp
+            window.cpp
             )
 target_include_directories(parser PRIVATE ${Boost_INCLUDE_DIRS})

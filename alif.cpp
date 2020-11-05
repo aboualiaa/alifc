@@ -21,9 +21,9 @@
 #include "general/headers.h"
 #include "general/setup.h"
 #include "generator/generator.h"
-#include "lexer/alif_lexer.h"
-#include "lib/utf8.h"
+#include "lexer/lexer.h"
 #include "parser/parser.h"
+#include "utf8/utf8.h"
 
 // --------------------------------------------------------
 // Help

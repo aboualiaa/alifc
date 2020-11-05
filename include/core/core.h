@@ -7,21 +7,22 @@
 
 #include <sstream>
 
-#include "../lib/utf8.h"
-#include "../lib/utf8/core.h"
 #include "general/headers.h"
 #include "general/log.h"
+#include "utf8/core.h"
+#include "utf8/utf8.h"
 
 auto ID_GENERATOR() -> int;
 
-auto replace(std::string &str, const std::string &from, const std::string &to) -> bool;
+auto replace(std::string &str, const std::string &from, const std::string &to)
+    -> bool;
 auto replace_end(std::string &str, const std::string &from,
                  const std::string &to) -> bool;
-auto substr_utf8(const std::string &originalString, int Position,
-                        int MaxLen) -> std::string;
+auto substr_utf8(const std::string &originalString, int Position, int MaxLen)
+    -> std::string;
 auto IntToString(int INT_VAL) -> std::string;
 auto CONVERT_STRING_ARRAY_TO_STRING(std::string STRING_ARRAY_VAL[1024],
-                                           int LONG) -> std::string;
+                                    int LONG) -> std::string;
 auto CONVERT_WCHAT_T_TO_STRING(wchar_t *WCHART_T_VAL) -> std::string;
 auto CONVERT_CHAR_TO_STRING(char *CHART_VAL) -> std::string;
 
@@ -43,8 +44,8 @@ auto BinaryToC_str2upr(char *s) -> char *;
 void BinaryToC_process(const char *ifname, const char *ofname);
 void BinaryToC(const std::string &FileIn, const std::string &FileOut);
 static inline auto is_base64(unsigned char c) -> bool;
-auto base64_encode(unsigned char const *bytes_to_encode,
-                          unsigned int in_len) -> std::string;
+auto base64_encode(unsigned char const *bytes_to_encode, unsigned int in_len)
+    -> std::string;
 auto BinaryToBase64(const std::string &FileIn) -> std::string;
 void SET_OBJ_C_NAME(const std::string &VAR);
 void SET_GLOBAL_OBJ_C_NAME(const std::string &VAR);
@@ -55,12 +56,14 @@ auto IsInArray_v(const std::string &value,
                  const std::vector<std::string> &array) -> bool;
 auto IsDataType(const std::string &value) -> bool;
 auto CharCount_utf8(std::string LINE8, CLASS_TOKEN *o_tokens) -> int;
-auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION,
-                              CLASS_TOKEN *o_tokens) -> std::string;
-auto IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens) -> bool;
-auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER,
-                                CLASS_TOKEN *o_tokens) -> std::string;
-auto IsValidDigit(const std::string &DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens) -> bool;
+auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens)
+    -> std::string;
+auto IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens)
+    -> bool;
+auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, CLASS_TOKEN *o_tokens)
+    -> std::string;
+auto IsValidDigit(const std::string &DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens)
+    -> bool;
 auto CAN_ADD_OPERATION_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_VAR_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_FUN_HERE(const std::string &TOKEN_LAST) -> bool;
@@ -68,8 +71,8 @@ auto CAN_ADD_PARENTHESIS_OPEN_HERE(const std::string &TOKEN_LAST) -> bool;
 auto IsValidVar(const std::string &Var, CLASS_TOKEN *o_tokens) -> bool;
 auto CAN_ADD_PARENTHESIS_CLOSE_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_DIGIT_HERE(const std::string &TOKEN_LAST) -> bool;
-auto GET_TXT_FROM_STRING(const std::string &STRING,
-                                CLASS_TOKEN *o_tokens) -> std::string;
+auto GET_TXT_FROM_STRING(const std::string &STRING, CLASS_TOKEN *o_tokens)
+    -> std::string;
 void CheckForSameGlobalID(const std::string &Name, CLASS_TOKEN *o_tokens);
 auto IsValidName(const std::string &Name, CLASS_TOKEN *o_tokens) -> bool;
 void ADD_FUN(bool GLOBAL, const std::string &WIN_NAME,
@@ -84,7 +87,7 @@ void SetNewVarClass(bool IsGlobal, bool IsPrivate, const std::string &ClassName,
                     const std::string &VarDataType, bool IsConstant,
                     bool IsArray, int Line, CLASS_TOKEN *o_tokens);
 auto GetSyntaxDataType(std::string Token[1024], int Position,
-                              CLASS_TOKEN *o_tokens) -> std::string;
+                       CLASS_TOKEN *o_tokens) -> std::string;
 void ADD_FUN_CLASS(bool PRIVATE, const std::string &CLASS_NAME,
                    const std::string &FUN_NAME, const std::string &TYPE,
                    int Line, CLASS_TOKEN *o_tokens);

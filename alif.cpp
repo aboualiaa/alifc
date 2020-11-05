@@ -13,7 +13,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/lexical_cast.hpp>
-#include <generator/pc_gui.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "compile/macos.h"
 #include "core/core.h"
@@ -21,9 +21,23 @@
 #include "general/headers.h"
 #include "general/setup.h"
 #include "generator/generator.h"
+#include "generator/pc_gui.h"
 #include "lexer/lexer.h"
 #include "parser/parser.h"
+#include "support/CommandLine.h"
 #include "utf8/utf8.h"
+
+namespace cli = alif::support::cli;
+struct ALIFARGS : cli::CMDARGS {
+public:
+  explicit ALIFARGS(std::vector<char const *> args) : cli::CMDARGS(std::move(args)){};
+  std::string input{};
+  std::string output{};
+  bool printlog{false};
+};
+
+static auto good_cmdline_args(ALIFARGS *cmdargs, cli::ENV *env) noexcept
+    -> bool;
 
 // --------------------------------------------------------
 // Help
@@ -111,23 +125,19 @@ void ALIF_HELP() {
 #endif
 }
 
-// --------------------------------------------------------
-// Main
-// --------------------------------------------------------
+auto main(int argc, char **argv) -> int {
 
-#ifdef _WIN32
-// int wmain(int argc, wchar_t *argv[], wchar_t *envp[])
-int main(int argc, char **argv) // Standard
-                                // int _tmain( int argc, _TCHAR* argv[] )
-// int WinMain(int argc, _TCHAR* argv[])
-// int wmain(int argc, char **argv)
-// int winMain(int argc, wchar_t **argv)
-#elif __APPLE__
-auto main(int argc, char **argv) -> int // Standard
-#else
-int main(int argc, char **argv) // Standard
-#endif
-{
+  std::vector<char const *> args(argv, argv + argc);
+  static auto err_logger = spdlog::stderr_color_mt("mri-convert");
+  spdlog::set_level(spdlog::level::warn);
+  auto env = cli::ENV();
+  auto cmdargs = ALIFARGS(args);
+  if (!good_cmdline_args(&cmdargs, &env)) {
+    spdlog::get("mri-convert")
+        ->critical("Error while parsing command line arguments.");
+    return 1;
+  }
+
   // setlocale(LC_ALL, "en_US.UTF-8");
   setlocale(LC_ALL, "ar_SA.UTF-8");
 
@@ -450,4 +460,129 @@ int main(int argc, char **argv) // Standard
 
   // Hamdo li ALLAH =)
   exit(EXIT_SUCCESS);
+}
+
+/// \brief initialize options description and save values in cmdargs
+/// \param desc holds description of supported args
+/// \param cmdargs holds the actual args
+void initArgDesc(boost::program_options::options_description *desc,
+                 ALIFARGS *cmdargs, cli::ENV *env) {
+
+  namespace po = boost::program_options;
+
+  desc->add_options()
+
+      ("help,h",
+
+       po::bool_switch() //
+           ->notifier([desc, env](auto v) {
+             if (v) {
+               print_help(*desc, env);
+               exit(0);
+             }
+           }),
+
+       "print out information on how to use this program and exit")
+
+      //
+
+      ("version,v",
+
+       po::bool_switch() //
+           ->notifier([](auto v) {
+             if (v) {
+               cli::print_version();
+               exit(0);
+             }
+           }),
+
+       "print out version and exit")
+
+      //
+
+      ("all-info",
+
+       po::bool_switch() //
+           ->notifier([env, desc](auto v) {
+             if (v) {
+               print_help(*desc, env);
+               cli::print_version();
+               exit(0);
+             }
+           }),
+
+       "print out all info and exit")
+
+      //
+
+      ("usage,u",
+
+       po::bool_switch() //
+           ->notifier([env, desc](auto v) {
+             if (v) {
+               print_usage(*desc, env);
+               exit(0);
+             }
+           }),
+
+       "print usage and exit")
+
+      //
+
+      ("printlog",
+
+       po::bool_switch(&cmdargs->printlog) //
+           ->notifier([](auto v) {
+             if (v) {
+               spdlog::set_level(
+                   spdlog::level::debug); // Set global log level to debug
+             }
+           }),
+
+       "turn on logging");
+}
+
+/// \brief does the housekeeping, use this to parse command lines,
+///  do sanity and inconsistency checks, read files etc. After that
+///  just start directly with your porgram logic
+/// \param cmdargs struct to hold values of parsed args
+/// \param env holds the vcid string
+/// \return true if all logic is ok, false otherwise
+static auto good_cmdline_args(ALIFARGS *cmdargs, cli::ENV *env) noexcept
+    -> bool {
+
+  namespace po = boost::program_options;
+
+  try {
+    po::options_description desc("\nUsage: alifc [options] <input> <output>\n"
+                                 "\nAvailable Options");
+    po::positional_options_description pos;
+    pos.add("input", 1).add("output", 1);
+    po::variables_map vm;
+
+    initArgDesc(&desc, cmdargs, env);
+    auto *av = cmdargs->get_raw_array();
+    auto ac = static_cast<int>(cmdargs->get_raw_size());
+    if (ac == 1) {
+      print_usage(desc, env);
+      return false;
+    }
+    auto parsed_opts = po::command_line_parser(ac, av)
+                           .options(desc)
+                           .positional(pos)
+                           .style(cli::po_style)
+                           .run();
+
+    po::store(parsed_opts, vm, false);
+
+    po::notify(vm);
+
+    cmdargs->check_conflicts(vm);
+    cmdargs->check_dependencies(vm);
+  } catch (std::exception const &e) {
+    spdlog::get("mri-convert")->critical(e.what());
+    return false;
+  }
+
+  return true;
 }

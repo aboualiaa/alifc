@@ -80,21 +80,13 @@ auto GET_PATH_WITHOUT_FILE(const std::string &PATH) -> std::string {
 #endif
 }
 
-auto IS_PATH(const std::string &PATH_OR_FILE) -> bool {
+auto IS_PATH(const std::string &str) -> bool {
   // 'myfile.x'               --> false.
   // '/abc/test/myfile.x'     --> true.
 
-#ifdef _WIN32
-  int POSITION = PATH_OR_FILE.find_last_of("\\/");
-#else
-  int POSITION = PATH_OR_FILE.find_last_of("//");
-#endif
+  int pos = str.find_last_of(path_separator);
 
-  if (POSITION < 1) {
-    return false;
-  } else {
-    return true;
-  }
+  return pos >= 0;
 }
 
 auto GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH) -> std::string {
@@ -140,24 +132,8 @@ bool CHECK_FOLDER_EXISTE(string PATH)
 }
 */
 
-auto CHECK_FILE_EXISTE(const std::string PATH) -> bool {
-  /*
-  string::iterator end_it = utf8::find_invalid(PATH.begin(), PATH.end());
-
-if (end_it != PATH.end()) {
-   cout << "Invalid UTF-8 encoding detected at line " << "\n";
-}
-
-  vector<unsigned short> utf16line;
-utf8::utf8to16(PATH.begin(), end_it, back_inserter(utf16line));
-
-  //std::string s = std::to_string(utf16line);
-
-  std::string str(utf16line.begin(), utf16line.end());
-  */
-
-  std::ifstream infile(PATH.c_str());
-  return infile.good();
+auto file_exists(const std::string str) -> bool {
+  return std::filesystem::exists(str);
 }
 
 auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
@@ -194,12 +170,12 @@ auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
   // Get Working Path
   // -------------------
 
-  if (PATH_WORKING.empty()) {
-    PATH_WORKING = GET_WORKING_PATH_WIN32();
+  if (working_directory.empty()) {
+    working_directory = GET_WORKING_PATH_WIN32();
 
-    if (PATH_WORKING == PATH_ABSOLUTE) {
+    if (working_directory == PATH_ABSOLUTE) {
       // Tray a seconde solution !
-      PATH_WORKING = GET_PATH_WITHOUT_FILE(PATH_FULL_ALIF);
+      working_directory = GET_PATH_WITHOUT_FILE(PATH_FULL_ALIF);
     }
   }
 
@@ -263,12 +239,12 @@ auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
   // Get Working Path
   // -------------------
 
-  if (PATH_WORKING.empty()) {
-    PATH_WORKING = GET_WORKING_PATH();
+  if (working_directory.empty()) {
+    working_directory = GET_WORKING_PATH();
 
-    if (PATH_WORKING == PATH_ABSOLUTE) {
+    if (working_directory == PATH_ABSOLUTE) {
       // Tray a seconde solution !
-      PATH_WORKING = GET_PATH_WITHOUT_FILE(PATH_FULL_ALIF);
+      working_directory = GET_PATH_WITHOUT_FILE(PATH_FULL_ALIF);
     }
   }
 
@@ -333,12 +309,12 @@ auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
   // Get Working Path
   // -------------------
 
-  if (PATH_WORKING.empty()) {
-    PATH_WORKING = GET_WORKING_PATH();
+  if (working_directory.empty()) {
+    working_directory = GET_WORKING_PATH();
 
-    if (PATH_WORKING == PATH_ABSOLUTE) {
+    if (working_directory == PATH_ABSOLUTE) {
       // Tray a seconde solution !
-      PATH_WORKING = GET_PATH_WITHOUT_FILE(PATH_FULL_ALIF);
+      working_directory = GET_PATH_WITHOUT_FILE(PATH_FULL_ALIF);
     }
   }
 
@@ -372,7 +348,7 @@ auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
     ALIF_ERROR("ERROR: The binary file and the log, is the same.");
   }
 
-  if (PATH_WORKING.empty()) {
+  if (working_directory.empty()) {
     ALIF_ERROR("ERROR: Can't get Working Path. \n");
     return false;
   }
@@ -389,19 +365,17 @@ auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
 
   /*
   cout << "PATH_ABSOLUTE		: " << PATH_ABSOLUTE << endl;
-  cout << "PATH_WORKING		: " << PATH_WORKING << endl << endl;
-  cout << "PATH_FULL_ALIF		: " << PATH_FULL_ALIF << endl;
-  cout << "PATH_FULL_BIN		: " << PATH_FULL_BIN << endl;
-  cout << "PATH_FULL_LOG		: " << PATH_FULL_LOG << endl << endl;
-  cout << "PATH_FULL_GCC		: " << PATH_FULL_GCC << endl;
-  cout << "PATH_FULL_CPP		: " << PATH_FULL_CPP << endl;
-  cout << "PATH_FULL_OBJ		: " << PATH_FULL_OBJ << endl;
-  cout << "PATH_FULL_RC		: " << PATH_FULL_RC << endl;
-  cout << "PATH_FULL_ICO		: " << PATH_FULL_ICO << endl << endl;
-  #if  __APPLE__
-          cout << "PATH_FULL_BIN_TMP	: " << PATH_FULL_BIN_TMP << endl;
-          cout << "PATH_FULL_PLIST		: " << PATH_FULL_PLIST << endl;
-  #endif
+  cout << "working_directory		: " << working_directory << endl <<
+  endl; cout << "PATH_FULL_ALIF		: " << PATH_FULL_ALIF << endl; cout <<
+  "PATH_FULL_BIN		: " << PATH_FULL_BIN << endl; cout <<
+  "PATH_FULL_LOG		: " << PATH_FULL_LOG << endl << endl; cout <<
+  "PATH_FULL_GCC		: " << PATH_FULL_GCC << endl; cout <<
+  "PATH_FULL_CPP		: " << PATH_FULL_CPP << endl; cout <<
+  "PATH_FULL_OBJ		: " << PATH_FULL_OBJ << endl; cout <<
+  "PATH_FULL_RC		: " << PATH_FULL_RC << endl; cout << "PATH_FULL_ICO
+  : " << PATH_FULL_ICO << endl << endl; #if  __APPLE__ cout <<
+  "PATH_FULL_BIN_TMP	: " << PATH_FULL_BIN_TMP << endl; cout <<
+  "PATH_FULL_PLIST		: " << PATH_FULL_PLIST << endl; #endif
   exit(EXIT_FAILURE);
   */
 

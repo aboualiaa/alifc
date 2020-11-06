@@ -102,8 +102,8 @@ auto main(int argc, char **argv) -> int {
     std::ofstream dst(PATH_FULL_CPP, std::ios::binary);
     dst << src.rdbuf();
 
-    // PATH_FULL_CPP = PATH_WORKING + PATH_FULL_ALIF; // This is more quickly
-    // than copy files ! boost::filesystem::copy_file(PATH_FULL_ALIF,
+    // PATH_FULL_CPP = working_directory + PATH_FULL_ALIF; // This is more
+    // quickly than copy files ! boost::filesystem::copy_file(PATH_FULL_ALIF,
     // PATH_FULL_CPP, boost::filesystem::copy_option::overwrite_if_exists);
   } else {
     // This is Alif Source Code
@@ -203,7 +203,7 @@ auto main(int argc, char **argv) -> int {
 #endif
 
 #ifdef __APPLE__
-  if (CHECK_FILE_EXISTE(PATH_FULL_BIN + "/Contents/MacOS/alif"))
+  if (file_exists(PATH_FULL_BIN + "/Contents/MacOS/alif"))
 #else
   if (CHECK_FILE_EXISTE(PATH_FULL_BIN))
 #endif
@@ -415,7 +415,7 @@ void initArgDesc(boost::program_options::options_description *desc,
       ("workpath",
        po::value(&cmdargs->workpath) //
            ->notifier([](auto v) {
-             PATH_WORKING = GET_PATH_WITHOUT_LAST_SEPARATION(v);
+             working_directory = GET_PATH_WITHOUT_LAST_SEPARATION(v);
            }),
        "workpath")
       //

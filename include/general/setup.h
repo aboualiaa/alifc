@@ -51,10 +51,10 @@ std::string GET_WORKING_PATH();
 
 std::string GET_PATH_WITHOUT_FILE(std::string PATH);
 
-auto IS_PATH(const std::string &PATH_OR_FILE) -> bool;
+auto IS_PATH(const std::string &str) -> bool;
 std::string GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH);
 auto Temp_File_Rand() -> int;
-auto CHECK_FILE_EXISTE(std::string PATH) -> bool;
+auto file_exists(const std::string str) -> bool;
 auto CHECK_SETUP() -> bool;
 
 #endif // GENERAL_SETUP_H

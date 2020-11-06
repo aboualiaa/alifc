@@ -17,7 +17,7 @@ namespace lex = alif::lexer;
 
 void parser_NewWindowWeb(std::string Token[2048], lex::Token *o_tokens);
 
-void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
-                     bool FIRST_FILE, bool Tokens_Are_Predefined);
+void AlifLexerParser(std::string fileName, const std::string &fileType,
+                     bool isFirstFile, bool tokensArePredefined);
 
 #endif

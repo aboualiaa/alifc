@@ -131,17 +131,13 @@ extern std::string PATH_FULL_PLIST;
 extern std::string PATH_FULL_BIN_TMP;
 #endif
 extern std::string PATH_ABSOLUTE;
-extern std::string PATH_WORKING;
+extern std::string working_directory;
 extern std::string PATH_TEMP;
 extern std::string RANDOM;
 extern std::string PATH_FULL_LIB_SETTING;
 extern std::map<std::string, std::string> LIB_FILE_NAME;
 extern std::string PATH_FULL_WINDOW_WEB;
-#ifdef _WIN32
-std::string SEPARATION = "\\";
-#else
-extern std::string SEPARATION;
-#endif
+extern std::string path_separator;
 extern std::string Compile_ExtraCompile;
 extern std::string Compile_ExtraLink;
 extern std::string PythonInclude_path;

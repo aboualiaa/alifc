@@ -8,13 +8,14 @@
 // Alif Programming Language
 // ==================================
 
-#include "parser/parser.h"
-
-#include <core/core.h>
+#include <algorithm>
 #include <fstream>
-#include <general/global.h>
-#include <general/log.h>
-#include <general/setup.h>
+
+#include "core/core.h"
+#include "general/global.h"
+#include "general/log.h"
+#include "general/setup.h"
+#include "parser/parser.h"
 
 namespace lex = alif::lexer;
 
@@ -167,177 +168,79 @@ void ADD_TOKEN(const std::string &TOKEN_CHAR, bool NEW_TOKEN,
   }
 }
 
-void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
-                     bool FIRST_FILE, bool Tokens_Are_Predefined) {
+void AlifLexerParser(std::string fileName, const std::string &fileType,
+                     bool isFirstFile, bool tokensArePredefined) {
 
-  lex::Token OBJ_CLASS_TOKEN; // Create Obj of Tokens Class
+  lex::Token token;
 
-  // ------------------------------------------------------
-  // ALIF FILE EXTENTION
-  // ------------------------------------------------------
+  std::string lower_file_type{fileType};
+  std::transform(lower_file_type.begin(), lower_file_type.end(),
+                 lower_file_type.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
+
+  std::string lower_file_name{fileName};
+  std::transform(lower_file_name.begin(), lower_file_name.end(),
+                 lower_file_name.begin(),
+                 [](unsigned char c) { return std::tolower(c); });
 
   // TODO(aboualiaa): check file_name format
   // check if file existe
   // if(!IsValidStringFormat(Token[4], o_tokens))
   // ErrorCode("خطأ في كتابة إسم الملف: "+ Token[4], o_tokens);
 
-  int POS = FILE_NAME.find_last_of('.');
-  std::string EXTENTION;
+  int pos = lower_file_name.find_last_of('.');
+  std::string file_extension;
 
   // Get extention
-  if (POS > 0) {
-    EXTENTION = FILE_NAME.substr(POS + 1);
+  if (pos > 0) {
+    file_extension = lower_file_name.substr(pos + 1);
+    if (file_extension != lower_file_type) {
+      // TODO(aboualiaa): or if it is not one of alif, alifui, alifuiw, aliflib
+      ErrorCode("علة: نوع ملف غير معروف : ' " + fileType + " ' ", &token);
+    }
   } else {
-    EXTENTION = "";
+    lower_file_name.append(".").append(lower_file_type);
   }
 
-  // check extention
-  if (EXTENTION.empty()) // #include "myfile" OR #include "/abc/folder/myfile"
-  {
-    if (FILE_TYPE == "ALIF") {
-      if (IS_PATH(FILE_NAME)) {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".alif";
-      } else {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE =
-            PATH_WORKING + SEPARATION + FILE_NAME + ".alif";
-      }
-    } else if (FILE_TYPE == "ALIFUI") {
-      if (IS_PATH(FILE_NAME)) {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".alifui";
-      } else {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE =
-            PATH_WORKING + SEPARATION + FILE_NAME + ".alifui";
-      }
-    } else if (FILE_TYPE == "ALIFUIW") {
-
-      if (IS_PATH(FILE_NAME)) {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".alifuiw";
-        PATH_FULL_WINDOW_WEB = FILE_NAME + ".alifuiw";
-      } else {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE =
-            PATH_WORKING + SEPARATION + FILE_NAME + ".alifuiw";
-        PATH_FULL_WINDOW_WEB =
-            PATH_WORKING + SEPARATION + FILE_NAME + ".alifuiw";
-      }
-    } else if (FILE_TYPE == "ALIFLIB") {
-      if (!LIB_FILE_NAME[FILE_NAME].empty()) {
-        FILE_NAME = LIB_FILE_NAME[FILE_NAME];
-      }
-
-      // #include "MyLib" OR #include "/abc/folder/MyLib"
-      // SO, need to Include Library file from Alif Lib folder.
-
-#ifdef _WIN32
-      if (IS_PATH(FILE_NAME))
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".aliflib";
-      else
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE =
-            PATH_ABSOLUTE + "\\aliflib\\" + FILE_NAME + ".aliflib";
-#elif __APPLE__
-      if (IS_PATH(FILE_NAME)) {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".aliflib";
-      } else {
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE =
-            "/Library/Application Support/Aliflang/Alif_Compiler/aliflib/" +
-            FILE_NAME + ".aliflib";
-      }
-#else
-      if (IS_PATH(FILE_NAME))
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME + ".aliflib";
-      else
-        OBJ_CLASS_TOKEN.PATH_FULL_SOURCE =
-            "/usr/local/lib/aliflib/" + FILE_NAME + ".aliflib";
-#endif
-    } else {
-      ErrorCode("علة: نوع ملف غير معروف : ' " + FILE_TYPE + " ' ",
-                &OBJ_CLASS_TOKEN);
+  if (IS_PATH(lower_file_name)) {
+    token.PATH_FULL_SOURCE = lower_file_name;
+    if (lower_file_type == "alifuiw") {
+      PATH_FULL_WINDOW_WEB =
+          working_directory + path_separator + lower_file_name;
+      // We don't need to do anything with Alif WindowWeb
+      // just back to privious parser to continue
+      // now, we have the full path of Alif WindowWeb file
+      // PATH_FULL_WINDOW_WEB
+      return;
     }
-  } else if (EXTENTION == "alif" ||
-             EXTENTION ==
-                 "ALIF") // #include "myfile.alif" OR "/abc/folder/myfile.alif"
-                         // OR [alif myfile.alif ...]
-  {
-    if (FILE_TYPE != "ALIF") {
-      ErrorCode("يجب إستعمال #اضف لترجمة هدا الملف : ' " + FILE_NAME + " ' ",
-                &OBJ_CLASS_TOKEN);
+  } else {
+    token.PATH_FULL_SOURCE =
+        working_directory + path_separator + lower_file_name;
+    if (lower_file_type == "alifuiw") {
+      PATH_FULL_WINDOW_WEB =
+          working_directory + path_separator + lower_file_name;
+      return;
     }
+  }
 
-    if (IS_PATH(FILE_NAME)) {
-      OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME;
-    } else {
-      OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = PATH_WORKING + SEPARATION + FILE_NAME;
-    }
-  } else if (EXTENTION == "alifui" || EXTENTION == "ALIFUI") {
-    if (FILE_TYPE != "ALIFUI") {
-      ErrorCode("جب إستعمال #واجهة لترجمة هدا الملف : ' " + FILE_NAME + " ' ",
-                &OBJ_CLASS_TOKEN);
-    }
-
-    if (IS_PATH(FILE_NAME)) {
-      OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME;
-    } else {
-      OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = PATH_WORKING + SEPARATION + FILE_NAME;
-    }
-  } else if (EXTENTION == "alifuiw" || EXTENTION == "ALIFUIW") {
-
-    if (FILE_TYPE != "ALIFUIW") {
-      ErrorCode("جب إستعمال #واجهة_ويب لترجمة هدا الملف : ' " + FILE_NAME +
-                    " ' ",
-                &OBJ_CLASS_TOKEN);
-    }
-
-    if (IS_PATH(FILE_NAME)) {
-      OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = FILE_NAME;
-      PATH_FULL_WINDOW_WEB = FILE_NAME;
-    } else {
-      OBJ_CLASS_TOKEN.PATH_FULL_SOURCE = PATH_WORKING + SEPARATION + FILE_NAME;
-      PATH_FULL_WINDOW_WEB = PATH_WORKING + SEPARATION + FILE_NAME;
-    }
-  } else if (EXTENTION == "aliflib" || EXTENTION == "ALIFLIB") {
-    if (FILE_TYPE != "ALIFLIB") {
-      ErrorCode("يجب إستعمال #مكتبة لترجمة هدا الملف : ' " + FILE_NAME + " ' ",
-                &OBJ_CLASS_TOKEN);
-    }
-
-    // #include "MyLib.aliflib" OR #include "/abc/folder/MyLib.aliflib"
-
-    // This is custom user library file.
-
+  if (lower_file_type == "aliflib") {
     ErrorCode("نأسف، حاليا مترجم ألف لا يقبل المكتبات الشخصية، أو مكتبات مسبقة "
               "الترجمة، المرجو إزالة إمتداد الملف من أجل إستعمال المكتبات "
               "المدمجة مع مترجم ألف : ' " +
-                  FILE_NAME + " ' ",
-              &OBJ_CLASS_TOKEN);
-  } else {
-    ErrorCode("امتداد الملف غير مقبول : ' " + FILE_NAME + " ' ",
-              &OBJ_CLASS_TOKEN);
+                  fileName + " ' ",
+              &token);
   }
 
-  // check file existe
-  if (!CHECK_FILE_EXISTE(OBJ_CLASS_TOKEN.PATH_FULL_SOURCE)) {
+  if (!file_exists(token.PATH_FULL_SOURCE)) {
     SHOW_FILE_AND_LINE = false;
-    ErrorCode("ملف غير موجود : ' " + OBJ_CLASS_TOKEN.PATH_FULL_SOURCE + " ' ",
-              &OBJ_CLASS_TOKEN);
-  }
-
-  // ------------------------------------------------------
-  // Lex/Pars for WebUI
-  // ------------------------------------------------------
-
-  if (FILE_TYPE == "ALIFUIW") {
-
-    // We don't need to do anything with Alif WindowWeb
-    // just back to privious parser to continue
-    // now, we have the full path of Alif WindowWeb file
-    // PATH_FULL_WINDOW_WEB
-    return;
+    ErrorCode("ملف غير موجود : ' " + token.PATH_FULL_SOURCE + " ' ", &token);
   }
 
   // ------------------------------------------------------
   // Current File Type
   // ------------------------------------------------------
 
-  OBJ_CLASS_TOKEN.ALIF_SCRIPT_TYPE = FILE_TYPE;
+  token.ALIF_SCRIPT_TYPE = lower_file_type;
 
   // ------------------------------------------------------
   // ALIF VARIABLES INITIALIZATION
@@ -345,75 +248,16 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
 
   // Set Initialisation of general variables..
   // Main window set, flag, inside fun or win..
-  ALIF_VAR_INITIALIZATION_FOR_NEW_SOURCE_FILE(
-      FIRST_FILE); // true = first file to Lex, false = seconde file..
-
-  // ------------------------------------------------------
-  // Log File Start
-  // ------------------------------------------------------
-
-  // if(DEBUG)DEBUG_MESSAGE(" ----------- DEBUGING START ----------- \n",
-  // &OBJ_CLASS_TOKEN);
-
-  // ------------------------------------------------------
-  // Read Source file (UTF8 File name)
-  // ------------------------------------------------------
-
-  // Get it from Save folder...
-
-  // map < int , vector<string> > ZZZ;
-  // map < int , int, string > ZZZ;
-
-  // map<string, string> SSS;
-  // strMap["Monday"]    = "1";
-
-  // std::vector<std::string> VVV;
-  // VVV [1] = "xxx";
-  // VVV [2] = "xxx";
-
-  // std::map<std::pair<int,int>, string> ZZZ;
-  // myMap[std::make_pair(10,20)] = 25;
-
-  // ZZZ[std::make_pair(1,1)] = "aaa";
-  // ZZZ[std::make_pair(1,2)] = "الف";
-
-  // ZZZ[std::make_pair(2,1)] = "ccc";
-  // ZZZ[std::make_pair(2,2)] = "ddd";
-
-  // ZZZ[3] = {"xxx","SSS"};
-  // ZZZ[1][1] = "aaa";
-  // ZZZ[1][2] = "bbb";
-
-  // ZZZ[2][1] = "ccc";
-  // ZZZ[2][2] = "ddd";
-
-  ////cout << "1.1 : " << ZZZ[std::make_pair(1,1)] << endl;
-  ////cout << "2.1 : " << ZZZ[std::make_pair(2,1)] << endl;
-
-  /*
-  if (ZZZ[std::make_pair(1,2)] == "الف")
-  {
-          //cout << "1.2 = ALIF YES" << endl;
-  }
-  else
-  {
-          //cout << "1.2 = ALIF NO." << endl;
-  }
-  */
-
-  // OBJ_CLASS_TOKEN.TOTAL [1] = 10;
-
-  // exit(EXIT_FAILURE);
+  ALIF_VAR_INITIALIZATION_FOR_NEW_SOURCE_FILE(isFirstFile);
 
   // ------------------------------------------------------
   // Read Source file (ANSI File name)
   // ------------------------------------------------------
 
-  std::ifstream FILE_STREAM(OBJ_CLASS_TOKEN.PATH_FULL_SOURCE.c_str());
+  std::ifstream input_file(token.PATH_FULL_SOURCE);
 
-  if (!FILE_STREAM.is_open()) {
-    ALIF_ERROR("ERROR [F001]: Could not open " +
-               OBJ_CLASS_TOKEN.PATH_FULL_SOURCE);
+  if (!input_file.is_open()) {
+    ALIF_ERROR("ERROR [F001]: Could not open " + token.PATH_FULL_SOURCE);
     exit(EXIT_FAILURE);
   }
 
@@ -423,15 +267,15 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
 
   bool INSIDE_STRING_CPP = false;
 
-  while (getline(FILE_STREAM, LINE8)) {
+  while (getline(input_file, LINE8)) {
     // ------------------------------------------------------
     // Ignore blank lines
     // ------------------------------------------------------
 
     if ((LINE8 == "\n") || (LINE8 == "\r") || (LINE8 == "\r\n") ||
         (LINE8.empty()) || (LINE8 == " ")) {
-      OBJ_CLASS_TOKEN.TOTAL[OBJ_CLASS_TOKEN.TOTAL_LINES] = 0;
-      OBJ_CLASS_TOKEN.TOTAL_LINES++;
+      token.TOTAL[token.TOTAL_LINES] = 0;
+      token.TOTAL_LINES++;
       continue;
     }
 
@@ -452,17 +296,17 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
     // Remove extra spaces
     // ------------------------------------------------------
 
-    LINE8 = REMOVE_DOUBLE_SPACE(LINE8, &OBJ_CLASS_TOKEN);
+    LINE8 = REMOVE_DOUBLE_SPACE(LINE8, &token);
 
     if ((LINE8 == "\n") || (LINE8 == "\r") || (LINE8 == "\r\n") ||
         (LINE8.empty()) || (LINE8 == " ")) {
-      OBJ_CLASS_TOKEN.TOTAL[OBJ_CLASS_TOKEN.TOTAL_LINES] = 0;
-      OBJ_CLASS_TOKEN.TOTAL_LINES++;
+      token.TOTAL[token.TOTAL_LINES] = 0;
+      token.TOTAL_LINES++;
       continue;
     }
 
     // Set Real Line
-    OBJ_CLASS_TOKEN.REAL_LINE[OBJ_CLASS_TOKEN.TOTAL_LINES] = LINE8;
+    token.REAL_LINE[token.TOTAL_LINES] = LINE8;
 
     // ------------------------------------------------------
     // Char loop
@@ -473,9 +317,9 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
     std::string Char;
     bool INSIDE_STRING = false;
 
-    OBJ_CLASS_TOKEN.TOTAL[OBJ_CLASS_TOKEN.TOTAL_LINES] = 0;
+    token.TOTAL[token.TOTAL_LINES] = 0;
 
-    LINE_CHAR_TOTAL = CharCount_utf8(LINE8, &OBJ_CLASS_TOKEN);
+    LINE_CHAR_TOTAL = CharCount_utf8(LINE8, &token);
 
     while (CHAR_NUMBER < LINE_CHAR_TOTAL) // '<=' is wrong!
     {
@@ -545,14 +389,14 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
 
         if (!INSIDE_STRING_CPP) {
           if (Char != "@") {
-            ADD_TOKEN(CompletChar, true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+            ADD_TOKEN(CompletChar, true, true, CHAR_NUMBER, &token);
 
-            // if(DEBUG)DEBUG_MESSAGE(" <NEW start:_س_> " , &OBJ_CLASS_TOKEN);
+            // if(DEBUG)DEBUG_MESSAGE(" <NEW start:_س_> " , &token);
             // // DEBUG
           } else {
-            ADD_TOKEN("@", true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+            ADD_TOKEN("@", true, true, CHAR_NUMBER, &token);
 
-            // if(DEBUG)DEBUG_MESSAGE(" <NEW start:@> " , &OBJ_CLASS_TOKEN); //
+            // if(DEBUG)DEBUG_MESSAGE(" <NEW start:@> " , &token); //
             // DEBUG
           }
 
@@ -560,19 +404,18 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
           LIB_LEXER_CG_BUFER = "";
         } else {
           INSIDE_STRING_CPP = false;
-          ADD_TOKEN(LIB_LEXER_CG_BUFER, true, true, CHAR_NUMBER,
-                    &OBJ_CLASS_TOKEN);
+          ADD_TOKEN(LIB_LEXER_CG_BUFER, true, true, CHAR_NUMBER, &token);
 
           if (Char != "@") {
-            ADD_TOKEN(CompletChar, true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+            ADD_TOKEN(CompletChar, true, true, CHAR_NUMBER, &token);
 
             // if(DEBUG)DEBUG_MESSAGE(" <NEW END:_س_>|" + LIB_LEXER_CG_BUFER +
-            // "| " , &OBJ_CLASS_TOKEN); // DEBUG
+            // "| " , &token); // DEBUG
           } else {
-            ADD_TOKEN("@", true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+            ADD_TOKEN("@", true, true, CHAR_NUMBER, &token);
 
             // if(DEBUG)DEBUG_MESSAGE(" <NEW END:@>|" + LIB_LEXER_CG_BUFER + "|
-            // " , &OBJ_CLASS_TOKEN); // DEBUG
+            // " , &token); // DEBUG
           }
 
           LIB_LEXER_CG_BUFER = "";
@@ -592,18 +435,18 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
         {
                 // This char is inside quote _س_ ..... _س_
                 // Add this char to this current token
-                ADD_TOKEN("\"", false, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+                ADD_TOKEN("\"", false, false, CHAR_NUMBER, &token);
         }
         */
         if (INSIDE_STRING) {
           // String End
           // Add char, and new token after
-          ADD_TOKEN("\"", false, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+          ADD_TOKEN("\"", false, true, CHAR_NUMBER, &token);
           INSIDE_STRING = false;
         } else {
           // String Start
           // New token, add char
-          ADD_TOKEN("\"", true, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+          ADD_TOKEN("\"", true, false, CHAR_NUMBER, &token);
           INSIDE_STRING = true;
         }
       }
@@ -615,44 +458,44 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
                       // Inside String
                       // Add char, continue
                       ADD_TOKEN("@", false, false, CHAR_NUMBER,
-      &OBJ_CLASS_TOKEN);
+      &token);
               }
               else
               {
                       // New token, add char
-                      ADD_TOKEN("@", true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+                      ADD_TOKEN("@", true, true, CHAR_NUMBER, &token);
               }
       }
       */
       else if (INSIDE_STRING) {
         // This char is inside quote " " OR _س_
         // Add this char to this current token
-        ADD_TOKEN(Char, false, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+        ADD_TOKEN(Char, false, false, CHAR_NUMBER, &token);
       } else if (Char == " ") // Space
       {
         // ignore space!
         // Point to next token
-        ADD_TOKEN("", true, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+        ADD_TOKEN("", true, false, CHAR_NUMBER, &token);
       } else if (Char == "-") // || Char == "+")
       {
         // If is '-123', must be in the same token
         // else, '-', and '123', in different token
 
         if (IsValidDigit(substr_utf8(LINE8, CHAR_NUMBER + 1, 1), false,
-                         &OBJ_CLASS_TOKEN)) {
+                         &token)) {
           // FORCED Point to next token
-          // if(OBJ_CLASS_TOKEN.TOKEN[std::make_pair(OBJ_CLASS_TOKEN.TOTAL_LINES,
-          // OBJ_CLASS_TOKEN.TOTAL[OBJ_CLASS_TOKEN.TOTAL_LINES])] != "")
+          // if(token.TOKEN[std::make_pair(token.TOTAL_LINES,
+          // token.TOTAL[token.TOTAL_LINES])] != "")
           //{
-          // OBJ_CLASS_TOKEN.TOTAL[OBJ_CLASS_TOKEN.TOTAL_LINES]++;
+          // token.TOTAL[token.TOTAL_LINES]++;
           //}
 
           // Add char '-', next is digit, so no new token
-          ADD_TOKEN(Char, true, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+          ADD_TOKEN(Char, true, false, CHAR_NUMBER, &token);
         } else {
           // Add char
           // Point to next token
-          ADD_TOKEN(Char, true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+          ADD_TOKEN(Char, true, true, CHAR_NUMBER, &token);
         }
       } else if (Char == "@" || // C++ Code
                  Char == "#" || // Hash
@@ -667,10 +510,10 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
                  Char == ",") {
         // Add char
         // Point to next token
-        ADD_TOKEN(Char, true, true, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+        ADD_TOKEN(Char, true, true, CHAR_NUMBER, &token);
       } else {
         // Add char
-        ADD_TOKEN(Char, false, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+        ADD_TOKEN(Char, false, false, CHAR_NUMBER, &token);
       }
       // ======================================================
       CHAR_NUMBER++;
@@ -678,15 +521,15 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
   NEXT_LINE:
 
     if (INSIDE_STRING_CPP) {
-      // ADD_TOKEN("\n", false, false, CHAR_NUMBER, &OBJ_CLASS_TOKEN);
+      // ADD_TOKEN("\n", false, false, CHAR_NUMBER, &token);
       LIB_LEXER_CG_BUFER.append("\n");
     }
 
-    OBJ_CLASS_TOKEN.TOTAL_LINES++;
+    token.TOTAL_LINES++;
   } // End Line loop.
   // ------------------------------------------------------
 
-  if (FIRST_FILE) {
+  if (isFirstFile) {
     // This is the first file (main.alif)
     // this file, need Tokens Predefinetion
 
@@ -694,38 +537,34 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
     // Parser - Tokens Predefinetion
     // ------------------------------------------------------
     if (DEBUG) {
-      DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION START --- \n",
-                    &OBJ_CLASS_TOKEN);
+      DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION START --- \n", &token);
     }
-    OBJ_CLASS_TOKEN.TOKENS_PREDEFINED = false;
+    token.TOKENS_PREDEFINED = false;
     // Read list of tokens
-    ALIF_PARSER(&OBJ_CLASS_TOKEN);
+    ALIF_PARSER(&token);
     if (DEBUG) {
-      DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION END --- \n\n",
-                    &OBJ_CLASS_TOKEN);
+      DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION END --- \n\n", &token);
     }
 
     // ------------------------------------------------------
     // Parser - Normal way
     // ------------------------------------------------------
     if (DEBUG) {
-      DEBUG_MESSAGE(" ----------- DEBUGING START ----------- \n",
-                    &OBJ_CLASS_TOKEN);
+      DEBUG_MESSAGE(" ----------- DEBUGING START ----------- \n", &token);
     }
-    OBJ_CLASS_TOKEN.TOKENS_PREDEFINED = true;
+    token.TOKENS_PREDEFINED = true;
     // Read list of tokens
-    ALIF_PARSER(&OBJ_CLASS_TOKEN);
+    ALIF_PARSER(&token);
     // Check final application code
-    FINAL_APPLICATION_CODE_CHECKING(&OBJ_CLASS_TOKEN, FIRST_FILE);
+    FINAL_APPLICATION_CODE_CHECKING(&token, isFirstFile);
     if (DEBUG) {
-      DEBUG_MESSAGE("\n ----------- DEBUGING FINISH ------------- \n",
-                    &OBJ_CLASS_TOKEN);
+      DEBUG_MESSAGE("\n ----------- DEBUGING FINISH ------------- \n", &token);
     }
   } else {
     // This is a seconde file (mylib.alif)
     // so, check if this file need Tokens Predefinetion
 
-    if (!Tokens_Are_Predefined) {
+    if (!tokensArePredefined) {
       // This file did not have any Tokens Predefinetion
       // so, lets start one..
 
@@ -733,15 +572,13 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
       // Parser - Tokens Predefinetion
       // ------------------------------------------------------
       if (DEBUG) {
-        DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION START --- \n",
-                      &OBJ_CLASS_TOKEN);
+        DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION START --- \n", &token);
       }
-      OBJ_CLASS_TOKEN.TOKENS_PREDEFINED = false;
+      token.TOKENS_PREDEFINED = false;
       // Read list of tokens
-      ALIF_PARSER(&OBJ_CLASS_TOKEN);
+      ALIF_PARSER(&token);
       if (DEBUG) {
-        DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION END --- \n\n",
-                      &OBJ_CLASS_TOKEN);
+        DEBUG_MESSAGE("\n --- TOKENS PREDEFINITION END --- \n\n", &token);
       }
     } else {
       // This file have already Tokens Predefinetion
@@ -751,17 +588,16 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
       // Parser - Normal way
       // ------------------------------------------------------
       if (DEBUG) {
-        DEBUG_MESSAGE(" ----------- DEBUGING START ----------- \n",
-                      &OBJ_CLASS_TOKEN);
+        DEBUG_MESSAGE(" ----------- DEBUGING START ----------- \n", &token);
       }
-      OBJ_CLASS_TOKEN.TOKENS_PREDEFINED = true;
+      token.TOKENS_PREDEFINED = true;
       // Read list of tokens
-      ALIF_PARSER(&OBJ_CLASS_TOKEN);
+      ALIF_PARSER(&token);
       // Check final application code
-      FINAL_APPLICATION_CODE_CHECKING(&OBJ_CLASS_TOKEN, FIRST_FILE);
+      FINAL_APPLICATION_CODE_CHECKING(&token, isFirstFile);
       if (DEBUG) {
         DEBUG_MESSAGE("\n ----------- DEBUGING FINISH ------------- \n",
-                      &OBJ_CLASS_TOKEN);
+                      &token);
       }
     }
   }

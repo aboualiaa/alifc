@@ -131,16 +131,16 @@ std::string PATH_FULL_PLIST;
 std::string PATH_FULL_BIN_TMP;
 #endif
 std::string PATH_ABSOLUTE;
-std::string PATH_WORKING;
+std::string working_directory;
 std::string PATH_TEMP;
 std::string RANDOM;
 std::string PATH_FULL_LIB_SETTING;
 std::map<std::string, std::string> LIB_FILE_NAME;
 std::string PATH_FULL_WINDOW_WEB;
 #ifdef _WIN32
-std::string SEPARATION = "\\";
+std::string path_separator = "\\";
 #else
-std::string SEPARATION = "/";
+std::string path_separator = "/";
 #endif
 std::string Compile_ExtraCompile = " ";
 std::string Compile_ExtraLink = " ";

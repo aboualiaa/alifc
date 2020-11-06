@@ -384,7 +384,7 @@ void parser_NewWindowWeb(std::string Token[2048], lex::Token *o_tokens) {
                               " = ALIFCORE_ID_GENERATOR(); \n");
     CPP_OBJ_DECLARATION.append(" wxWebView* " + CBUFER_OBJ + "; \n");
     // New Web Window -> WebUI HTML
-    std::string PATH_FULL_HTML_CPP = PATH_TEMP + SEPARATION +
+    std::string PATH_FULL_HTML_CPP = PATH_TEMP + path_separator +
                                      "alifcompiler_html_" + ID["رئيسية"] + "_" +
                                      RANDOM + ".cpp";
     HTML_to_c(PATH_FULL_WINDOW_WEB, PATH_FULL_HTML_CPP, CBUFER_VarName,
@@ -510,7 +510,7 @@ void parser_NewWindowWeb(std::string Token[2048], lex::Token *o_tokens) {
                               " = ALIFCORE_ID_GENERATOR(); \n");
     CPP_OBJ_DECLARATION.append(" wxWebView* " + CBUFER_OBJ + "; \n");
     // New Web Window -> WebUI HTML
-    std::string PATH_FULL_HTML_CPP = PATH_TEMP + SEPARATION +
+    std::string PATH_FULL_HTML_CPP = PATH_TEMP + path_separator +
                                      "alifcompiler_html_" + ID[Token[3]] + "_" +
                                      RANDOM + ".cpp";
     HTML_to_c(PATH_FULL_WINDOW_WEB, PATH_FULL_HTML_CPP, CBUFER_VarName,

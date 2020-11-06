@@ -21,41 +21,49 @@
 void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // Class -> دالة
 
-  if (IsInsideFunction)
+  if (IsInsideFunction) {
     ErrorCode("لا يمكن انشاء دالة داخل دالة، الدالة الحالية : " + TheFunction,
               o_tokens);
+  }
 
   int FUN_POS = 1;
 
-  if (Token[1] == "خاص")
+  if (Token[1] == "خاص") {
     FUN_POS = 2;
+  }
 
-  if (Token[FUN_POS + 1] == "")
+  if (Token[FUN_POS + 1].empty()) {
     ErrorCode("يجب اعطاء اسم لهته الدالة الجديدة", o_tokens);
+  }
 
-  if (Token[FUN_POS + 1] == "رئيسية")
+  if (Token[FUN_POS + 1] == "رئيسية") {
     ErrorCode("لايمكن إنشاء دالة رئيسية داخل صنف، هل تقصد ' بناء ' ؟",
               o_tokens);
+  }
 
-  if (Token[FUN_POS + 1] == "نقر")
+  if (Token[FUN_POS + 1] == "نقر") {
     ErrorCode("لايمكن إنشاء دالة نقر داخل صنف", o_tokens);
+  }
 
   if (Token[FUN_POS + 1] == "بناء") // Class -> Constrictor
   {
-    if (Token[1] == "خاص")
+    if (Token[1] == "خاص") {
       ErrorCode(" ' دالة بناء الصنف لا يمكن ان تكون من نوع ' خاص", o_tokens);
+    }
 
-    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(")
+    if (!Token[FUN_POS + 2].empty() && Token[FUN_POS + 2] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 2] + " ' ", o_tokens);
+    }
 
-    if (Token[FUN_POS + 2] == "") {
+    if (Token[FUN_POS + 2].empty()) {
       // Class -> Constrictor.
 
       if (!o_tokens->TOKENS_PREDEFINED) {
-        if (CLASS_CONSTRICTOR_FUN_IS_SET[TheClass])
+        if (CLASS_CONSTRICTOR_FUN_IS_SET[TheClass]) {
           ErrorCode("دالة بناء الصنف تم انشاؤها مسبقا في السطر : " +
                         CLASS_CONSTRICTOR_FUN_AT_LINE[TheClass],
                     o_tokens);
+        }
 
         CLASS_CONSTRICTOR_FUN_IS_SET[TheClass] = true;
         CLASS_CONSTRICTOR_FUN_AT_LINE[TheClass] = IntToString(o_tokens->Line);
@@ -72,10 +80,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       TheFunction_TYPE = "عادم";
       RETURN_FUN[std::make_pair(TheClass, "بناء")] = "OK";
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("	[CLASS-FUNCTION-CONSTRICTOR] [" + Token[FUN_POS + 1] +
                           "] \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // Class -> CONSTRICTOR-Func.
@@ -87,15 +96,17 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     {
       if (Token[FUN_POS + 3] == ")") // دالة بناء Class ().
       {
-        if (Token[FUN_POS + 4] != "")
+        if (Token[FUN_POS + 4] != "") {
           ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 4] + " ' ",
                     o_tokens);
+        }
 
         if (!o_tokens->TOKENS_PREDEFINED) {
-          if (CLASS_CONSTRICTOR_FUN_IS_SET[TheClass])
+          if (CLASS_CONSTRICTOR_FUN_IS_SET[TheClass]) {
             ErrorCode("دالة بناء الصنف تم انشاؤها مسبقا في السطر : " +
                           CLASS_CONSTRICTOR_FUN_AT_LINE[TheClass],
                       o_tokens);
+          }
 
           CLASS_CONSTRICTOR_FUN_IS_SET[TheClass] = true;
           MAIN_FUN_AT_LINE[TheClass] = IntToString(o_tokens->Line);
@@ -112,10 +123,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         TheFunction_TYPE = "عادم";
         RETURN_FUN[std::make_pair(TheClass, "بناء")] = "OK";
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("	[CLASS-FUNCTION-CONSTRICTOR] [" +
                             Token[FUN_POS + 1] + "] () \n\n",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class -> CONSTRICTOR-Func ()
@@ -125,8 +137,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         return; // continue;
       } else    // دالة بناء Class (...)
       {
-        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
           ErrorCode("يجب انهاء السطر بالإشارة ')' ", o_tokens);
+        }
 
         TempTokenCount = 0;
         for (int p = (FUN_POS + 3); p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
@@ -137,10 +150,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         }
 
         if (!o_tokens->TOKENS_PREDEFINED) {
-          if (CLASS_CONSTRICTOR_FUN_IS_SET[TheClass])
+          if (CLASS_CONSTRICTOR_FUN_IS_SET[TheClass]) {
             ErrorCode("دالة بناء الصنف تم انشاؤها مسبقا في السطر : " +
                           CLASS_CONSTRICTOR_FUN_AT_LINE[TheClass],
                       o_tokens);
+          }
 
           CLASS_CONSTRICTOR_FUN_IS_SET[TheClass] = true;
           MAIN_FUN_AT_LINE[TheClass] = IntToString(o_tokens->Line);
@@ -156,10 +170,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
           return; // continue;
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("	[CLASS-FUNCTION-CONSTRICTOR] [" +
                             Token[FUN_POS + 1] + "] (",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class -> CONSTRICTOR-Func (...
@@ -171,8 +186,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             CHECK_NEW_FUN_SYNTAX(false, TempToken, (TempTokenCount - 1),
                                  TheClass, Token[FUN_POS + 1], o_tokens);
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(") \n\n", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class -> CONSTRICTOR-Func ...)
@@ -192,13 +208,15 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
              Token[FUN_POS + 1] ==
                  "منطق") // Class دالة TYPE MyFunctionName (...)
   {
-    if (Token[FUN_POS + 2] == "")
+    if (Token[FUN_POS + 2].empty()) {
       ErrorCode("يجب اعطاء اسم لهته الدالة الجديدة", o_tokens);
+    }
 
-    if (Token[FUN_POS + 3] != "" && Token[FUN_POS + 3] != "(")
+    if (!Token[FUN_POS + 3].empty() && Token[FUN_POS + 3] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 3] + " ' ", o_tokens);
+    }
 
-    if (Token[FUN_POS + 3] == "") // Class دالة TYPE MyFunctionName
+    if (Token[FUN_POS + 3].empty()) // Class دالة TYPE MyFunctionName
     {
       if (Token[FUN_POS + 1] == "عدد") {
         if (Token[1] == "خاص") {
@@ -206,10 +224,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 2], "عدد",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private INT-Func
@@ -222,10 +241,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 2], "عدد",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> INT-Func
@@ -245,11 +265,12 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 2], "نص",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(
                   "	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_STRING] [" +
                       Token[FUN_POS + 2] + "] \n\n",
                   o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private STRING-Func
@@ -262,10 +283,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 2], "نص",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_STRING] [" +
                                 Token[FUN_POS + 2] + "] \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> STRING-Func
@@ -285,10 +307,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 2], "منطق",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private BOOL-Func
@@ -301,10 +324,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 2], "منطق",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> BOOL-Func
@@ -322,14 +346,16 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     } else if (Token[FUN_POS + 3] ==
                "(") // Class دالة TYPE MyFunctionName ( ???
     {
-      if (Token[FUN_POS + 4] == "")
+      if (Token[FUN_POS + 4].empty()) {
         ErrorCode("سطر غير كامل المرجو اضافة ')' ", o_tokens);
+      }
 
       if (Token[FUN_POS + 4] == ")") // Class دالة TYPE MyFunctionName ()
       {
-        if (Token[FUN_POS + 5] != "")
+        if (!Token[FUN_POS + 5].empty()) {
           ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 5] + " ' ",
                     o_tokens);
+        }
 
         if (Token[FUN_POS + 1] == "عدد") {
           if (Token[1] == "خاص") {
@@ -337,10 +363,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 2], "عدد",
                             o_tokens->Line, o_tokens);
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_INT] [" +
                                   Token[FUN_POS + 2] + "] () \n\n",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               // Class -> Private INT-Func ()
@@ -353,10 +380,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 2], "عدد",
                             o_tokens->Line, o_tokens);
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_INT] [" +
                                   Token[FUN_POS + 2] + "] () \n\n",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               // Class -> INT-Func ()
@@ -376,11 +404,12 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 2], "نص",
                             o_tokens->Line, o_tokens);
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE(
                     "	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_STRING] [" +
                         Token[FUN_POS + 2] + "] () \n\n",
                     o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               // Class -> Private STRING-Func ()
@@ -393,10 +422,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 2], "نص",
                             o_tokens->Line, o_tokens);
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_STRING] [" +
                                   Token[FUN_POS + 2] + "] () \n\n",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               // Class -> STRING-Func ()
@@ -416,10 +446,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 2], "منطق",
                             o_tokens->Line, o_tokens);
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_BOOL] [" +
                                   Token[FUN_POS + 2] + "] () \n\n",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               // Class -> Private BOOL-Func ()
@@ -432,10 +463,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 2], "منطق",
                             o_tokens->Line, o_tokens);
             } else {
-              if (DEBUG)
+              if (DEBUG) {
                 DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_BOOL] [" +
                                   Token[FUN_POS + 2] + "] () \n\n",
                               o_tokens); // DEBUG
+              }
 
               // *** Generate Code ***
               // Class -> BOOL-Func ()
@@ -452,12 +484,13 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         }
       } else // Class دالة TYPE MyFunctionName (...)
       {
-        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
           ErrorCode("يجب انهاء السطر بالإشارة ')' ", o_tokens);
+        }
 
         TempTokenCount = 0;
         for (int p = (FUN_POS + 4); p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-          if (Token[p] != "") {
+          if (!Token[p].empty()) {
             TempToken[TempTokenCount] = Token[p];
             TempTokenCount++;
           }
@@ -480,10 +513,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private INT-Func (...
@@ -506,10 +540,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_INT] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Public INT-Func (...
@@ -522,8 +557,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               CHECK_NEW_FUN_SYNTAX(false, TempToken, (TempTokenCount - 1),
                                    TheClass, Token[FUN_POS + 2], o_tokens);
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(") \n\n", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Pub/Priv INT-Func ...)
@@ -551,11 +587,12 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(
                   "	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_STRING] [" +
                       Token[FUN_POS + 2] + "] (",
                   o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private STRING-Func (...
@@ -578,10 +615,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_STRING] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Public STRING-Func (...
@@ -594,8 +632,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               CHECK_NEW_FUN_SYNTAX(false, TempToken, (TempTokenCount - 1),
                                    TheClass, Token[FUN_POS + 2], o_tokens);
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(") \n\n", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Pub/Priv INT-Func ...)
@@ -623,10 +662,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private BOOL-Func (...
@@ -649,10 +689,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               return; // continue;
             }
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [FUN_TYPE_BOOL] [" +
                                 Token[FUN_POS + 2] + "] (",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Public BOOL-Func (...
@@ -665,8 +706,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
               CHECK_NEW_FUN_SYNTAX(false, TempToken, (TempTokenCount - 1),
                                    TheClass, Token[FUN_POS + 2], o_tokens);
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(") \n\n", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Pub/Priv BOOL-Func ...)
@@ -682,20 +724,22 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     }
   } else // void : Class دالة MyFunctionName (???) // void
   {
-    if (Token[FUN_POS + 2] != "" && Token[FUN_POS + 2] != "(")
+    if (!Token[FUN_POS + 2].empty() && Token[FUN_POS + 2] != "(") {
       ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 2] + " ' ", o_tokens);
+    }
 
-    if (Token[FUN_POS + 2] == "") // دالة MyFunctionName
+    if (Token[FUN_POS + 2].empty()) // دالة MyFunctionName
     {
       if (Token[1] == "خاص") {
         if (!o_tokens->TOKENS_PREDEFINED) {
           ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 1], "عادم",
                         o_tokens->Line, o_tokens);
         } else {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [" +
                               Token[FUN_POS + 1] + "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Private Func
@@ -708,10 +752,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
           ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 1], "عادم",
                         o_tokens->Line, o_tokens);
         } else {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[CLASS-FUNCTION] [" + Token[FUN_POS + 1] +
                               "] \n\n",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Func
@@ -729,19 +774,21 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     {
       if (Token[FUN_POS + 3] == ")") // Class دالة MyFunctionName ()
       {
-        if (Token[FUN_POS + 4] != "")
+        if (Token[FUN_POS + 4] != "") {
           ErrorCode("أمر غير معروف : ' " + Token[FUN_POS + 4] + " ' ",
                     o_tokens);
+        }
 
         if (Token[1] == "خاص") {
           if (!o_tokens->TOKENS_PREDEFINED) {
             ADD_FUN_CLASS(true, TheClass, Token[FUN_POS + 1], "عادم",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [" +
                                 Token[FUN_POS + 1] + "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Private Func ()
@@ -754,10 +801,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             ADD_FUN_CLASS(false, TheClass, Token[FUN_POS + 1], "عادم",
                           o_tokens->Line, o_tokens);
           } else {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE("	[CLASS-FUNCTION] [" + Token[FUN_POS + 1] +
                                 "] () \n\n",
                             o_tokens); // DEBUG
+            }
 
             // *** Generate Code ***
             // Class -> Func ()
@@ -773,8 +821,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         return; // continue;
       } else    // Class دالة MyFunctionName (...)
       {
-        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+        if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
           ErrorCode("يجب انهاء السطر بالإشارة ')' ", o_tokens);
+        }
 
         TempTokenCount = 0;
         for (int p = (FUN_POS + 3); p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
@@ -800,10 +849,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[PRIVATE] [CLASS-FUNCTION] [" +
                               Token[FUN_POS + 1] + "] ( ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Private Func (...
@@ -827,10 +877,11 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             return; // continue;
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("	[CLASS-FUNCTION] [" + Token[FUN_POS + 1] +
                               "] ( ",
                           o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           // Class -> Public Func (...
@@ -843,8 +894,9 @@ void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             CHECK_NEW_FUN_SYNTAX(false, TempToken, (TempTokenCount - 1),
                                  TheClass, Token[FUN_POS + 1], o_tokens);
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(") \n\n", o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class -> Pub/Priv Func ...)

@@ -24,8 +24,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 */
 
-#ifndef _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_CORE_H
-#define _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_CORE_H
+#ifndef UTF8_CORE_H
+#define UTF8_CORE_H
 
 #include <iterator>
 
@@ -43,16 +43,16 @@ namespace internal {
 // Unicode constants
 // Leading (high) surrogates: 0xd800 - 0xdbff
 // Trailing (low) surrogates: 0xdc00 - 0xdfff
-const uint16_t LEAD_SURROGATE_MIN = 0xd800u;
-const uint16_t LEAD_SURROGATE_MAX = 0xdbffu;
-const uint16_t TRAIL_SURROGATE_MIN = 0xdc00u;
-const uint16_t TRAIL_SURROGATE_MAX = 0xdfffu;
+const uint16_t LEAD_SURROGATE_MIN = 0xd800U;
+const uint16_t LEAD_SURROGATE_MAX = 0xdbffU;
+const uint16_t TRAIL_SURROGATE_MIN = 0xdc00U;
+const uint16_t TRAIL_SURROGATE_MAX = 0xdfffU;
 const uint16_t LEAD_OFFSET = LEAD_SURROGATE_MIN - (0x10000 >> 10);
 const uint32_t SURROGATE_OFFSET =
-    0x10000u - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
+    0x10000U - (LEAD_SURROGATE_MIN << 10) - TRAIL_SURROGATE_MIN;
 
 // Maximum valid value for a Unicode code point
-const uint32_t CODE_POINT_MAX = 0x0010ffffu;
+const uint32_t CODE_POINT_MAX = 0x0010ffffU;
 
 template <typename octet_type> inline auto mask8(octet_type oc) -> uint8_t {
   return static_cast<uint8_t>(0xff & oc);
@@ -86,7 +86,8 @@ inline auto sequence_length(octet_iterator lead_it) ->
   uint8_t lead = utf8::internal::mask8(*lead_it);
   if (lead < 0x80) {
     return 1;
-  } else if ((lead >> 5) == 0x6) {
+  }
+  if ((lead >> 5) == 0x6) {
     return 2;
   } else if ((lead >> 4) == 0xe) {
     return 3;
@@ -264,9 +265,9 @@ auto validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_point)
         code_point = cp;
         ++it;
         return UTF8_OK;
-      } else {
-        err = OVERLONG_SEQUENCE;
       }
+      err = OVERLONG_SEQUENCE;
+
     } else {
       err = INVALID_CODE_POINT;
     }
@@ -279,7 +280,7 @@ auto validate_next(octet_iterator &it, octet_iterator end, uint32_t &code_point)
 
 template <typename octet_iterator>
 inline auto validate_next(octet_iterator &it, octet_iterator end) -> utf_error {
-  uint32_t ignored;
+  uint32_t ignored = 0;
   return utf8::internal::validate_next(it, end, ignored);
 }
 
@@ -324,4 +325,4 @@ inline auto is_bom(octet_iterator it) -> bool {
 }
 } // namespace utf8
 
-#endif // _USERS_ABOUALIAA_DESKTOP__TEMP_PROJ_ALIFC_LIB_UTF8_CORE_H
+#endif // UTF8_CORE_H

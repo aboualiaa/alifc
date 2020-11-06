@@ -21,24 +21,29 @@
 void parser_NextBreak(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // التالي - كسر
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال ' " + Token[1] + " ' داخل دالة", o_tokens);
+  }
 
-  if (ALIF_LOOP_STATUS < 1)
+  if (ALIF_LOOP_STATUS < 1) {
     ErrorCode("يجب استعمال ' " + Token[1] + " ' داخل جملة تكرارية \"كلما\" ",
               o_tokens);
+  }
 
-  if (Token[2] != "")
+  if (!Token[2].empty()) {
     ErrorCode("أمر غير معروف : ' " + Token[2] +
                   " '، على العموم لايجب وضع أي شيئ بعد ' " + Token[1] + " ' ' ",
               o_tokens);
+  }
 
   if (Token[1] == "التالي") {
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[Continue] \n\n", o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     if (!IsInsideWindow) {
@@ -50,8 +55,9 @@ void parser_NextBreak(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     }
     // *** *** *** *** *** ***
   } else {
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[Break] \n\n", o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     if (!IsInsideWindow) {

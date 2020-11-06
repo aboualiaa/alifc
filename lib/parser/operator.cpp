@@ -54,7 +54,7 @@ void parser_TwoPointOperator(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   std::string CTR_OPTION;
   std::string CTR_OPTION_TYPE;
   std::string CTR_OPTION_CPP_END;
-  int CTR_ARG;
+  int CTR_ARG = 0;
   // int CTR_OPERATOR_POSITION;
 
   // TODO(aboualiaa): main:center() not work if main set only by code !
@@ -134,7 +134,8 @@ void parser_TwoPointOperator(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         // *** *** *** *** *** ***
 
         return; // continue;
-      } else if (Token[3] == "إخفاء") {
+      }
+      if (Token[3] == "إخفاء") {
         // Window:Hide()
 
         if (Token[5] == "") {
@@ -304,7 +305,8 @@ void parser_TwoPointOperator(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
       // Exception!
       return; // continue;
-    } else if (Token[4] == "=") {
+    }
+    if (Token[4] == "=") {
       // ---------------------------------------------------------------------------------
       // Window : Value =
       // ---------------------------------------------------------------------------------

@@ -31,7 +31,7 @@ void ALIF_ERROR(const std::string &ERROR_DESCRIPTION) {
   exit(EXIT_FAILURE);
 }
 
-void DEBUG_MESSAGE(const std::string &MESSAGE, CLASS_TOKEN *o_tokens) {
+void DEBUG_MESSAGE(const std::string &MESSAGE, CLASS_TOKEN * /*o_tokens*/) {
   LOG_MESSAGE_FULL.append(MESSAGE);
 
   if (DEBUG_PRINT_ON_SCREEN) {

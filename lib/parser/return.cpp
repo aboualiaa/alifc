@@ -56,7 +56,8 @@ void parser_Return(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       // *** *** *** *** *** ***
 
       return; // continue;
-    } else if (!IsInsideWindow) {
+    }
+    if (!IsInsideWindow) {
       // void return in global func
 
       if (DEBUG) {
@@ -260,5 +261,5 @@ void parser_Return(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
   }
 
-  return; // continue;
+  // continue;
 }

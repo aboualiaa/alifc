@@ -39,25 +39,29 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
     // Check for tokens not predifined
 
     if (ALREADY_PARSED_FILE_TOKENS_NOT_PREDEFINED[o_tokens->PATH_FULL_SOURCE]) {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("\n Already Parsed(Not-Predifined) [" +
                           o_tokens->PATH_FULL_SOURCE + "] \n",
                       o_tokens);
+      }
       return;
-    } else
+    } else {
       ALREADY_PARSED_FILE_TOKENS_NOT_PREDEFINED[o_tokens->PATH_FULL_SOURCE] =
           true;
+    }
   } else {
     // Check for tokens already predifined
 
     if (ALREADY_PARSED_FILE_TOKENS_PREDEFINED[o_tokens->PATH_FULL_SOURCE]) {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("\n Already Parsed(Predifined) [" +
                           o_tokens->PATH_FULL_SOURCE + "] \n",
                       o_tokens);
+      }
       return;
-    } else
+    } else {
       ALREADY_PARSED_FILE_TOKENS_PREDEFINED[o_tokens->PATH_FULL_SOURCE] = true;
+    }
   }
 
   // ------------------------------------------------------
@@ -91,8 +95,8 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
       // Token 			: o_tokens->TOKEN[std::make_pair(o_tokens->Line,
       // o_tokens->NUMBER)]
       // -----------------------------------------------------------------
-      if (o_tokens->TOKEN[std::make_pair(o_tokens->Line, o_tokens->NUMBER)] !=
-          "") {
+      if (!o_tokens->TOKEN[std::make_pair(o_tokens->Line, o_tokens->NUMBER)]
+               .empty()) {
         Token[o_tokens->NUMBER] =
             o_tokens->TOKEN[std::make_pair(o_tokens->Line, o_tokens->NUMBER)];
         // printf("%s | %d -> %d -> %s", &o_tokens->PATH_FULL_SOURCE,
@@ -117,20 +121,24 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
       }
     } // End Tokens Loop Log way..
     // for (int i = 1; i <= o_tokens->NUMBER; i++){
-    if (Token[1] == "")
+    if (Token[1].empty()) {
       continue;
+    }
     // #######################################################
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE(IntToString(o_tokens->Line) + ": ", o_tokens); // DEBUG
+    }
 
     if (Token[1] == "#") // #
     {
-      if (Token[2] == "")
+      if (Token[2].empty()) {
         ErrorCode("هاش غير محدد ' # '", o_tokens);
+      }
 
-      if (IsInsideWindow || IsInsideFunction)
+      if (IsInsideWindow || IsInsideFunction) {
         ErrorCode("يجب استعمال هاش ' # ' في مكان عام", o_tokens);
+      }
 
       // --------------------------------------------
 
@@ -140,17 +148,21 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
         // Set Web control
         // #واجهة_ويب رئيسية "UI_WEB_1"
 
-        if (Token[3] == "")
+        if (Token[3].empty()) {
           ErrorCode("يجب تحديد اسم النافذة", o_tokens);
+        }
 
-        if (!IsValidName(Token[3], o_tokens))
+        if (!IsValidName(Token[3], o_tokens)) {
           ErrorCode("اسم غير مقبول : ' " + Token[3] + " ' ", o_tokens);
+        }
 
-        if (Token[4] == "")
+        if (Token[4].empty()) {
           ErrorCode("يجب تحديد اسم الملف", o_tokens);
+        }
 
-        if (!IsValidStringFormat(Token[4], o_tokens))
+        if (!IsValidStringFormat(Token[4], o_tokens)) {
           ErrorCode("خطأ في كتابة إسم الملف: " + Token[4], o_tokens);
+        }
 
         // Get PATH_FULL_WINDOW_WEB
         AlifLexerParser(GET_TXT_FROM_STRING(Token[4], o_tokens), "ALIFUIW",
@@ -161,19 +173,23 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
                  Token[2] == "واجهة" || // #واجهة "test.ALIFUI"
                  Token[2] == "مكتبة")   // #مكتبة "test.ALIFLIB"
       {
-        if (Token[3] == "")
+        if (Token[3].empty()) {
           ErrorCode("مسار الملف غير محدد" + Token[2], o_tokens);
+        }
 
-        if (!IsValidStringFormat(Token[3], o_tokens))
+        if (!IsValidStringFormat(Token[3], o_tokens)) {
           ErrorCode("مسار الملف غير صائب : ' " + Token[3] + " ' ", o_tokens);
+        }
 
-        if (Token[4] != "")
+        if (!Token[4].empty()) {
           ErrorCode("أمر غير معروف : ' " + Token[4] + " ' ", o_tokens);
+        }
 
-        if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE])
+        if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE]) {
           ErrorCode(
               "يجب الإعلان عن علم ألف اولا، المرجو اضافة ' #ألف ' في الأعلى",
               o_tokens);
+        }
 
         if (Token[2] == "أضف") {
           // Include Local File for aditional user code.
@@ -181,12 +197,14 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
           // if (Token[4] != "")
           //	ErrorCode("أمر غير معروف : ' " + Token[4] + " ' ", o_tokens);
 
-          if (!IsValidStringFormat(Token[3], o_tokens))
+          if (!IsValidStringFormat(Token[3], o_tokens)) {
             ErrorCode("خطأ في كتابة إسم الملف: " + Token[3], o_tokens);
+          }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[#INCLUDE " + Token[3] + " . ALIF] ... \n\n",
                           o_tokens);
+          }
           AlifLexerParser(GET_TXT_FROM_STRING(Token[3], o_tokens), "ALIF",
                           false, o_tokens->TOKENS_PREDEFINED);
         } else if (Token[2] == "واجهة") {
@@ -195,75 +213,81 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
           // if (Token[4] != "")
           //	ErrorCode("أمر غير معروف : ' " + Token[4] + " ' ", o_tokens);
 
-          if (!IsValidStringFormat(Token[3], o_tokens))
+          if (!IsValidStringFormat(Token[3], o_tokens)) {
             ErrorCode("خطأ في كتابة إسم الملف: " + Token[3], o_tokens);
+          }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[#INCLUDE " + Token[3] + " . ALIF UI] ... \n\n",
                           o_tokens);
+          }
           AlifLexerParser(GET_TXT_FROM_STRING(Token[3], o_tokens), "ALIFUI",
                           false, o_tokens->TOKENS_PREDEFINED);
         } else if (Token[2] == "مكتبة") {
           // Include Library from Lib folder, or local folder.
 
           if (GET_TXT_FROM_STRING(Token[3], o_tokens) == "رسالة" ||
-              GET_TXT_FROM_STRING(Token[3], o_tokens) == "الرسالة")
+              GET_TXT_FROM_STRING(Token[3], o_tokens) == "الرسالة") {
             ErrorCode(
                 "ثم دمج مكتبة ' رسالة ' مع مكتبات ألف القياسية الرئيسية، لدى "
                 "يقوم المترجم باستعمالها بشكل آلي، المرجو إزالة هذا السطر ",
                 o_tokens);
 
-          // Python lib need 3 other var to setup
-          /* if(GET_TXT_FROM_STRING(Token[3], o_tokens) == "البايثون"){
+            // Python lib need 3 other var to setup
+            /* if(GET_TXT_FROM_STRING(Token[3], o_tokens) == "البايثون"){
 
-                  //if (Token[7] != "")
-                  //	ErrorCode("أمر غير معروف : ' " + Token[7] + " ' ",
-          o_tokens);
+                    //if (Token[7] != "")
+                    //	ErrorCode("أمر غير معروف : ' " + Token[7] + " ' ",
+            o_tokens);
 
-                  // #مكتبة "البايثون" "/usr/include/python3.5"4
-          "/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu"6 "python3.5"6 ...7
+                    // #مكتبة "البايثون" "/usr/include/python3.5"4
+            "/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu"6 "python3.5"6 ...7
 
-                  if (Token[4] == "")
-                          ErrorCode("يجب تحديد مسار عناوين البايثون", o_tokens);
-                  if(!IsValidStringFormat(Token[4], o_tokens))
-                          ErrorCode("خطأ في كتابة مسار عناوين البايثون: "+
-          Token[4], o_tokens);
+                    if (Token[4] == "")
+                            ErrorCode("يجب تحديد مسار عناوين البايثون",
+            o_tokens); if(!IsValidStringFormat(Token[4], o_tokens))
+                            ErrorCode("خطأ في كتابة مسار عناوين البايثون: "+
+            Token[4], o_tokens);
 
-                  if (Token[5] == "")
-                          ErrorCode("يجب تحديد مسار مكتبات البايثون", o_tokens);
-                  if(!IsValidStringFormat(Token[5], o_tokens))
-                          ErrorCode("خطأ في كتابة مسار مكتبات البايثون: "+
-          Token[5], o_tokens);
+                    if (Token[5] == "")
+                            ErrorCode("يجب تحديد مسار مكتبات البايثون",
+            o_tokens); if(!IsValidStringFormat(Token[5], o_tokens))
+                            ErrorCode("خطأ في كتابة مسار مكتبات البايثون: "+
+            Token[5], o_tokens);
 
-                  if (Token[6] == "")
-                          ErrorCode("يجب تحديد إسم مكتبة البايثون", o_tokens);
-                  if(!IsValidStringFormat(Token[6], o_tokens))
-                          ErrorCode("خطأ في كتابة إسم مكتبة البايثون: "+
-          Token[6], o_tokens);
+                    if (Token[6] == "")
+                            ErrorCode("يجب تحديد إسم مكتبة البايثون", o_tokens);
+                    if(!IsValidStringFormat(Token[6], o_tokens))
+                            ErrorCode("خطأ في كتابة إسم مكتبة البايثون: "+
+            Token[6], o_tokens);
 
-                  // Setup Python lib env.
-                  PythonSetEnvirenment(	GET_TXT_FROM_STRING(Token[4], o_tokens),
-          // /usr/include/python3.5 GET_TXT_FROM_STRING(Token[5], o_tokens),
-          // /usr/lib/python3.5/config-3.5m-x86_64-linux-gnu
-                                                                  GET_TXT_FROM_STRING(Token[6],
-          o_tokens));	// python3.5
-          } */
+                    // Setup Python lib env.
+                    PythonSetEnvirenment(	GET_TXT_FROM_STRING(Token[4],
+            o_tokens),
+            // /usr/include/python3.5 GET_TXT_FROM_STRING(Token[5], o_tokens),
+            // /usr/lib/python3.5/config-3.5m-x86_64-linux-gnu
+                                                                    GET_TXT_FROM_STRING(Token[6],
+            o_tokens));	// python3.5
+            } */
 
-          else {
+          } else {
 
-            if (GET_TXT_FROM_STRING(Token[3], o_tokens) == "البايثون")
+            if (GET_TXT_FROM_STRING(Token[3], o_tokens) == "البايثون") {
               PythonSetEnvirenment();
+            }
 
             // Other librarys check..
             // Example: #مكتبة "الوقت"
 
-            if (Token[4] != "")
+            if (!Token[4].empty()) {
               ErrorCode("أمر غير معروف : ' " + Token[4] + " ' ", o_tokens);
+            }
           }
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[#INCLUDE " + Token[3] + " . ALIF LIB] ... \n\n",
                           o_tokens);
+          }
           AlifLexerParser(GET_TXT_FROM_STRING(Token[3], o_tokens), "ALIFLIB",
                           false, o_tokens->TOKENS_PREDEFINED);
         } else if (Token[2] == "أظف_أمر_ترجمة" || Token[2] == "أظف_أمر_ربط") {
@@ -271,8 +295,9 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
           // #أظف_أمر_ترجمة "..."
           // #أظف_أمر_ربط "..."
 
-          if (!IsValidStringFormat(Token[3], o_tokens))
+          if (!IsValidStringFormat(Token[3], o_tokens)) {
             ErrorCode("خطأ في كتابة إسم الأمر: " + Token[3], o_tokens);
+          }
 
           if (Token[2] == "أظف_أمر_ترجمة") {
 
@@ -294,27 +319,30 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
       else if (Token[2] == "البايثون_مسار_عناوين") {
 
         PythonInclude_path = GET_TXT_FROM_STRING(Token[3], o_tokens);
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[Setting Python Include '" +
                             GET_TXT_FROM_STRING(Token[3], o_tokens) +
                             "' ] \n\n",
                         o_tokens);
+        }
       } else if (Token[2] == "البايثون_مسار_مكتبات") {
 
         PythonLib_path = GET_TXT_FROM_STRING(Token[3], o_tokens);
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[Setting Python Lib '" +
                             GET_TXT_FROM_STRING(Token[3], o_tokens) +
                             "' ] \n\n",
                         o_tokens);
+        }
       } else if (Token[2] == "البايثون_مكتبات") {
 
         PythonLibName = GET_TXT_FROM_STRING(Token[3], o_tokens);
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[Setting Python LibName '" +
                             GET_TXT_FROM_STRING(Token[3], o_tokens) +
                             "' ] \n\n",
                         o_tokens);
+        }
       }
 
       // --------------------------------------------
@@ -324,14 +352,16 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
       else if (Token[2] == "ألف") // || Token[2] == "الف") // || Token[2] ==
                                   // "الف_اندرويد" || Token[2] == "الف_ايفون")
       {
-        if (Token[3] != "")
+        if (!Token[3].empty()) {
           ErrorCode("أمر غير معروف : ' " + Token[3] + " ' ", o_tokens);
+        }
 
         if (!o_tokens->TOKENS_PREDEFINED) {
-          if (ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE])
+          if (ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE]) {
             ErrorCode("تم الاعلان عن علم ألف مسبقا في السطر : " +
                           ALIF_FLAG_AT_LINE_FILE[o_tokens->PATH_FULL_SOURCE],
                       o_tokens);
+          }
 
           ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE] = true;
           ALIF_FLAG_AT_LINE_FILE[o_tokens->PATH_FULL_SOURCE] =
@@ -340,8 +370,9 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
           continue;
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("[#ALIF] \n\n", o_tokens);
+        }
 
         continue;
 
@@ -396,84 +427,93 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
             Token[2] == "الألف" || Token[2] == "الالف") {
           ErrorCode("أمر غير معروف : ' " + Token[2] + " '، هل تقصد ' ألف ' ؟ ",
                     o_tokens);
-        } else
+        } else {
           ErrorCode("أمر غير معروف : ' " + Token[2] + " ' ", o_tokens);
+        }
       }
     }
     // ---------------------------------------------------------------------------------
     // General Erros
     // ---------------------------------------------------------------------------------
 
-    else if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE])
+    else if (!ALIF_FLAG_FILE[o_tokens->PATH_FULL_SOURCE]) {
       ErrorCode("يجب الإعلان عن علم ألف اولا، المرجو اضافة ' #ألف ' في الأعلى",
                 o_tokens);
 
-    else if (Token[1] == "خاص" && !IsInsideClass) // ERROR
+    } else if (Token[1] == "خاص" && !IsInsideClass) { // ERROR
       ErrorCode("يجب استعمال ' خاص ' داخل صنف", o_tokens);
-    else if (Token[1] == "خاص" && Token[2] == "")
+    } else if (Token[1] == "خاص" && Token[2].empty()) {
       ErrorCode("يجب تحديد نوع المتغير بعد ' خاص ' ", o_tokens);
-    else if (Token[1] == "خاص" &&
-             (Token[2] != "عدد" && Token[2] != "نص" && Token[2] != "منطق" &&
-              Token[2] != "دالة")) // ERROR
+    } else if (Token[1] == "خاص" &&
+               (Token[2] != "عدد" && Token[2] != "نص" && Token[2] != "منطق" &&
+                Token[2] != "دالة")) { // ERROR
       ErrorCode("أمر غير معروف : ' " + Token[2] +
                     " ' ، على العموم أمر ' خاص ' يمكن استعماله فقط مع متغيرات "
                     "من نوع حرف، عدد، منطق، أو دالة",
                 o_tokens);
 
-    // ---------------------------------------------------------------------------------
-    // _س_ ... C++ ... | _ج_ ... JavaScript ...
-    // ---------------------------------------------------------------------------------
+      // ---------------------------------------------------------------------------------
+      // _س_ ... C++ ... | _ج_ ... JavaScript ...
+      // ---------------------------------------------------------------------------------
 
-    else if (Token[1] == "_س_" || Token[1] == "_ج_") {
+    } else if (Token[1] == "_س_" || Token[1] == "_ج_") {
 
-      if (!o_tokens->TOKENS_PREDEFINED)
+      if (!o_tokens->TOKENS_PREDEFINED) {
         continue;
+      }
 
       // string DebugTag = Token[1];
 
       if (Token[1] == "_ج_") {
         // AlifJavaScript
 
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           ErrorCode("لايمكن تنفيذ جافاسكريبت من خارج نافذة '" + Token[1] + "' ",
                     o_tokens);
+        }
 
-        if (!IsInsideFunction)
+        if (!IsInsideFunction) {
           ErrorCode("لايمكن تنفيذ جافاسكريبت من خارج دالة '" + Token[1] + "' ",
                     o_tokens);
+        }
 
-        if (!WIN_IS_WEB[TheWindow])
+        if (!WIN_IS_WEB[TheWindow]) {
           ErrorCode("لايمكن تنفيذ جافاسكريبت في نافذة ليست من نوع ويب '" +
                         TheWindow + "' -> '" + Token[1] + "' ",
                     o_tokens);
+        }
 
         ThisIsJavaScript = true;
       }
 
       if (!LIB_INSIDE_CPP_CODE) {
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(" {_س_ START} ", o_tokens); // DEBUG
+        }
 
         LIB_INSIDE_CPP_CODE = true;
         LIB_PARSER_CG_BUFER = "";
 
-        if (ThisIsJavaScript)
+        if (ThisIsJavaScript) {
           LIB_PARSER_CG_BUFER = "\n OBJ_CLASS_WINDOW_" + ID[TheWindow] +
                                 "->AlifJavaScript_Run(wxT(R\"V0G0N( \n ";
+        }
 
         for (int p = 2; p <= o_tokens->TOTAL[o_tokens->Line];
              p++) // _س_ ...C++...@ Alif @...C++... _س_
         {
           if (Token[p] == "_س_" || Token[p] == "_ج_") // End C++ Code
           {
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(" {_س_ END} ", o_tokens); // DEBUG
+            }
             LIB_INSIDE_CPP_CODE = false;
 
-            if (ThisIsJavaScript)
+            if (ThisIsJavaScript) {
               LIB_PARSER_CG_BUFER.append(
                   " \n )V0G0N\")); \n "); // JavaScript END
+            }
 
             ThisIsJavaScript = false;
 
@@ -498,8 +538,9 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
           {
             // ...C++...@ Alif @...C++...
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(" {@} ", o_tokens); // DEBUG
+            }
 
             TempTokenCount = 1; // CheckForSyntax() Need this.
             TempToken[0] = "="; // CheckForSyntax() Need this.
@@ -517,14 +558,16 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
               TempTokenCount++;
             }
 
-            if (!AT_FOUND)
+            if (!AT_FOUND) {
               ErrorCode("نهايه شفرة سي++ غير موجوده ' @ '", o_tokens);
+            }
 
             std::string CLASS_OR_WIN;
-            if (IsInsideClass)
+            if (IsInsideClass) {
               CLASS_OR_WIN = TheClass;
-            else
+            } else {
               CLASS_OR_WIN = TheWindow;
+            }
 
             ScriptSyntaxBuffer = CheckForSyntax(
                 "C++",     // OBJECTIF_TYPE
@@ -542,24 +585,27 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
                 TheFunction,          // TMP_FUNCTION_NAME
                 o_tokens);
 
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(" {@} ", o_tokens); // DEBUG
+            }
 
             // *** C++ ***
             LIB_PARSER_CG_BUFER.append(" " + ScriptSyntaxBuffer + " ");
             // *** *** *** *** *** ***
 
             // @ End.
-          } else if (Token[p] != "") {
+          } else if (!Token[p].empty()) {
             // Add C++ Code to the buffer
             LIB_PARSER_CG_BUFER.append(Token[p]);
-            if (DEBUG)
+            if (DEBUG) {
               DEBUG_MESSAGE(" {" + Token[p] + "} ", o_tokens); // DEBUG
+            }
           }
         }
       } else {
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(" {_س_ END} ", o_tokens); // DEBUG
+        }
         LIB_INSIDE_CPP_CODE = false;
         ThisIsJavaScript = false;
       }
@@ -573,12 +619,14 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
       {
         if (Token[p] == "_س_" || Token[p] == "_ج_") // End C++ Code
         {
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {_س_ END} ", o_tokens); // DEBUG
+          }
           LIB_INSIDE_CPP_CODE = false;
 
-          if (ThisIsJavaScript)
+          if (ThisIsJavaScript) {
             LIB_PARSER_CG_BUFER.append(" \n )V0G0N\")); \n "); // JavaScript END
+          }
 
           ThisIsJavaScript = false;
 
@@ -606,8 +654,9 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
         {
           // ...C++...@ Alif @...C++...
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {@} ", o_tokens); // DEBUG
+          }
 
           TempTokenCount = 1; // CheckForSyntax() Need this.
           TempToken[0] = "="; // CheckForSyntax() Need this.
@@ -625,14 +674,16 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
             TempTokenCount++;
           }
 
-          if (!AT_FOUND)
+          if (!AT_FOUND) {
             ErrorCode("نهايه شفرة سي++ غير موجوده ' @ '", o_tokens);
+          }
 
           std::string CLASS_OR_WIN;
-          if (IsInsideClass)
+          if (IsInsideClass) {
             CLASS_OR_WIN = TheClass;
-          else
+          } else {
             CLASS_OR_WIN = TheWindow;
+          }
 
           ScriptSyntaxBuffer =
               CheckForSyntax("C++", // OBJECTIF_TYPE
@@ -650,26 +701,29 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
                              TheFunction,          // TMP_FUNCTION_NAME
                              o_tokens);
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {@} ", o_tokens); // DEBUG
+          }
 
           // *** C++ ***
           LIB_PARSER_CG_BUFER.append(" " + ScriptSyntaxBuffer + " ");
           // *** *** *** *** *** ***
 
           // @ End.
-        } else if (Token[p] != "") {
+        } else if (!Token[p].empty()) {
           // Add C++ Code to the buffer
           LIB_PARSER_CG_BUFER.append(Token[p]);
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" {" + Token[p] + "} ", o_tokens); // DEBUG
+          }
         }
       }
     }
 
     else if (Token[1] == "@") {
-      if (!LIB_INSIDE_CPP_CODE)
+      if (!LIB_INSIDE_CPP_CODE) {
         ErrorCode("يجب تحديد ' _س_ ' قبل ' @ '", o_tokens);
+      }
 
       ErrorCode("لا يمكن بدء السطر بالإشارة ' @ '", o_tokens);
     }
@@ -793,7 +847,7 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
 
     else {
       if (!o_tokens->TOKENS_PREDEFINED) {
-        if (Control_ID[Token[1]] != "") {
+        if (!Control_ID[Token[1]].empty()) {
           // show error description
           // when, (no-win) CTR:OPTION
           // in global area.
@@ -878,9 +932,11 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
 
     // #######################################################
 
-    if (o_tokens->TOKENS_PREDEFINED)
-      if (DEBUG)
+    if (o_tokens->TOKENS_PREDEFINED) {
+      if (DEBUG) {
         DEBUG_MESSAGE("\n\n", o_tokens);
+      }
+    }
 
   } // End Line Loop
 

@@ -20,40 +20,46 @@
 void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // إذا - أو
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال الشرط داخل دالة", o_tokens);
+  }
 
-  if (Token[1] == "أو" && Token[2] == "")
+  if (Token[1] == "أو" && Token[2].empty()) {
     ErrorCode("شرط غير صحيح، هل تقصد ' وإلا ' ؟ ", o_tokens);
+  }
 
-  if (Token[1] == "أو" && Token[2] != "إذا")
+  if (Token[1] == "أو" && Token[2] != "إذا") {
     ErrorCode("شرط غير صحيح، هل تقصد ' أو إذا " + Token[2] + " ... ' ؟",
               o_tokens);
+  }
 
   std::string PART[1024];
-  int PART_TOTAL;
+  int PART_TOTAL = 0;
 
   PART[0] = "=";
   PART_TOTAL = 0;
 
-  int IF_PARENTISE_POSITION;
+  int IF_PARENTISE_POSITION = 0;
   IF_PARENTISE_POSITION = 0;
 
-  int Start;
+  int Start = 0;
 
   if (Token[1] == "أو") {
     Start = 3;
 
-    if (ALIF_IF_STATUS < 1)
+    if (ALIF_IF_STATUS < 1) {
       ErrorCode("لايمكن إستعمال ' أو ' من دون فتح شرط، ربمى تقصد ' إذا ' ",
                 o_tokens);
+    }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[ELSE IF " + IntToString(ALIF_IF_STATUS) + "] ( ",
                     o_tokens); // DEBUG
+    }
 
     if (IsInsideClass) {
       // just for fixing this ...
@@ -73,9 +79,10 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
     ALIF_IF_STATUS++;
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("	[IF " + IntToString(ALIF_IF_STATUS) + "] ( ",
                     o_tokens); // DEBUG
+    }
 
     if (IsInsideClass) {
       // just for fixing this ...
@@ -98,8 +105,8 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // [-Wparentheses]
   // if (A != B && C != D && X != Z && G != P)
 
-  bool PART_A;
-  bool PART_B;
+  bool PART_A = 0;
+  bool PART_B = 0;
 
   PART_A = false;
   PART_B = false;
@@ -113,7 +120,7 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   for (int p = Start; p <= o_tokens->TOTAL[o_tokens->Line];
        p++) // Line loop after إذا /أوإذا
   {
-    if (Token[p] != "") // Token
+    if (!Token[p].empty()) // Token
     {
       // Condition-part is ready for syntax checking
 
@@ -127,10 +134,11 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         }
 
         std::string CLASS_OR_WIN;
-        if (IsInsideClass)
+        if (IsInsideClass) {
           CLASS_OR_WIN = TheClass;
-        else
+        } else {
           CLASS_OR_WIN = TheWindow;
+        }
 
         // Check this condition-part for syntaxt
         IS_IF_SYNTAX = true;
@@ -167,8 +175,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         if (Token[p] == ">" && Token[p + 1] == "=") {
           // أكبر أو يساوي
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[أكبر أو يساوي] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" >= ");
@@ -178,8 +187,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         } else if (Token[p] == ">") {
           // أكبر
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[أكبر] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" > ");
@@ -187,8 +197,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         } else if (Token[p] == "<" && Token[p + 1] == "=") {
           // أصغر أو يساوي
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[أصغر أو يساوي] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" <= ");
@@ -198,8 +209,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         } else if (Token[p] == "<") {
           // أصغر
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[أصغر] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" < ");
@@ -208,8 +220,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
                    (Token[p] == "=" && Token[p + 1] == "!")) {
           // يخالف
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[يخالف] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" != ");
@@ -219,8 +232,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         } else if (Token[p] == "=") {
           // يساوي
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[يساوي] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" == ");
@@ -228,8 +242,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         } else if (Token[p] == "و") {
           // و
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[و] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" && ");
@@ -237,8 +252,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         } else if (Token[p] == "أو") {
           // أو
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("[أو] ", o_tokens); // DEBUG
+          }
 
           // *** Generate Code ***
           IF_SYNTAX_BUFFER.append(" || ");
@@ -249,8 +265,9 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         }
 
         // Clear
-        for (int c = 0; c <= PART_TOTAL; c++)
+        for (int c = 0; c <= PART_TOTAL; c++) {
           PART[c] = "";
+        }
 
         PART[0] = "=";
         PART_TOTAL = 0;
@@ -264,11 +281,13 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       {
         IS_IF_SYNTAX = true;
 
-        if (p > 0)
-          if (!CAN_ADD_PARENTHESIS_OPEN_HERE(Token[p - 1]))
+        if (p > 0) {
+          if (!CAN_ADD_PARENTHESIS_OPEN_HERE(Token[p - 1])) {
             ErrorCode("لا يمكن إضافة قوس مفتوح هنا ' " + Token[p - 1] + " " +
                           Token[p] + " ' ",
                       o_tokens);
+          }
+        }
 
         IF_PARENTISE_POSITION++;
 
@@ -278,14 +297,17 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       {
         IS_IF_SYNTAX = true;
 
-        if (IF_PARENTISE_POSITION < 1)
+        if (IF_PARENTISE_POSITION < 1) {
           ErrorCode("غلق قوس ليس مفتوحا ' " + Token[p] + " ' ", o_tokens);
+        }
 
-        if (p > 0)
-          if (!CAN_ADD_PARENTHESIS_CLOSE_HERE(Token[p - 1]))
+        if (p > 0) {
+          if (!CAN_ADD_PARENTHESIS_CLOSE_HERE(Token[p - 1])) {
             ErrorCode("لا يمكن إضافة غلق قوس هنا ' " + Token[p - 1] + " " +
                           Token[p] + " ' ",
                       o_tokens);
+          }
+        }
 
         IF_PARENTISE_POSITION--;
 
@@ -295,21 +317,24 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         if (OBJECTIF_TYPE != "عدد" && OBJECTIF_TYPE != "نص" &&
             OBJECTIF_TYPE != "منطق") {
           if ((Token[p] != "+") && (Token[p] != "-") && (Token[p] != "*") &&
-              (Token[p] != "\\"))
-            if (!IsValidVar(Token[p], o_tokens))
+              (Token[p] != "\\")) {
+            if (!IsValidVar(Token[p], o_tokens)) {
               ErrorCode("نوع المتغير غير معروف ' " + Token[p] + " ' ",
                         o_tokens);
+            }
+          }
 
-          if (IsValidVar_Type == "عدد")
+          if (IsValidVar_Type == "عدد") {
             OBJECTIF_TYPE = "عدد";
-          else if (IsValidVar_Type == "نص")
+          } else if (IsValidVar_Type == "نص") {
             OBJECTIF_TYPE = "نص";
-          else if (IsValidVar_Type == "منطق")
+          } else if (IsValidVar_Type == "منطق") {
             OBJECTIF_TYPE = "منطق";
-          else
+          } else {
             ErrorCode("لايمكن إستعمال هدا المتغير ' " + Token[p] +
                           " ' لأنه من نوع " + IsValidVar_Type,
                       o_tokens);
+          }
 
           // IF X1 < X2 or X3 < X4
           if (!PART_A) {
@@ -317,10 +342,11 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
             PART_A_OBJECTIF_TYPE = OBJECTIF_TYPE;
           } else if (!PART_B) {
             // B
-            if (PART_A_OBJECTIF_TYPE != OBJECTIF_TYPE)
+            if (PART_A_OBJECTIF_TYPE != OBJECTIF_TYPE) {
               ErrorCode("لايمكن مقارنة نوعين مختلفين : ' " +
                             GET_REAL_LINE_MID(0, p, o_tokens) + " ' <-- ",
                         o_tokens);
+            }
           } else {
             // A
             PART_A_OBJECTIF_TYPE = OBJECTIF_TYPE;
@@ -360,10 +386,11 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   }
 
   std::string CLASS_OR_WIN;
-  if (IsInsideClass)
+  if (IsInsideClass) {
     CLASS_OR_WIN = TheClass;
-  else
+  } else {
     CLASS_OR_WIN = TheWindow;
+  }
 
   // Check this condition-part for syntaxt
   IS_IF_SYNTAX = true;
@@ -384,14 +411,15 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
                      o_tokens));
 
   // Parentise
-  if (IF_PARENTISE_POSITION < 0)
+  if (IF_PARENTISE_POSITION < 0) {
     ErrorCode("هناك " + IntToString(IF_PARENTISE_POSITION) +
                   " أقواس مغلوقة من دون فتحها، المرجو إزالتها",
               o_tokens);
-  else if (IF_PARENTISE_POSITION > 0)
+  } else if (IF_PARENTISE_POSITION > 0) {
     ErrorCode("بقيت " + IntToString(IF_PARENTISE_POSITION) +
                   " أقواس مفتوحة، المرجو إغلاقها بالإشارة ' ) '",
               o_tokens);
+  }
 
   if (IsInsideClass) {
     // just for fixing this ...
@@ -407,7 +435,8 @@ void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   }
   // *** *** *** *** *** ***
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-  return;                             // continue;
+  }
+  return; // continue;
 }

@@ -21,36 +21,44 @@
 void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // نص
 
-  if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction)
+  if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction) {
     // Igiore Local func var predefinition,
     // focus only on Global var predefinition, and Class global var
     // predefinition.
     return; // continue;
+  }
 
-  if (IsInsideWindow && !IsInsideFunction)
+  if (IsInsideWindow && !IsInsideFunction) {
     ErrorCode("انشاء متغير جديد يجب ان يكون خارج النافذة ليكون عام، او داخل "
               "دالة ليكون محلي",
               o_tokens);
+  }
 
-  if (Token[1] == "خاص" && !IsInsideClass)
+  if (Token[1] == "خاص" && !IsInsideClass) {
     ErrorCode("يجب استعمال خاصيه ' خاص ' داخل صنف", o_tokens);
+  }
 
-  if (Token[1] == "خاص" && IsInsideFunction)
+  if (Token[1] == "خاص" && IsInsideFunction) {
     ErrorCode("يجب استعمال خاصيه ' خاص ' خارج الدالة", o_tokens);
+  }
 
   int INT_POS = 1;
 
-  if (Token[1] == "خاص")
+  if (Token[1] == "خاص") {
     INT_POS = 2;
+  }
 
-  if (Token[INT_POS + 1] == "")
+  if (Token[INT_POS + 1].empty()) {
     ErrorCode("يجب تحديد اسم المتغير", o_tokens);
+  }
 
-  if (Token[INT_POS + 2] != "" && Token[INT_POS + 2] != "=")
+  if (!Token[INT_POS + 2].empty() && Token[INT_POS + 2] != "=") {
     ErrorCode("يجب استعمال ' = ' بعد اسم المتغير", o_tokens);
+  }
 
-  if (Token[INT_POS + 2] == "=" && Token[INT_POS + 3] == "")
+  if (Token[INT_POS + 2] == "=" && Token[INT_POS + 3].empty()) {
     ErrorCode("يجب اعطاء قيمة بعد ' = '", o_tokens);
+  }
 
   // Class
   if (IsInsideClass) {
@@ -64,21 +72,23 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
           return; // continue;
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("	[PRIVATE] [CLASS-GLOBAL-STRING] [" +
                             Token[INT_POS + 1] + "] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class : New Private STRING
         CPP_CLASS.append(" private: wxString " + Global_ID[Token[INT_POS + 1]] +
                          " ");
-        if (Token[INT_POS + 2] == "") {
+        if (Token[INT_POS + 2].empty()) {
           CPP_CLASS.append(" = \"\"; \n");
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-          return;                             // continue;
+          }
+          return; // continue;
         }
         // *** *** *** *** *** ***
       } else {
@@ -88,21 +98,23 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
           return; // continue;
         }
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("	[CLASS-GLOBAL-STRING] [" + Token[INT_POS + 1] +
                             "] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class : New Public STRING
         CPP_CLASS.append(" public: wxString " + Global_ID[Token[INT_POS + 1]] +
                          " ");
-        if (Token[INT_POS + 2] == "") {
+        if (Token[INT_POS + 2].empty()) {
           CPP_CLASS.append(" = \"\"; \n");
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-          return;                             // continue;
+          }
+          return; // continue;
         }
         // *** *** *** *** *** ***
       }
@@ -119,20 +131,22 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         // return; // continue;
         //}
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE("		[CLASS-STRING] [" + Token[INT_POS + 1] +
                             "] ",
                         o_tokens); // DEBUG
+        }
 
         // *** Generate Code ***
         // Class : New Local Class STRING
         CPP_CLASS.append(" wxString " + ID[Token[INT_POS + 1]] + " ");
-        if (Token[INT_POS + 2] == "") {
+        if (Token[INT_POS + 2].empty()) {
           CPP_CLASS.append(" = \"\"; \n");
 
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-          return;                             // continue;
+          }
+          return; // continue;
         }
         // *** *** *** *** *** ***
       }
@@ -150,20 +164,22 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       return; // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[GLOBAL-STRING] [" + Token[INT_POS + 1] + "] ",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Global Area
     // String a
     CPP_GLOBAL.append(" wxString " + Global_ID[Token[INT_POS + 1]] + " ");
-    if (Token[INT_POS + 2] == "") {
+    if (Token[INT_POS + 2].empty()) {
       CPP_GLOBAL.append(" ; \n");
 
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-      return;                             // continue;
+      }
+      return; // continue;
     }
     // *** *** *** *** *** ***
   } else {
@@ -175,9 +191,10 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     SetNewVar(false, TheWindow, TheFunction, Token[INT_POS + 1], "نص", false,
               false, o_tokens->Line, o_tokens);
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("		[LOCAL-STRING] [" + Token[INT_POS + 1] + "] ",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Local Area
@@ -185,30 +202,33 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     if (!IsInsideWindow) {
       // Global Function
       CPP_GLOBAL_FUN.append(" wxString " + ID[Token[INT_POS + 1]] + " ");
-      if (Token[INT_POS + 2] == "") {
+      if (Token[INT_POS + 2].empty()) {
         CPP_GLOBAL_FUN.append(" ; \n");
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-        return;                             // continue;
+        }
+        return; // continue;
       }
     } else {
       // Local Function
       cpp_AddScript(TheFunction, " wxString " + ID[Token[INT_POS + 1]] + " ");
-      if (Token[INT_POS + 2] == "") {
+      if (Token[INT_POS + 2].empty()) {
         cpp_AddScript(TheFunction, " = \"\"; \n");
 
-        if (DEBUG)
+        if (DEBUG) {
           DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-        return;                             // continue;
+        }
+        return; // continue;
       }
     }
     // *** *** *** *** *** ***
   }
 
   if (Token[INT_POS + 2] == "=") {
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("= ", o_tokens); // DEBUG
+    }
 
     if (!IsInsideFunction) {
       if (IsInsideClass) {
@@ -233,12 +253,13 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         // *** Generate Code ***
         // Local Area
         // STRING a =
-        if (!IsInsideWindow)
+        if (!IsInsideWindow) {
           // Global Function
           CPP_GLOBAL_FUN.append(" = ");
-        else
+        } else {
           // Local Function
           cpp_AddScript(TheFunction, " = ");
+        }
         // *** *** *** *** *** ***
       }
     }
@@ -246,23 +267,24 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     TempTokenCount = 0;
 
     for (int p = (INT_POS + 2); p <= o_tokens->TOTAL[o_tokens->Line]; p++) {
-      if (Token[p] != "") {
+      if (!Token[p].empty()) {
         if (substr_utf8(Token[p], 0, 1) == "_" &&
             !IsInsideFunction) // to avoid : a = b + _a
         {
           if (Token[INT_POS + 1] ==
-              substr_utf8(Token[p], 1, CharCount_utf8(Token[p], o_tokens)))
+              substr_utf8(Token[p], 1, CharCount_utf8(Token[p], o_tokens))) {
             ErrorCode("لا يمكن استعمال المتغير العام في نفس السطر الذي تم "
                       "الانشاء فيه '" +
                           Token[p] + "' ",
                       o_tokens);
+          }
         } else if (Token[INT_POS + 1] == Token[p] &&
                    (Token[p - 1] !=
                     ":")) // to avoid a = b + a, but ok for a = b + x:y:a
         {
           if (G_VAR_IS_SET[(Token[INT_POS + 1])] &&
               IntToString(o_tokens->Line) !=
-                  G_VAR_AT_LINE[(Token[INT_POS + 1])])
+                  G_VAR_AT_LINE[(Token[INT_POS + 1])]) {
             ErrorCode(
                 "لا يمكن استعمال المتغير في نفس السطر الذي تم الانشاء فيه '" +
                     Token[p] + "', كذلك اذا كنت تود استعمال المتغير العام '" +
@@ -270,6 +292,7 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
                     "', يجب اضافه خط قبل اسم المتغير على سبيل المثال : _" +
                     Token[INT_POS + 1],
                 o_tokens);
+          }
 
           ErrorCode(
               "لا يمكن استعمال المتغير في نفس السطر الذي تم الانشاء فيه '" +
@@ -283,10 +306,11 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     }
 
     std::string WIN_OR_CLASS;
-    if (IsInsideClass)
+    if (IsInsideClass) {
       WIN_OR_CLASS = TheClass;
-    else
+    } else {
       WIN_OR_CLASS = TheWindow;
+    }
 
     // STRING Syntax
     ScriptSyntaxBuffer =
@@ -314,29 +338,34 @@ void parser_String(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       // *** Generate Code ***
       // Global Area
       // STRING a = ... ;
-      CPP_GLOBAL.append(ScriptSyntaxBuffer +
-                        " ; \n "); // TODO: did we need 'CPP_CLASS' ??????
-                                   // *** *** *** *** *** ***
+      CPP_GLOBAL.append(
+          ScriptSyntaxBuffer +
+          " ; \n "); // TODO(aboualiaa): did we need 'CPP_CLASS' ??????
+                     // *** *** *** *** *** ***
     } else {
       // *** Generate Code ***
       // Local Area
       // STRING a = ... ;
-      if (!IsInsideWindow)
+      if (!IsInsideWindow) {
         // Global Function
         CPP_GLOBAL_FUN.append(ScriptSyntaxBuffer + " ; \n ");
-      else
+      } else {
         // Local Function
         cpp_AddScript(TheFunction, ScriptSyntaxBuffer + " ; \n ");
+      }
       // *** *** *** *** *** ***
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
-    return;                             // continue;
-  } else if (Token[INT_POS + 2] != "")
+    }
+    return; // continue;
+  } else if (Token[INT_POS + 2] != "") {
     ErrorCode("أمر غير معروف '" + Token[INT_POS + 2] + "', ربما تقصد '=' ",
               o_tokens);
+  }
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
+  }
 }

@@ -20,37 +20,47 @@
 void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   //أداة
 
-  if (IsInsideWindow || IsInsideFunction || IsInsideClass)
+  if (IsInsideWindow || IsInsideFunction || IsInsideClass) {
     ErrorCode("يجب انشاء الادوات في المنطقة العامة", o_tokens);
+  }
 
   if (Token[2] == "نافذة") {
-    if (Token[3] != "(")
+    if (Token[3] != "(") {
       ErrorCode("إشارة مفقودة '(' قبل ' " + Token[3] + " ' ", o_tokens);
-    if (Token[5] != ",")
+    }
+    if (Token[5] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[5] + " ' ", o_tokens);
-    if (Token[7] != ",")
+    }
+    if (Token[7] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[7] + " ' ", o_tokens);
-    if (Token[9] != ",")
+    }
+    if (Token[9] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[9] + " ' ", o_tokens);
-    if (Token[11] != ",")
+    }
+    if (Token[11] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[11] + " ' ", o_tokens);
-    if (Token[13] != ",")
+    }
+    if (Token[13] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[13] + " ' ", o_tokens);
-    if (Token[15] != ")")
+    }
+    if (Token[15] != ")") {
       ErrorCode("إشارة مفقودة ')' بعد ' " + Token[14] + " ' ", o_tokens);
+    }
 
-    if (!IsValidName(Token[4], o_tokens))
+    if (!IsValidName(Token[4], o_tokens)) {
       ErrorCode("تعريف غير مقبول : ' " + Token[4] + " ' ", o_tokens);
+    }
 
     // if already any other type of global var exist
     CheckForSameGlobalID(Token[6], o_tokens);
 
     if (!o_tokens->TOKENS_PREDEFINED) {
-      if (CONTROL_WIN_IS_SET[Token[4]])
+      if (CONTROL_WIN_IS_SET[Token[4]]) {
         ErrorCode("النافذة ' " + Token[4] +
                       " ' تم انشاؤها مسبقا في السطر رقم : " +
                       CONTROL_WIN_AT_LINE[(Token[4])],
                   o_tokens);
+      }
 
       CONTROL_WIN_IS_SET[Token[4]] = true;
       WIN_IS_WEB[Token[4]] = false;
@@ -64,9 +74,10 @@ void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       return; // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[CONTROL] [WINDOW] ['" + Token[4] + " '] \n\n",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // New Window
@@ -91,38 +102,49 @@ void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
     return; // continue;
   } else if (Token[2] == "زر" || Token[2] == "نص" || Token[2] == "ملصق") {
-    if (Token[3] != "(")
+    if (Token[3] != "(") {
       ErrorCode("إشارة مفقودة '(' قبل ' " + Token[3] + " ' ", o_tokens);
-    if (Token[5] != ",")
+    }
+    if (Token[5] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[5] + " ' ", o_tokens);
-    if (Token[7] != ",")
+    }
+    if (Token[7] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[7] + " ' ", o_tokens);
-    if (Token[9] != ",")
+    }
+    if (Token[9] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[9] + " ' ", o_tokens);
-    if (Token[11] != ",")
+    }
+    if (Token[11] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[11] + " ' ", o_tokens);
-    if (Token[13] != ",")
+    }
+    if (Token[13] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[13] + " ' ", o_tokens);
-    if (Token[15] != ",")
+    }
+    if (Token[15] != ",") {
       ErrorCode("إشارة مفقودة ',' قبل ' " + Token[15] + " ' ", o_tokens);
-    if (Token[17] != ")")
+    }
+    if (Token[17] != ")") {
       ErrorCode("إشارة مفقودة ')' بعد ' " + Token[16] + " ' ", o_tokens);
+    }
 
-    if (!CONTROL_WIN_IS_SET[Token[4]] && Token[4] != "رئيسية")
+    if (!CONTROL_WIN_IS_SET[Token[4]] && Token[4] != "رئيسية") {
       ErrorCode("نافذه غير موجوده : ' " + Token[4] + " ' ", o_tokens);
+    }
 
-    if (!IsValidName(Token[6], o_tokens))
+    if (!IsValidName(Token[6], o_tokens)) {
       ErrorCode("تعريف غير مقبول : ' " + Token[6] + " ' ", o_tokens);
+    }
 
     // if already any other type of global var exist
     CheckForSameGlobalID(Token[6], o_tokens);
 
     if (!o_tokens->TOKENS_PREDEFINED) {
-      if (CONTROL_IS_SET[std::make_pair(Token[4], Token[6])])
+      if (CONTROL_IS_SET[std::make_pair(Token[4], Token[6])]) {
         ErrorCode("الأداة ' " + Token[6] +
                       " ' تم انشاؤها مسبقا في السطر رقم : " +
                       CONTROL_AT_LINE[std::make_pair(Token[4], Token[6])],
                   o_tokens);
+      }
 
       CONTROL_IS_SET[std::make_pair(Token[4], Token[6])] = true;
       CONTROL_AT_LINE[std::make_pair(Token[4], Token[6])] =
@@ -133,10 +155,11 @@ void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       return; // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[CONTROL] ['" + Token[6] + " '] ['" + Token[2] +
                         " '] \n\n",
                     o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // New CTR
@@ -180,11 +203,12 @@ void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
     return; // continue;
   } else {
-    if (Token[2] == "نافدة")
+    if (Token[2] == "نافدة") {
       ErrorCode("نوع الأداة غير معروف ' " + Token[2] +
                     " '، هل تقصد ' نافذة ' ؟ ",
                 o_tokens);
-    else
+    } else {
       ErrorCode("نوع الأداة غير معروف ' " + Token[2] + " ' ", o_tokens);
+    }
   }
 }

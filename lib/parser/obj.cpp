@@ -21,31 +21,37 @@
 void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // كائن
 
-  if (!o_tokens->TOKENS_PREDEFINED)
+  if (!o_tokens->TOKENS_PREDEFINED) {
     return; // continue;
+  }
 
   // ك:م = 2
 
-  if (!IsInsideFunction)
+  if (!IsInsideFunction) {
     ErrorCode("يجب استعمال الكائن داخل دالة ' " + Token[1] + " ' ", o_tokens);
+  }
 
-  if (Token[2] != ":")
+  if (Token[2] != ":") {
     ErrorCode("يجب وضع نقطتين ':' بين الكائن و المنتمي، أي بعد ' " + Token[1] +
                   " ' ",
               o_tokens);
+  }
 
-  if (Token[3] == "بناء")
+  if (Token[3] == "بناء") {
     ErrorCode("لا يمكن استدعاء دالة ' بناء() '، هته الدالة تستدعى بشكل آلي عند "
               "إنشاء الكائن",
               o_tokens);
+  }
 
-  if (Token[3] == "هدم")
+  if (Token[3] == "هدم") {
     ErrorCode("لا يمكن استدعاء دالة ' هدم() '، هته الدالة تستدعى بشكل آلي عند "
               "الحاجة إلى تدمير هذا الكائن",
               o_tokens);
+  }
 
-  if (Token[3] == "")
+  if (Token[3].empty()) {
     ErrorCode("يجب وضع اسم المنتمي بعد ' " + Token[1] + ":' ", o_tokens);
+  }
 
   // C++, allow create Obj on global, global-class, local, but using it only on
   // func.
@@ -72,9 +78,10 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       OBJ_ID = "";
       WIN_OR_CLASS = "";
       IS_GLOBAL_OBJ = true;
-    } else
+    } else {
       ErrorCode("علة 1: انتماء الكائن غير معروف ' " + Token[1] + " ' ",
                 o_tokens);
+    }
   } else if (IsInsideWindow) {
     if (OBJ_IS_SET[std::make_pair(TheWindow + TheFunction, Token[1])]) {
       // Window -> Function.
@@ -88,9 +95,10 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       OBJ_ID = "";
       WIN_OR_CLASS = "";
       IS_GLOBAL_OBJ = true;
-    } else
+    } else {
       ErrorCode("علة 2: انتماء الكائن غير معروف ' " + Token[1] + " ' ",
                 o_tokens);
+    }
   } else {
     if (OBJ_IS_SET[std::make_pair(TheFunction, Token[1])]) {
       // Global Function.
@@ -104,9 +112,10 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       OBJ_ID = "";
       WIN_OR_CLASS = "";
       IS_GLOBAL_OBJ = true;
-    } else
+    } else {
       ErrorCode("علة 3: انتماء الكائن غير معروف ' " + Token[1] + " ' ",
                 o_tokens);
+    }
   }
 
   /*
@@ -147,50 +156,56 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   std::string TK_CLASS = OBJ_CLASS[std::make_pair(OBJ_ID, Token[1])];
 
   if (!CLASS_G_VAR_IS_SET[std::make_pair(TK_CLASS, Token[3])] &&
-      !CLASS_FUN_IS_SET[std::make_pair(TK_CLASS, Token[3])])
+      !CLASS_FUN_IS_SET[std::make_pair(TK_CLASS, Token[3])]) {
     ErrorCode("الصنف ' " + TK_CLASS + " ' ليس فيه أي منتمي معرف باسم ' " +
                   Token[3] + " ' ",
               o_tokens);
+  }
 
   std::string MEMBER_TYPE;
 
   if (CLASS_G_VAR_IS_SET[std::make_pair(TK_CLASS, Token[3])]) {
     // Var member
 
-    if (CLASS_G_VAR_PRIVATE[std::make_pair(TK_CLASS, Token[3])])
+    if (CLASS_G_VAR_PRIVATE[std::make_pair(TK_CLASS, Token[3])]) {
       ErrorCode("لا يمكن استدعاء المتغير ' " + Token[3] +
                     " ' المنتمي للصنف ' " + TK_CLASS +
                     " ' لأنه من نوع ' خاص ' ",
                 o_tokens);
+    }
 
-    if (Token[4] != "=")
+    if (Token[4] != "=") {
       ErrorCode("يجب وضع '=' بعد ' " + Token[1] + " : " + Token[3] + " ' ",
                 o_tokens);
+    }
 
-    if (Token[5] == "")
+    if (Token[5].empty()) {
       ErrorCode("يجب وضع قيمة بعد '=' ", o_tokens);
+    }
 
     MEMBER_TYPE = CLASS_G_VAR_TYPE[std::make_pair(TK_CLASS, Token[3])];
 
-    if (MEMBER_TYPE == "عادم")
+    if (MEMBER_TYPE == "عادم") {
       ErrorCode("لا يمكن إضافة منتمي عادم ' " + Token[1] + " : " + Token[3] +
                     " ' ",
                 o_tokens);
+    }
 
     TempTokenCount = 0;
     for (int p = 4; p <= o_tokens->TOTAL[o_tokens->Line]; p++) // | = a + b |
     {
-      if (Token[p] != "") {
+      if (!Token[p].empty()) {
         TempToken[TempTokenCount] = Token[p];
         TempTokenCount++;
       }
     }
 
     if (IS_GLOBAL_OBJ) {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[GLOBAL-OBJ ' " + Token[1] + " ' : ' " +
                           Token[3] + " '] = ",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // Obj:Mem = ...
@@ -208,10 +223,11 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       }
       // *** *** *** *** *** ***
     } else {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[LOCAL-OBJ ' " + Token[1] + " ' : ' " +
                           Token[3] + " '] = ",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // Obj:Mem = ...
@@ -249,8 +265,9 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
                        TheFunction,          // TMP_FUNCTION_NAME
                        o_tokens);
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE(" \n\n", o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Obj:Mem = ... ;
@@ -269,28 +286,33 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   } else if (CLASS_FUN_IS_SET[std::make_pair(TK_CLASS, Token[3])]) {
     // Function member
 
-    if (CLASS_FUN_PRIVATE[std::make_pair(TK_CLASS, Token[3])])
+    if (CLASS_FUN_PRIVATE[std::make_pair(TK_CLASS, Token[3])]) {
       ErrorCode("لا يمكن استدعاء الدالة ' " + Token[3] +
                     " ' المنتمية للصنف ' " + TK_CLASS +
                     " ' لأنها من نوع ' خاص ' ",
                 o_tokens);
+    }
 
-    if (CLASS_FUN_TYPE[std::make_pair(TK_CLASS, Token[3])] != "عادم")
+    if (CLASS_FUN_TYPE[std::make_pair(TK_CLASS, Token[3])] != "عادم") {
       ErrorCode("الدالة ' " + Token[3] + " ' المنتمية للصنف ' " + TK_CLASS +
                     " ' ليست من نوع 'عادم'، لذى لابد من استعمال متغير ليلتقط "
                     "قيمة الإرجاع ",
                 o_tokens);
+    }
 
-    if (Token[4] != "(")
+    if (Token[4] != "(") {
       ErrorCode("يجب وضع '(' بعد ' " + Token[1] + " : " + Token[3] + " ' ",
                 o_tokens);
+    }
 
-    if (Token[5] == "")
+    if (Token[5] == "") {
       ErrorCode("يجب غلق القوس بعد ' " + Token[1] + " : " + Token[3] + " (' ",
                 o_tokens);
+    }
 
-    if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")")
+    if (Token[o_tokens->TOTAL[o_tokens->Line] - 1] != ")") {
       ErrorCode("يجب غلق القوس", o_tokens);
+    }
 
     MEMBER_TYPE = CLASS_FUN_TYPE[std::make_pair(TK_CLASS, Token[3])];
 
@@ -305,10 +327,11 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     }
 
     if (IS_GLOBAL_OBJ) {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[GLOBAL-OBJ ' " + Token[1] + " ':'" + Token[3] +
                           " '(Func)( ",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // Obj:MemFunc ( ...
@@ -326,10 +349,11 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       }
       // *** *** *** *** *** ***
     } else {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("		[LOCAL-OBJ ' " + Token[1] + " ':'" + Token[3] +
                           " '(Func)( ",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // Obj:MemFunc ( ...
@@ -355,8 +379,9 @@ void parser_Obj(std::string Token[2048], CLASS_TOKEN *o_tokens) {
         2, // 2 = fun member
         WIN_OR_CLASS, TheFunction, TempToken, (TempTokenCount - 1), o_tokens);
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE(")] \n\n", o_tokens); // DEBUG
+    }
 
     // *** Generate Code ***
     // Obj:MemFunc ( ... ) ;

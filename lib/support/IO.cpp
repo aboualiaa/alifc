@@ -2,8 +2,8 @@
 // Created by Ahmed Abou Aliaa on 05.11.20.
 //
 
-#include <fstream>
 #include <fmt/format.h>
+#include <fstream>
 
 namespace alif::support::io {
 

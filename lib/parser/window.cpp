@@ -10,6 +10,7 @@
 #include <string>
 
 #include <boost/algorithm/string.hpp>
+#include <utility>
 
 #define UNICODE
 #define _UNICODE
@@ -24,8 +25,8 @@
 
 // ----------------------------------
 
-std::string GetFormatedHTML(std::string HTML, std::string WindowName,
-                            CLASS_TOKEN *o_tokens) {
+auto GetFormatedHTML(const std::string &HTML, const std::string &WindowName,
+                     CLASS_TOKEN *o_tokens) -> std::string {
 
   std::string FormatedHTML;
 
@@ -86,8 +87,8 @@ o_tokens); } else { FormatedHTML.append(Line);
     // <img src="data:image/png;base64,..." ...>
     // Note: src=\" -> 6
 
-    std::size_t p_1;
-    std::size_t p_2;
+    std::size_t p_1 = 0;
+    std::size_t p_2 = 0;
     std::string LineBuffer;
     std::string LineLower;
 
@@ -126,9 +127,10 @@ o_tokens); } else { FormatedHTML.append(Line);
         if (substr_utf8(LineBuffer, 0, 7) == "file://") {
 
           boost::algorithm::replace_first(LineBuffer, "file://", "");
-          if (DEBUG)
+          if (DEBUG) {
             DEBUG_MESSAGE("file and fixed |" + LineBuffer + "| \n\n",
                           o_tokens); // DEBUG
+          }
         }
 
         const std::string c_URI = LineBuffer;
@@ -151,7 +153,7 @@ o_tokens); } else { FormatedHTML.append(Line);
         }
 
         std::string FileType =
-            LineBuffer.substr(LineBuffer.find_last_of(".") + 1);
+            LineBuffer.substr(LineBuffer.find_last_of('.') + 1);
 
         // .apng -> image/apng .bmp
         // -> image/bmp .gif
@@ -238,8 +240,9 @@ o_tokens); } else { FormatedHTML.append(Line);
   return FormatedHTML;
 }
 
-void HTML_to_c(std::string sHTMLPath, std::string sCPath, std::string VarName,
-               std::string WindowName, CLASS_TOKEN *o_tokens) {
+void HTML_to_c(const std::string &sHTMLPath, const std::string &sCPath,
+               const std::string &VarName, std::string WindowName,
+               CLASS_TOKEN *o_tokens) {
   // This function can be completly replace in c++20 by <embed>
   // In: test.html
   // Out: test.c -> const test_content = "..test.html..";
@@ -253,7 +256,7 @@ void HTML_to_c(std::string sHTMLPath, std::string sCPath, std::string VarName,
   std::string sHTMLCode =
       "<!-- Alif compiler " + VERSION + " - HTML Start --> \n" +
       // --- Get formated AlifJavaScript ---
-      GetFormatedHTML(sHTML.str(), WindowName, o_tokens)
+      GetFormatedHTML(sHTML.str(), std::move(WindowName), o_tokens)
       // sHTML.str()
       + " \n<!-- Alif compiler " + VERSION + " - HTML End -->";
 
@@ -289,27 +292,34 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   // #واجهة_ويب رئيسية "UI_WEB_1"
   // #window_web MyWindow "MyFile.html"
 
-  if (IsInsideWindow)
+  if (IsInsideWindow) {
     ErrorCode("لا يمكن انشاء نافدة داخل نافدة، النافذة الحالية : " + TheWindow,
               o_tokens);
+  }
 
-  if (IsInsideClass)
+  if (IsInsideClass) {
     ErrorCode("لا يمكن انشاء نافذة داخل صنف : " + TheClass, o_tokens);
+  }
 
-  if (IsInsideFunction)
+  if (IsInsideFunction) {
     ErrorCode("لا يمكن انشاء نافذة داخل دالة : " + TheFunction, o_tokens);
+  }
 
-  if (Token[3] == "")
+  if (Token[3].empty()) {
     ErrorCode("يجب تحديد اسم النافذة", o_tokens);
+  }
 
-  if (!IsValidName(Token[3], o_tokens))
+  if (!IsValidName(Token[3], o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + Token[3] + " ' ", o_tokens);
+  }
 
-  if (Token[4] == "")
+  if (Token[4].empty()) {
     ErrorCode("يجب تحديد اسم الملف", o_tokens);
+  }
 
-  if (!IsValidStringFormat(Token[4], o_tokens))
+  if (!IsValidStringFormat(Token[4], o_tokens)) {
     ErrorCode("خطأ في كتابة إسم الملف: " + Token[4], o_tokens);
+  }
 
   // ------------------------
 
@@ -324,10 +334,11 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
     if (!o_tokens->TOKENS_PREDEFINED) {
 
-      if (CONTROL_WIN_IS_SET["رئيسية"])
+      if (CONTROL_WIN_IS_SET["رئيسية"]) {
         ErrorCode("النافذة ' رئيسية ' تم انشاؤها مسبقا في السطر رقم : " +
                       CONTROL_WIN_AT_LINE["رئيسية"],
                   o_tokens);
+      }
 
       // MAIN_WIN_IS_SET = true;
       // MAIN_WIN_AT_LINE = IntToString(o_tokens->Line);
@@ -344,9 +355,10 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       return; // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[WINDOW_WEB] [MAIN] {SET BASE CTR} \n\n",
                     o_tokens); // DEBUG
+    }
 
     /*
     if (CONTROL_WIN_IS_SET["رئيسية"]){
@@ -449,15 +461,17 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     // this window Generated_ID now.
     TheWindow = Token[3];
 
-    if (!IsValidName(Token[3], o_tokens))
+    if (!IsValidName(Token[3], o_tokens)) {
       ErrorCode("اسم غير مقبول : ' " + Token[3] + " ' ", o_tokens);
+    }
 
     if (!o_tokens->TOKENS_PREDEFINED) {
 
-      if (CONTROL_WIN_IS_SET[Token[3]])
+      if (CONTROL_WIN_IS_SET[Token[3]]) {
         ErrorCode("النافذة ' " + Token[3] + " ' تم انشاؤها مسبقا في السطر : " +
                       CONTROL_WIN_AT_LINE[Token[3]],
                   o_tokens);
+      }
 
       // MAIN_WIN_IS_SET = true;
       // MAIN_WIN_AT_LINE = IntToString(o_tokens->Line);
@@ -476,9 +490,10 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
       return; // continue;
     }
 
-    if (DEBUG)
+    if (DEBUG) {
       DEBUG_MESSAGE("[WINDOW] [" + Token[3] + "] {SET BASE CTR} \n\n",
                     o_tokens); // DEBUG
+    }
 
     // Not need this because we are in: #win web "MyWindow.alifui"
     // IsInsideWindow = true;
@@ -569,10 +584,11 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     TheWindow = "";
   }
 
-  if (DEBUG)
+  if (DEBUG) {
     DEBUG_MESSAGE("#NewWindow_Web (" + Token[3] + ") [HTML " + Token[4] +
                       " . ALIF UIWeb] \n\n",
                   o_tokens);
+  }
 
   // temporary end
   TheWindow = "";
@@ -580,44 +596,53 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
 void parser_NewWindow(std::string Token[2048], CLASS_TOKEN *o_tokens) {
 
-  if (IsInsideWindow)
+  if (IsInsideWindow) {
     ErrorCode("لا يمكن انشاء نافدة داخل نافدة، النافذة الحالية : " + TheWindow,
               o_tokens);
+  }
 
-  if (IsInsideClass)
+  if (IsInsideClass) {
     ErrorCode("لا يمكن انشاء نافذة داخل صنف : " + TheClass, o_tokens);
+  }
 
-  if (IsInsideFunction)
+  if (IsInsideFunction) {
     ErrorCode("لا يمكن انشاء نافذة داخل دالة : " + TheFunction, o_tokens);
+  }
 
-  if (Token[2] == "")
+  if (Token[2].empty()) {
     ErrorCode("يجب تحديد اسم النافذة", o_tokens);
+  }
 
-  if (Token[3] != "" && Token[3] != "(")
+  if (!Token[3].empty() && Token[3] != "(") {
     ErrorCode("أمر غير معروف : ' " + Token[3] + " ' ", o_tokens);
+  }
 
   if (Token[3] == "(") {
-    if (Token[4] == "")
+    if (Token[4].empty()) {
       ErrorCode("يجب اغلاق ')' ", o_tokens);
+    }
 
-    if (Token[4] != ")")
+    if (Token[4] != ")") {
       ErrorCode("لا يمكن اعطاء خصائص لنافدة", o_tokens);
+    }
 
-    if (Token[5] != "")
+    if (!Token[5].empty()) {
       ErrorCode("أمر غير معروف : ' " + Token[5] + " ' ", o_tokens);
+    }
   }
 
   if (Token[2] == "رئيسية") // نافدة رئيسية
   {
     if (!o_tokens->TOKENS_PREDEFINED) {
-      if (MAIN_WIN_IS_SET)
+      if (MAIN_WIN_IS_SET) {
         ErrorCode("النافذه الرئيسية تم انشاؤها مسبقا في السطر : " +
                       MAIN_WIN_AT_LINE,
                   o_tokens);
+      }
 
       MAIN_WIN_IS_SET = true;
       MAIN_WIN_AT_LINE = IntToString(o_tokens->Line);
-      WIN_IS_WEB["رئيسية"] = (WIN_IS_WEB["رئيسية"] ? true : false);
+      WIN_IS_WEB["رئيسية"] = (WIN_IS_WEB["رئيسية"]);
 
       IsInsideWindow = true; // Need by Tokens Predefined
       TheWindow = "رئيسية";  // Need by Tokens Predefined
@@ -633,14 +658,16 @@ void parser_NewWindow(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     APP_TYPE = "PC_GUI";
 
     if (CONTROL_WIN_IS_SET["رئيسية"]) {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[WINDOW] [MAIN] {CTR ALREADY SET} \n\n",
                       o_tokens); // DEBUG
+      }
 
       return; // continue;
     } else {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[WINDOW] [MAIN] {SET BASE CTR} \n\n", o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // CG_INITIALIZATION() // already done by 'alif.cpp'
@@ -652,17 +679,19 @@ void parser_NewWindow(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     }
   } else // نافدة MyWindowName
   {
-    if (!IsValidName(Token[2], o_tokens))
+    if (!IsValidName(Token[2], o_tokens)) {
       ErrorCode("اسم غير مقبول : ' " + Token[2] + " ' ", o_tokens);
+    }
 
     if (!o_tokens->TOKENS_PREDEFINED) {
-      if (WIN_IS_SET[Token[2]])
+      if (WIN_IS_SET[Token[2]]) {
         ErrorCode("النافذة ' " + Token[2] +
                       " ' تم انشاؤها مسبقا في السطر : " + WIN_AT_LINE[Token[2]],
                   o_tokens);
+      }
 
       WIN_IS_SET[Token[2]] = true;
-      WIN_IS_WEB[Token[2]] = (WIN_IS_WEB[Token[2]] ? true : false);
+      WIN_IS_WEB[Token[2]] = (WIN_IS_WEB[Token[2]]);
       WIN_AT_LINE[Token[2]] = IntToString(o_tokens->Line);
 
       IsInsideWindow = true; // Need by Tokens Predefined
@@ -680,14 +709,16 @@ void parser_NewWindow(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     APP_TYPE = "PC_GUI";
 
     if (CONTROL_WIN_IS_SET[Token[2]]) {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[WINDOW] [" + Token[2] + "] {CTR ALREADY SET} \n\n",
                       o_tokens); // DEBUG
-      return;                    // continue;
+      }
+      return; // continue;
     } else {
-      if (DEBUG)
+      if (DEBUG) {
         DEBUG_MESSAGE("[WINDOW] [" + Token[2] + "] {SET BASE CTR} \n\n",
                       o_tokens); // DEBUG
+      }
 
       // *** Generate Code ***
       // New Window

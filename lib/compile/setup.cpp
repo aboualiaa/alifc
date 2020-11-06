@@ -46,22 +46,20 @@ std::string GET_WORKING_PATH_WIN32() {
 
 #endif
 
-std::string GET_WORKING_PATH() {
+auto GET_WORKING_PATH() -> std::string {
   // https://msdn.microsoft.com/en-us/library/sf98bd4y.aspx
 
-  char *buffer;
+  char *buffer = nullptr;
 
-  if ((buffer = GetCurrentDir(NULL, 0)) == NULL) {
-    return NULL;
-  } else {
-    // printf( "%s \nLength: %d\n", buffer, strnlen(buffer) );
-    // free(buffer);
+  if ((buffer = GetCurrentDir(nullptr, 0)) == nullptr) {
+    return nullptr;
+  } // printf( "%s \nLength: %d\n", buffer, strnlen(buffer) );
+  // free(buffer);
 
-    return buffer;
-  }
+  return buffer;
 }
 
-std::string GET_PATH_WITHOUT_FILE(std::string PATH) {
+auto GET_PATH_WITHOUT_FILE(const std::string &PATH) -> std::string {
   // In: /abc/def/test.xx
   // Out: /abc/def/
 
@@ -74,16 +72,14 @@ std::string GET_PATH_WITHOUT_FILE(std::string PATH) {
   if (POSITION < 1) // To avoid ABC/DEF/ or Relative Path
   {
     return "";
-  } else {
-#ifdef _WIN32
-    return PATH.substr(0, PATH.find_last_of("\\/"));
-#else
-    return PATH.substr(0, PATH.find_last_of("//"));
-#endif
   }
+#ifdef _WIN32 return PATH.substr(0, PATH.find_last_of("\\/"));
+#else
+  return PATH.substr(0, PATH.find_last_of("//"));
+#endif
 }
 
-bool IS_PATH(std::string PATH_OR_FILE) {
+auto IS_PATH(const std::string &PATH_OR_FILE) -> bool {
   // 'myfile.x'               --> false.
   // '/abc/test/myfile.x'     --> true.
 
@@ -93,13 +89,14 @@ bool IS_PATH(std::string PATH_OR_FILE) {
   int POSITION = PATH_OR_FILE.find_last_of("//");
 #endif
 
-  if (POSITION < 1)
+  if (POSITION < 1) {
     return false;
-  else
+  } else {
     return true;
+  }
 }
 
-std::string GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH) {
+auto GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH) -> std::string {
   // In : '/abc/test/folder/'
   // Out : '/abc/test/folder'
 
@@ -111,15 +108,16 @@ std::string GET_PATH_WITHOUT_LAST_SEPARATION(std::string PATH) {
   else
     return PATH;
 #else
-  if (Last_Char == "/")
+  if (Last_Char == "/") {
     return PATH.substr(0, PATH.length() - 1);
-  else
+  } else {
     return PATH;
+  }
 #endif
 }
 
-int Temp_File_Rand() {
-  srand(time(NULL));
+auto Temp_File_Rand() -> int {
+  srand(time(nullptr));
   return rand() % 10 + 1000;
 }
 
@@ -141,7 +139,7 @@ bool CHECK_FOLDER_EXISTE(string PATH)
 }
 */
 
-bool CHECK_FILE_EXISTE(std::string PATH) {
+auto CHECK_FILE_EXISTE(const std::string &PATH) -> bool {
   /*
   string::iterator end_it = utf8::find_invalid(PATH.begin(), PATH.end());
 
@@ -161,12 +159,13 @@ utf8::utf8to16(PATH.begin(), end_it, back_inserter(utf16line));
   return infile.good();
 }
 
-bool CHECK_SETUP() // string ARGV_0, string OUTPUT)
+auto CHECK_SETUP() -> bool // string ARGV_0, string OUTPUT)
 {
-  if (DEBUG)
+  if (DEBUG) {
     RANDOM = "0000";
-  else
+  } else {
     RANDOM = IntToString(Temp_File_Rand());
+  }
 
 #ifdef _WIN32
 
@@ -362,7 +361,7 @@ bool CHECK_SETUP() // string ARGV_0, string OUTPUT)
 
 #endif
 
-  // TODO: check installation..
+  // TODO(aboualiaa): check installation..
   // trim all var..
   // check gcc installation.. return false;
   // tray create file to check for errors..

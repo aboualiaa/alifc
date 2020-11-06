@@ -106,7 +106,7 @@ auto substr_utf8(const std::string &originalString, int Position, int MaxLen)
 
   const char *aStr = resultString_start.c_str();
 
-  while (*aStr) {
+  while (*aStr != 0) {
 
     if ((*aStr & 0xc0) != 0x80) {
 
@@ -302,7 +302,7 @@ auto base64_encode(unsigned char const *bytes_to_encode, unsigned int in_len)
   unsigned char char_array_3[3];
   unsigned char char_array_4[4];
 
-  while ((in_len--) != 0u) {
+  while ((in_len--) != 0U) {
     char_array_3[i++] = *(bytes_to_encode++);
     if (i == 3) {
       char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
@@ -381,7 +381,9 @@ base64_chars.find(char_array_4[i]) & 0xff;
 }
 */
 
-auto BinaryToBase64(const std::string &FileIn) -> std::string { return ""; }
+auto BinaryToBase64(const std::string & /*FileIn*/) -> std::string {
+  return "";
+}
 
 // -----------------------------------------------------------
 // CPP Set Variables Name
@@ -510,9 +512,8 @@ auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens)
   if (BUFFER.empty()) {
     return o_tokens->REAL_LINE[o_tokens->Line]; // Empty, So tray to return full
                                                 // real line !
-  } else {
-    return BUFFER; // Return the SubStr requested.
   }
+  return BUFFER; // Return the SubStr requested.
 }
 
 // ====================================================
@@ -770,13 +771,9 @@ auto CAN_ADD_FUN_HERE(const std::string &TOKEN_LAST) -> bool {
   }
   */
 
-  if ((TOKEN_LAST != "+") && (TOKEN_LAST != "-") && (TOKEN_LAST != "*") &&
-      (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "،") &&
-      (TOKEN_LAST != ",") && (TOKEN_LAST != "(")) {
-    return false;
-  }
-
-  return true;
+  return !((TOKEN_LAST != "+") && (TOKEN_LAST != "-") && (TOKEN_LAST != "*") &&
+           (TOKEN_LAST != "/") && (TOKEN_LAST != "=") && (TOKEN_LAST != "،") &&
+           (TOKEN_LAST != ",") && (TOKEN_LAST != "("));
 }
 
 // ====================================================
@@ -813,7 +810,8 @@ auto IsValidVar(const std::string &Var, CLASS_TOKEN *o_tokens) -> bool {
   if (Var.empty()) {
 
     return false;
-  } else if (Var == "صحيح" || Var == "خطأ") {
+  }
+  if (Var == "صحيح" || Var == "خطأ") {
 
     IsValidVar_Type = "منطق";
     return true;
@@ -1479,25 +1477,26 @@ auto CHECK_NEW_FUN_SYNTAX(bool GLOBAL, std::string SYNTAX[1024],
 
   if (o_tokens->TOKENS_PREDEFINED) {
     return CPP_CODE;
-  } else {
-    return "";
   }
+  return "";
 }
 
 // ====================================================
 
 auto CheckForSyntax(
     const std::string &OBJECTIF_TYPE, // OBJECTIF_TYPE
-    bool ACCEPT_REF_WIN_WIDGET, // Accept Using Reference إلى Window:Controls
-    bool ACCEPT_REF_WIN_FUN,    // Accept Using Reference إلى Window:Function
-    bool ACCEPT_REF_GLOBAL_FUN, // Accept Using Reference إلى Global Functions
-    bool ACCEPT_REF_LOCAL_FUN,  // Accept Using Reference إلى Local Functions
-    bool ACCEPT_REF_GLOBAL_VAR, // Accept Using Reference إلى Global VAR
-    bool ACCEPT_REF_LOCAL_VAR,  // Accept Using Reference إلى Local VAR
-    bool ACCEPT_STR_TO_INT,     // Accept Convertion من نص إلى Int
-    bool ACCEPT_INT_TO_STRING,  // Accept Convertion من عدد إلى String
-    std::string SYNTAX[1024],   // SYNTAX[] string
-    int SYNTAX_LONG,            // SYNTAX_LONG int
+    bool /*ACCEPT_REF_WIN_WIDGET*/,   // Accept Using Reference إلى
+                                      // Window:Controls
+    bool /*ACCEPT_REF_WIN_FUN*/, // Accept Using Reference إلى Window:Function
+    bool /*ACCEPT_REF_GLOBAL_FUN*/, // Accept Using Reference إلى Global
+                                    // Functions
+    bool /*ACCEPT_REF_LOCAL_FUN*/, // Accept Using Reference إلى Local Functions
+    bool /*ACCEPT_REF_GLOBAL_VAR*/, // Accept Using Reference إلى Global VAR
+    bool /*ACCEPT_REF_LOCAL_VAR*/,  // Accept Using Reference إلى Local VAR
+    bool /*ACCEPT_STR_TO_INT*/,     // Accept Convertion من نص إلى Int
+    bool ACCEPT_INT_TO_STRING, // Accept Convertion من عدد إلى String
+    std::string SYNTAX[1024],  // SYNTAX[] string
+    int SYNTAX_LONG,           // SYNTAX_LONG int
     const std::string &TMP_WIN_OR_CLASS, // a = b + win:fun(2+2) + class:fun(x)
     const std::string &TmpFunction,      // a = b + win/class:fun(2+2)
     CLASS_TOKEN *o_tokens) -> std::string {
@@ -1552,7 +1551,8 @@ auto CheckForSyntax(
           C_FOUND = true;
           p = z;
           break;
-        } else if (SYNTAX[z] == "@") // @ Start ...
+        }
+        if (SYNTAX[z] == "@") // @ Start ...
         {
           // xyz = ...C++...@ Alif @...C++...
 
@@ -1616,9 +1616,8 @@ auto CheckForSyntax(
 
       if (C_FOUND) {
         continue; // Point إلى next بعد _س_
-      } else {
-        ErrorCode("نهايه شفرة غير موجود داخل البناء ' _س_ '", o_tokens);
       }
+      ErrorCode("نهايه شفرة غير موجود داخل البناء ' _س_ '", o_tokens);
     }
 
     // ----------------------
@@ -3318,7 +3317,7 @@ auto CheckForSyntax(
       std::string CTR_OPTION_TYPE;
       std::string CTR_OPTION_CPP_END;
       // int CTR_ARG;
-      int CTR_LAST_TOKEN_NUMBER;
+      int CTR_LAST_TOKEN_NUMBER = 0;
 
       if (CONTROL_WIN_IS_SET[SYNTAX[p]] || WIN_IS_SET[SYNTAX[p]]) {
         // abc = Window:option() 				| win:show()
@@ -3655,7 +3654,7 @@ auto CheckForSyntax(
                 continue;
         }
         */
-        else if (SYNTAX[p + 3] == ":") {
+        if (SYNTAX[p + 3] == ":") {
           // ---------------------------------------------------------------------------------
           // abc = Window : Control : Options
           // ---------------------------------------------------------------------------------

@@ -373,8 +373,8 @@ auto AlifJavaScript_Bridge_SendRequest() -> std::string {
 #endif
 }
 
-auto AlifJavaScript_Bridge_OnNewWindowSendRequest(const std::string &WVObjName)
-    -> std::string {
+auto AlifJavaScript_Bridge_OnNewWindowSendRequest(
+    const std::string & /*WVObjName*/) -> std::string {
 
 #ifdef _WIN32
   return " this->AlifJavaScriptBridge(evt.GetURL()); ";

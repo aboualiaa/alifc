@@ -80,7 +80,7 @@ std::map<std::pair<std::string, int>, std::string> L_FUN_ARG_TYPE;
 int Win_CurrentTotalFucntion = 0;
 std::map<std::string, int> Win_TotalFucntion;
 std::map<std::pair<std::string, int>, std::string> Win_FunctionNames;
-std::string NEW_FUNCTION_ARG = "";
+std::string NEW_FUNCTION_ARG;
 std::map<std::pair<std::string, std::string>, bool> L_VAR_IS_SET;
 std::map<std::pair<std::string, std::string>, std::string> L_VAR_AT_LINE;
 std::map<std::pair<std::string, std::string>, std::string> L_VAR_TYPE;
@@ -106,7 +106,7 @@ const bool DEBUG_PRINT_ON_SCREEN = false;
 bool THIS_IS_ALIF_C_FILE = false;
 bool SHOW_FILE_AND_LINE = true;
 bool ERROR_PRINT_ON_SCREEN = false;
-std::string LOG_MESSAGE_FULL = "";
+std::string LOG_MESSAGE_FULL;
 std::string CBUFER;
 std::string CBUFER_ID;
 std::string CBUFER_OBJ;
@@ -145,12 +145,9 @@ std::string SEPARATION = "/";
 std::string Compile_ExtraCompile = " ";
 std::string Compile_ExtraLink = " ";
 
-void CompileAddExtra_Compile(const std::string &cmd);
-void CompileAddExtra_Link(const std::string &cmd);
-std::string PythonInclude_path = "";
-std::string PythonLib_path = "";
-std::string PythonLibName = "";
-void PythonSetEnvirenment();
+std::string PythonInclude_path;
+std::string PythonLib_path;
+std::string PythonLibName;
 
 void CompileAddExtra_Compile(const std::string &cmd) {
   Compile_ExtraCompile.append(cmd);

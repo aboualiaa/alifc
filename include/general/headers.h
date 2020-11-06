@@ -15,7 +15,7 @@
 
 void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens);
 
-void AlifLexerParser(std::string FILE_NAME, std::string FILE_TYPE,
+void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
                      bool FIRST_FILE, bool TOKENS_ARE_PREDININED);
 
 #endif

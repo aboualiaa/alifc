@@ -89,9 +89,9 @@ void parser_Function(std::string Token[2048], CLASS_TOKEN *o_tokens) {
     }
 
     return; // continue;
-  } else if (Token[FUN_POS + 1] ==
-             "نقر") // || Token[FUN_POS + 1] == "فارة_نقر") // دالة Mouse_Click
-                    // MyFunctionName ()
+  }
+  if (Token[FUN_POS + 1] == "نقر") // || Token[FUN_POS + 1] == "فارة_نقر") //
+                                   // دالة Mouse_Click MyFunctionName ()
   {
     // --------------------------
     // Control Function

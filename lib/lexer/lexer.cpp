@@ -207,9 +207,8 @@ void AlifLexerParser(std::string fileName, const std::string &fileType,
     if (lower_file_type == "alifuiw") {
       PATH_FULL_WINDOW_WEB =
           working_directory + path_separator + lower_file_name;
-      // We don't need to do anything with Alif WindowWeb
-      // just back to privious parser to continue
-      // now, we have the full path of Alif WindowWeb file
+      // We don't need to do anything with Alif WindowWeb just back to privious
+      // parser to continue now, we have the full path of Alif WindowWeb file
       // PATH_FULL_WINDOW_WEB
       return;
     }

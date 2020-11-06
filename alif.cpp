@@ -12,7 +12,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/lexical_cast.hpp>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "compile/macos.h"
@@ -30,186 +29,42 @@
 namespace cli = alif::support::cli;
 struct ALIFARGS : cli::CMDARGS {
 public:
-  explicit ALIFARGS(std::vector<char const *> args) : cli::CMDARGS(std::move(args)){};
+  explicit ALIFARGS(std::vector<char const *> args)
+      : cli::CMDARGS(std::move(args)){};
   std::string input{};
   std::string output{};
+  std::string logfile{};
+  std::string workpath{};
   bool printlog{false};
 };
 
 static auto good_cmdline_args(ALIFARGS *cmdargs, cli::ENV *env) noexcept
-    -> bool;
-
-// --------------------------------------------------------
-// Help
-// --------------------------------------------------------
-
-void ALIF_HELP() {
-  std::cout << std::endl;
-
-  std::string Options =
-      " -workpath=[Working Path] : \n   Set Working Path, useful "
-      "if compiler can't correctly found include files.\n"
-      " -printlog : \n   Print Arabic Log on Screen, also save "
-      "log into the file [logfile].\n"
-      " -version : \n   Print the current Alif Compiler version.";
-
-#ifdef _WIN32
-
-  std::cout << "Alif Compiler " << VERSION << " - Microsoft(R) Windows(R)"
-            << std::endl;
-  std::cout << "(C)2020 DRAGA Hassan - www.aliflang.org" << std::endl;
-  std::cout << "--------------------------------------------" << std::endl
-            << std::endl;
-  std::cout << " Usage:  alif  [source.alif] [output.exe]  [logfile.txt]  "
-               "[Options...]"
-            << endl
-            << " Usage:  alif  [source.alifc] [output.exe]  [logfile.txt]  "
-               "[Options...]"
-            << endl
-            << std::endl;
-  std::cout << " Options : " << std::endl
-            << std::endl
-            << Options << std::endl
-            << std::endl;
-
-#elif __APPLE__
-
-  std::cout << "Alif Compiler " << VERSION << " - Apple(R) macOS(R)"
-            << std::endl;
-  std::cout << "(C)2020 DRAGA Hassan - www.aliflang.org" << std::endl;
-  std::cout << "------------------------------------------" << std::endl
-            << std::endl;
-  std::cout << " Usage:  alif  [source.alif]  [output.app]  [logfile.txt]  "
-               "[Options...]"
-            << std::endl
-            << std::endl;
-  std::cout << " Options : " << std::endl
-            << std::endl
-            << Options << std::endl
-            << std::endl;
-  // std::cout << "   iPhone Application Usage:  alif [source.alifi]
-  // [output.app] [logfile]" << std::endl; std::cout << " " << std::endl;
-  // std::cout << "   Windows Application Usage:  Unsuported. (You need Alif
-  // Compiler Windows Version)" << std::endl; cout
-  // << "   Linux Application Usage:  Unsuported. (You need Alif Compiler Linux
-  // Version)" << std::endl; std::cout << "   Android Application Usage:
-  // Unsuported. (You need Alif Compiler Windows Version)" << std::endl;
-
-#else
-
-  std::cout << "Alif Compiler " << VERSION << " - GNU Linux (GTK2_x86_64)"
-            << std::endl; // x86_64
-  std::cout << "(C)2020 DRAGA Hassan - www.aliflang.org" << std::endl;
-  std::cout << "------------------------------------------" << std::endl
-            << std::endl;
-  std::cout << " Usage:  alif  [source.alif]  [output.bin]  [logfile.txt]  "
-               "[Options...]"
-            << endl
-            << std::endl;
-  std::cout << " Options : " << std::endl
-            << std::endl
-            << Options << std::endl
-            << std::endl;
-  // std::cout << "   Linux 32 Application Usage:  alif [source.alif] [output]
-  // [logfile] -32" << std::endl; std::cout << " " << std::endl; std::cout << "
-  // Windows Application Usage:  Unsuported. (You need Alif Compiler Windows
-  // Version)"
-  // << std::endl; cout
-  // << "   Mac OS X Application Usage:  Unsuported. (You need Alif Compiler Mac
-  // OS X Version)" << std::endl; std::cout << "   Android Application Usage:
-  // Unsuported. (You need Alif Compiler Windows Version)" << std::endl;
-  // std::cout << "   iPhone Application Usage:  Unsuported. (You need Alif
-  // Compiler Mac OS X Version)"
-  // << std::endl;
-
-#endif
-}
+    -> std::string;
 
 auto main(int argc, char **argv) -> int {
 
   std::vector<char const *> args(argv, argv + argc);
-  static auto err_logger = spdlog::stderr_color_mt("mri-convert");
+  static auto err_logger = spdlog::stderr_color_mt("alifc");
   spdlog::set_level(spdlog::level::warn);
   auto env = cli::ENV();
   auto cmdargs = ALIFARGS(args);
-  if (!good_cmdline_args(&cmdargs, &env)) {
-    spdlog::get("mri-convert")
-        ->critical("Error while parsing command line arguments.");
+  auto msg = good_cmdline_args(&cmdargs, &env);
+  if (!msg.empty()) {
+    spdlog::get("alifc")->critical(msg);
     return 1;
   }
 
   // setlocale(LC_ALL, "en_US.UTF-8");
   setlocale(LC_ALL, "ar_SA.UTF-8");
 
-  // ------------------------------------------------------
-  // Check cmd
-  // ------------------------------------------------------
-
   std::string ARG_BUFFER;
-
-  // alif --version
-  if (argc == 2) {
-    ARG_BUFFER = argv[1];
-
-    if (ARG_BUFFER == "--version" || ARG_BUFFER == "-version" ||
-        ARG_BUFFER == "--v" || ARG_BUFFER == "-v") // --version
-    {
-      std::cout << "Alif Compiler " << VERSION << std::endl;
-      exit(EXIT_SUCCESS);
-    } else {
-      ALIF_HELP();
-      exit(EXIT_FAILURE);
-    }
-  }
-
-  if (argc < 4) {
-    ALIF_HELP();
-    exit(EXIT_FAILURE);
-  }
-
-  // ------------------------------------------------------
-  // Pars CMD
-  // ------------------------------------------------------
 
   // check -o, -m32, -m64, -silent, -path=".." ...
 
   // alif  [source] [output] [logfile]
-  PATH_FULL_ALIF = argv[1];
-  PATH_FULL_BIN = argv[2];
-  PATH_FULL_LOG = argv[3];
-
-  if (argc > 4) {
-    // alif  [source] [output] [logfile] [option1=val1] [option2=val2]
-
-    for (int i = 4; i < argc; i++) {
-      ARG_BUFFER = argv[i];
-
-      if (ARG_BUFFER == "--version" || ARG_BUFFER == "-version") // --version
-      {
-        std::cout << "Alif Compiler " << VERSION << std::endl << std::endl;
-        // exit(EXIT_SUCCESS);
-      } else if (ARG_BUFFER.substr(0, 10) ==
-                 "-workpath=") // -workpath="aaa/bbb/ccc/"
-      {
-        // Setting Working Path.
-
-        PATH_WORKING = GET_PATH_WITHOUT_LAST_SEPARATION(ARG_BUFFER.substr(10));
-      } else if (ARG_BUFFER == "-beta") // -beta
-      {
-        // Setting Beta Log
-
-        DEBUG = true;
-      } else if (ARG_BUFFER == "-printlog") // -beta
-      {
-        // Setting Log On Screen
-
-        ERROR_PRINT_ON_SCREEN = true;
-      } else {
-        ALIF_ERROR("ERROR: Unknown Option : " + ARG_BUFFER);
-        exit(EXIT_FAILURE);
-      }
-    }
-  }
+  PATH_FULL_ALIF = cmdargs.input;
+  PATH_FULL_BIN = cmdargs.output;
+  PATH_FULL_LOG = cmdargs.logfile;
 
   // ------------------------------------------------------
   // Check Files extention
@@ -257,7 +112,8 @@ auto main(int argc, char **argv) -> int {
     // Alif Lib Setting (to fix arab file name problem)
     // ------------------------------------------------------
 
-    ALIF_LIB_SETTING();
+    // TODO(aboualiaa): doesn't make any sense, uncomment if necessary
+    // ALIF_LIB_SETTING();
 
     // ------------------------------------------------------
     // CPP CODE INITIALIZATION
@@ -283,10 +139,11 @@ auto main(int argc, char **argv) -> int {
       LogMessage("\n ----------- The Alif Standard Library ------------- \n");
     }
 
-    AlifLexerParser("alifstandardlib", "ALIFLIB", false,
-                    false); // Global Tokens Predefinition.
-    AlifLexerParser("alifstandardlib", "ALIFLIB", false,
-                    true); // Full Syntaxt Checking.
+    // FIXME(aboualiaa): also senseless
+    // AlifLexerParser("alifstandardlib", "ALIFLIB", false,
+    //                    false); // Global Tokens Predefinition.
+    // AlifLexerParser("alifstandardlib", "ALIFLIB", false,
+    //                true); // Full Syntaxt Checking.
 
     if (DEBUG) {
       LogMessage("\n ----------- Standard Library FINISH --------------- \n");
@@ -529,17 +386,48 @@ void initArgDesc(boost::program_options::options_description *desc,
 
       //
 
-      ("printlog",
+      ("log,l",
 
        po::bool_switch(&cmdargs->printlog) //
            ->notifier([](auto v) {
              if (v) {
-               spdlog::set_level(
-                   spdlog::level::debug); // Set global log level to debug
+               spdlog::set_level(spdlog::level::debug);
+               ERROR_PRINT_ON_SCREEN = true;
              }
            }),
 
-       "turn on logging");
+       "turn on logging")
+
+      //
+
+      ("input,i", po::value(&cmdargs->input)->required(), "input")
+
+      //
+
+      ("output,o", po::value(&cmdargs->output), "output")
+
+      //
+
+      ("logfile", po::value(&cmdargs->logfile), "logfile")
+
+      //
+
+      ("workpath",
+       po::value(&cmdargs->workpath) //
+           ->notifier([](auto v) {
+             PATH_WORKING = GET_PATH_WITHOUT_LAST_SEPARATION(v);
+           }),
+       "workpath")
+      //
+
+      ("beta",
+       po::bool_switch() //
+           ->notifier([](auto v) {
+             if (v) {
+               DEBUG = true;
+             }
+           }),
+       "beta");
 }
 
 /// \brief does the housekeeping, use this to parse command lines,
@@ -549,40 +437,47 @@ void initArgDesc(boost::program_options::options_description *desc,
 /// \param env holds the vcid string
 /// \return true if all logic is ok, false otherwise
 static auto good_cmdline_args(ALIFARGS *cmdargs, cli::ENV *env) noexcept
-    -> bool {
+    -> std::string {
 
   namespace po = boost::program_options;
 
   try {
-    po::options_description desc("\nUsage: alifc [options] <input> <output>\n"
-                                 "\nAvailable Options");
-    po::positional_options_description pos;
-    pos.add("input", 1).add("output", 1);
-    po::variables_map vm;
+    po::options_description desc(
+        "\nUsage: alifc [options] <input> <output>\n\nAvailable Options");
 
+    po::positional_options_description pos_desc;
+
+    pos_desc.add("input", -1).add("output", 1);
+
+    po::variables_map vm;
     initArgDesc(&desc, cmdargs, env);
     auto *av = cmdargs->get_raw_array();
     auto ac = static_cast<int>(cmdargs->get_raw_size());
+
     if (ac == 1) {
       print_usage(desc, env);
-      return false;
+      return "Not enough arguments.";
     }
+
     auto parsed_opts = po::command_line_parser(ac, av)
                            .options(desc)
-                           .positional(pos)
+                           .positional(pos_desc)
                            .style(cli::po_style)
                            .run();
 
-    po::store(parsed_opts, vm, false);
+    po::store(parsed_opts, vm, true);
 
     po::notify(vm);
 
+    // only after notifying vm, because the notifiers add these conflicts and/or
+    // dependencies
     cmdargs->check_conflicts(vm);
     cmdargs->check_dependencies(vm);
+
   } catch (std::exception const &e) {
-    spdlog::get("mri-convert")->critical(e.what());
-    return false;
+    std::string msg{e.what()};
+    return msg;
   }
 
-  return true;
+  return "";
 }

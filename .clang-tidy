@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvmlibc-callee-namespace,-llvmlibc-implementation-in-namespace,-fuchsia-trailing-return,-fuchsia-default-arguments-declarations,-fuchsia-default-arguments-calls'
+Checks:          '*,-llvmlibc-callee-namespace,-llvmlibc-implementation-in-namespace,-fuchsia-trailing-return,-fuchsia-default-arguments-declarations,-fuchsia-default-arguments-calls,-misc-non-private-member-variables-in-classes'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false

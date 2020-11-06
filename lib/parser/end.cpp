@@ -17,7 +17,7 @@
 
 // ----------------------------------
 
-void parser_End(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_End(std::string Token[2048], lex::Token *o_tokens) {
   // نهاية
 
   if (Token[2].empty()) {

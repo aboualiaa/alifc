@@ -26,7 +26,7 @@
 // ----------------------------------
 
 auto GetFormatedHTML(const std::string &HTML, const std::string &WindowName,
-                     CLASS_TOKEN *o_tokens) -> std::string {
+                     lex::Token *o_tokens) -> std::string {
 
   std::string FormatedHTML;
 
@@ -242,7 +242,7 @@ o_tokens); } else { FormatedHTML.append(Line);
 
 void HTML_to_c(const std::string &sHTMLPath, const std::string &sCPath,
                const std::string &VarName, std::string WindowName,
-               CLASS_TOKEN *o_tokens) {
+               lex::Token *o_tokens) {
   // This function can be completly replace in c++20 by <embed>
   // In: test.html
   // Out: test.c -> const test_content = "..test.html..";
@@ -287,7 +287,7 @@ void HTML_to_c(const std::string &sHTMLPath, const std::string &sCPath,
   cFile << cppCode;
 }
 
-void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_NewWindowWeb(std::string Token[2048], lex::Token *o_tokens) {
 
   // #واجهة_ويب رئيسية "UI_WEB_1"
   // #window_web MyWindow "MyFile.html"
@@ -594,7 +594,7 @@ void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens) {
   TheWindow = "";
 }
 
-void parser_NewWindow(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_NewWindow(std::string Token[2048], lex::Token *o_tokens) {
 
   if (IsInsideWindow) {
     ErrorCode("لا يمكن انشاء نافدة داخل نافدة، النافذة الحالية : " + TheWindow,

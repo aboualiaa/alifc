@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_Int(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Int(std::string Token[2048], lex::Token *o_tokens) {
   // عدد
 
   if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction) {

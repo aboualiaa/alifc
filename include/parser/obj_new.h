@@ -5,6 +5,6 @@
 #ifndef PARSER_OBJ_NEW_H
 #define PARSER_OBJ_NEW_H
 
-void parser_ObjNew(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_ObjNew(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_OBJ_NEW_H

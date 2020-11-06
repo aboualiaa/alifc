@@ -20,7 +20,7 @@
 #include <map> // vector
 // ----------------------------------
 
-void parser_Var(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Var(std::string Token[2048], lex::Token *o_tokens) {
 
   // Local var
   // a = 1 + 2

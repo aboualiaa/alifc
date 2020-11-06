@@ -16,9 +16,7 @@
 #include <general/log.h>
 #include <general/setup.h>
 
-// ----------------------------------
-// INITIALIZATION
-// ----------------------------------
+namespace lex = alif::lexer;
 
 void ALIF_VAR_INITIALIZATION_FOR_NEW_SOURCE_FILE(bool FIRST_FILE) {
   // ----------------------------------
@@ -45,7 +43,6 @@ void ALIF_VAR_INITIALIZATION_FOR_NEW_SOURCE_FILE(bool FIRST_FILE) {
   // ----------------------------------
 
   ALIF_PARENTHESIS_STATUS = 0;
-
   ALIF_IF_STATUS = 0;
 
   // ----------------------------------
@@ -55,10 +52,6 @@ void ALIF_VAR_INITIALIZATION_FOR_NEW_SOURCE_FILE(bool FIRST_FILE) {
   ScriptSyntaxBuffer = "";
   ScriptBuffer = "";
 }
-
-// ------------------------------------------------------
-// Read ALif Lib Setting file
-// ------------------------------------------------------
 
 void ALIF_LIB_SETTING() {
   std::ifstream FILE_STREAM(PATH_FULL_LIB_SETTING.c_str());
@@ -117,7 +110,7 @@ void ALIF_LIB_SETTING() {
 
 void ADD_TOKEN(const std::string &TOKEN_CHAR, bool NEW_TOKEN,
                bool NEW_TOKEN_AFTER, int REAL_CHAR_NUMBER,
-               CLASS_TOKEN *o_tokens) {
+               lex::Token *o_tokens) {
   if (NEW_TOKEN) {
     // New Token
     if (!o_tokens
@@ -136,7 +129,7 @@ void ADD_TOKEN(const std::string &TOKEN_CHAR, bool NEW_TOKEN,
                                      o_tokens->TOTAL[o_tokens->TOTAL_LINES])] =
           TOKEN_CHAR;
 
-      // Set Real Token position in the real line
+      // Set Reallex::Tokenposition in the real line
       o_tokens->REAL_TOKEN_POSITION[std::make_pair(
           o_tokens->TOTAL_LINES, o_tokens->TOTAL[o_tokens->TOTAL_LINES])] =
           REAL_CHAR_NUMBER + CharCount_utf8(TOKEN_CHAR, o_tokens);
@@ -159,7 +152,7 @@ void ADD_TOKEN(const std::string &TOKEN_CHAR, bool NEW_TOKEN,
                                     o_tokens->TOTAL[o_tokens->TOTAL_LINES])])
         .append(TOKEN_CHAR);
 
-    // Set Real Token position in the real line
+    // Set Reallex::Tokenposition in the real line
     o_tokens->REAL_TOKEN_POSITION[std::make_pair(
         o_tokens->TOTAL_LINES, o_tokens->TOTAL[o_tokens->TOTAL_LINES])] =
         REAL_CHAR_NUMBER + CharCount_utf8(TOKEN_CHAR, o_tokens);
@@ -175,16 +168,9 @@ void ADD_TOKEN(const std::string &TOKEN_CHAR, bool NEW_TOKEN,
 }
 
 void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
-                     bool FIRST_FILE, bool TOKENS_ARE_PREDININED) {
-  // ------------------------------------------------------
-  // Create new object of tokens class
-  // referenced here in this func by ref &
-  // referenced in other func by pointer *
-  // ------------------------------------------------------
+                     bool FIRST_FILE, bool Tokens_Are_Predefined) {
 
-  CLASS_TOKEN OBJ_CLASS_TOKEN; // Create Obj of Tokens Class, Also
-                               // INITIALIZATION of Tokens
-  // OBJ_CLASS_TOKEN.TOTAL_LINES = 1;
+  lex::Token OBJ_CLASS_TOKEN; // Create Obj of Tokens Class
 
   // ------------------------------------------------------
   // ALIF FILE EXTENTION
@@ -739,7 +725,7 @@ void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
     // This is a seconde file (mylib.alif)
     // so, check if this file need Tokens Predefinetion
 
-    if (!TOKENS_ARE_PREDININED) {
+    if (!Tokens_Are_Predefined) {
       // This file did not have any Tokens Predefinetion
       // so, lets start one..
 

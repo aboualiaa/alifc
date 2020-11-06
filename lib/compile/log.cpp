@@ -31,7 +31,7 @@ void ALIF_ERROR(const std::string &ERROR_DESCRIPTION) {
   exit(EXIT_FAILURE);
 }
 
-void DEBUG_MESSAGE(const std::string &MESSAGE, CLASS_TOKEN * /*o_tokens*/) {
+void DEBUG_MESSAGE(const std::string &MESSAGE, lex::Token * /*o_tokens*/) {
   LOG_MESSAGE_FULL.append(MESSAGE);
 
   if (DEBUG_PRINT_ON_SCREEN) {
@@ -55,7 +55,7 @@ void PATH_FULL_LOG_SAVE() {
   file.close();
 }
 
-void ErrorCode(const std::string &ERROR_DESCRIPTION, CLASS_TOKEN *o_tokens) {
+void ErrorCode(const std::string &ERROR_DESCRIPTION, lex::Token *o_tokens) {
 
   if (DEBUG) {
     DEBUG_MESSAGE("\n ----------- DEBUGING ERROR ------------- \n", o_tokens);

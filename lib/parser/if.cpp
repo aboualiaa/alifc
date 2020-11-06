@@ -17,7 +17,7 @@
 #include <string>
 // ----------------------------------
 
-void parser_IfOr(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_IfOr(std::string Token[2048], lex::Token *o_tokens) {
   // إذا - أو
 
   if (!o_tokens->TOKENS_PREDEFINED) {

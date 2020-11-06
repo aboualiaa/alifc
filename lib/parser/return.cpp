@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_Return(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Return(std::string Token[2048], lex::Token *o_tokens) {
   // إرجاع
   // func int ()
   // return 1 + 2

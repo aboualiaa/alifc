@@ -73,7 +73,8 @@ auto GET_PATH_WITHOUT_FILE(const std::string &PATH) -> std::string {
   {
     return "";
   }
-#ifdef _WIN32 return PATH.substr(0, PATH.find_last_of("\\/"));
+#ifdef _WIN32
+  return PATH.substr(0, PATH.find_last_of("\\/"));
 #else
   return PATH.substr(0, PATH.find_last_of("//"));
 #endif
@@ -139,7 +140,7 @@ bool CHECK_FOLDER_EXISTE(string PATH)
 }
 */
 
-auto CHECK_FILE_EXISTE(const std::string &PATH) -> bool {
+auto CHECK_FILE_EXISTE(const std::string PATH) -> bool {
   /*
   string::iterator end_it = utf8::find_invalid(PATH.begin(), PATH.end());
 

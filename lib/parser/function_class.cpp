@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_FunctionClass(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_FunctionClass(std::string Token[2048], lex::Token *o_tokens) {
   // Class -> دالة
 
   if (IsInsideFunction) {

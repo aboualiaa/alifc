@@ -17,7 +17,7 @@
 
 // ----------------------------------
 
-void parser_Class(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Class(std::string Token[2048], lex::Token *o_tokens) {
   //صنف
 
   if (IsInsideClass) {

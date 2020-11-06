@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_NextBreak(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_NextBreak(std::string Token[2048], lex::Token *o_tokens) {
   // التالي - كسر
 
   if (!o_tokens->TOKENS_PREDEFINED) {

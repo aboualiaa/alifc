@@ -17,7 +17,7 @@
 #include <string>
 // ----------------------------------
 
-void parser_Function(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Function(std::string Token[2048], lex::Token *o_tokens) {
 
   //دالة
 

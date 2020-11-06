@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_VarGlobal(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_VarGlobal(std::string Token[2048], lex::Token *o_tokens) {
 
   // Global var
   // _g1 = 1 + 2

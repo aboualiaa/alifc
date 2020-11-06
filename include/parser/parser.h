@@ -7,6 +7,8 @@
 
 #include "general/class_token.h"
 
-void ALIF_PARSER(CLASS_TOKEN *o_tokens);
+namespace lex = alif::lexer;
+
+void ALIF_PARSER(lex::Token *o_tokens);
 
 #endif // PARSER_PARSER_H

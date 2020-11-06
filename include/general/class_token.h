@@ -8,7 +8,9 @@
 #include <map>
 #include <string>
 
-class CLASS_TOKEN {
+namespace alif::lexer {
+
+class Token {
 public:
   // ----------------------------------
   // Script Type
@@ -33,12 +35,12 @@ public:
       REAL_LINE[2048]; // The real Alif script line, without toknonisation !
   std::map<std::pair<int, int>, int>
       REAL_TOKEN_POSITION; // The real Alif script token position in real line !
-  // [Line Number, Token Number] = "real char number"
+  // [Line Number,lex::TokenNumber] = "real char number"
 
   bool TOKENS_PREDEFINED = false;
 
   std::map<std::pair<int, int>, std::string>
-      TOKEN; // TOKEN [Line Number, Token Number] = "token"
+      TOKEN; // TOKEN [Line Number,lex::TokenNumber] = "token"
 
   int TOTAL[2048];
   int TOTAL_LINES;
@@ -49,7 +51,7 @@ public:
   // Constructor
   // ----------------------------------
 
-  CLASS_TOKEN() {
+  Token() {
     TOTAL_LINES = 1;
     NUMBER = 1;
     Line = 1;
@@ -57,5 +59,7 @@ public:
     PATH_FULL_SOURCE = "";
   }
 };
+
+} // namespace alif::lexer
 
 #endif // GENERAL_CLASS_TOKEN_H

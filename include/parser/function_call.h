@@ -5,6 +5,6 @@
 #ifndef PARSER_FUNCTION_CALL_H
 #define PARSER_FUNCTION_CALL_H
 
-void parser_FunctionCall(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_FunctionCall(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_FUNCTION_CALL_H

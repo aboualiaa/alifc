@@ -30,7 +30,7 @@
 #include "parser/var_g_class.h"
 #include "parser/window.h"
 
-void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
+void ALIF_PARSER(lex::Token *o_tokens) {
   // ------------------------------------------------------
   // Already Parsed files
   // -----------------------------------------------------
@@ -91,8 +91,9 @@ void ALIF_PARSER(CLASS_TOKEN *o_tokens) {
          o_tokens->NUMBER++) {
       // -----------------------------------------------------------------
       // Line Number 		: o_tokens->Line
-      // Token Number 	: o_tokens->NUMBER
-      // Token 			: o_tokens->TOKEN[std::make_pair(o_tokens->Line,
+      // lex::TokenNumber 	: o_tokens->NUMBER
+      // lex::Token			:
+      // o_tokens->TOKEN[std::make_pair(o_tokens->Line,
       // o_tokens->NUMBER)]
       // -----------------------------------------------------------------
       if (!o_tokens->TOKEN[std::make_pair(o_tokens->Line, o_tokens->NUMBER)]

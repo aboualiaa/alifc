@@ -17,7 +17,7 @@
 
 // ----------------------------------
 
-void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_Control(std::string Token[2048], lex::Token *o_tokens) {
   //أداة
 
   if (IsInsideWindow || IsInsideFunction || IsInsideClass) {

@@ -5,6 +5,6 @@
 #ifndef PARSER_IF_ELSE_H
 #define PARSER_IF_ELSE_H
 
-void parser_IfElse(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_IfElse(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_IF_ELSE_H

@@ -55,45 +55,45 @@ void SET_CONTROL_C_NAME(const std::string &VAR);
 auto IsInArray_v(const std::string &value,
                  const std::vector<std::string> &array) -> bool;
 auto IsDataType(const std::string &value) -> bool;
-auto CharCount_utf8(std::string LINE8, CLASS_TOKEN *o_tokens) -> int;
-auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens)
+auto CharCount_utf8(std::string LINE8, lex::Token *o_tokens) -> int;
+auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, lex::Token *o_tokens)
     -> std::string;
-auto IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens)
+auto IsValidStringFormat(const std::string &STRING, lex::Token *o_tokens)
     -> bool;
-auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, CLASS_TOKEN *o_tokens)
+auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, lex::Token *o_tokens)
     -> std::string;
-auto IsValidDigit(const std::string &DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens)
+auto IsValidDigit(const std::string &DIGIT, bool FLOAT, lex::Token *o_tokens)
     -> bool;
 auto CAN_ADD_OPERATION_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_VAR_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_FUN_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_PARENTHESIS_OPEN_HERE(const std::string &TOKEN_LAST) -> bool;
-auto IsValidVar(const std::string &Var, CLASS_TOKEN *o_tokens) -> bool;
+auto IsValidVar(const std::string &Var, lex::Token *o_tokens) -> bool;
 auto CAN_ADD_PARENTHESIS_CLOSE_HERE(const std::string &TOKEN_LAST) -> bool;
 auto CAN_ADD_DIGIT_HERE(const std::string &TOKEN_LAST) -> bool;
-auto GET_TXT_FROM_STRING(const std::string &STRING, CLASS_TOKEN *o_tokens)
+auto GET_TXT_FROM_STRING(const std::string &STRING, lex::Token *o_tokens)
     -> std::string;
-void CheckForSameGlobalID(const std::string &Name, CLASS_TOKEN *o_tokens);
-auto IsValidName(const std::string &Name, CLASS_TOKEN *o_tokens) -> bool;
+void CheckForSameGlobalID(const std::string &Name, lex::Token *o_tokens);
+auto IsValidName(const std::string &Name, lex::Token *o_tokens) -> bool;
 void ADD_FUN(bool GLOBAL, const std::string &WIN_NAME,
              const std::string &FUN_NAME, const std::string &TYPE, int Line,
-             CLASS_TOKEN *o_tokens);
+             lex::Token *o_tokens);
 void SetNewVar(bool IsGlobal, const std::string &TmpWindow,
                const std::string &TmpFunction, const std::string &VarName,
                const std::string &VarDataType, bool IsConstant, bool IsArray,
-               int Line, CLASS_TOKEN *o_tokens);
+               int Line, lex::Token *o_tokens);
 void SetNewVarClass(bool IsGlobal, bool IsPrivate, const std::string &ClassName,
                     const std::string &FunctionName, const std::string &VarName,
                     const std::string &VarDataType, bool IsConstant,
-                    bool IsArray, int Line, CLASS_TOKEN *o_tokens);
+                    bool IsArray, int Line, lex::Token *o_tokens);
 auto GetSyntaxDataType(std::string Token[1024], int Position,
-                       CLASS_TOKEN *o_tokens) -> std::string;
+                       lex::Token *o_tokens) -> std::string;
 void ADD_FUN_CLASS(bool PRIVATE, const std::string &CLASS_NAME,
                    const std::string &FUN_NAME, const std::string &TYPE,
-                   int Line, CLASS_TOKEN *o_tokens);
+                   int Line, lex::Token *o_tokens);
 auto CHECK_NEW_FUN_SYNTAX(bool GLOBAL, std::string SYNTAX[1024],
                           int SYNTAX_LONG, const std::string &TmpWindow,
-                          const std::string &TmpFunction, CLASS_TOKEN *o_tokens)
+                          const std::string &TmpFunction, lex::Token *o_tokens)
     -> std::string;
 auto CheckForSyntax(
     const std::string &OBJECTIF_TYPE, // OBJECTIF_TYPE
@@ -109,14 +109,14 @@ auto CheckForSyntax(
     int SYNTAX_LONG,            // SYNTAX_LONG int
     const std::string &TMP_WIN_OR_CLASS, // a = b + win:fun(2+2) + class:fun(x)
     const std::string &TmpFunction,      // a = b + win/class:fun(2+2)
-    CLASS_TOKEN *o_tokens) -> std::string;
+    lex::Token *o_tokens) -> std::string;
 auto CHECK_CALL_FUN_ARG(bool CALL_FUN_GLOBAL,
                         const std::string &CALL_WIN_OR_CLASS,
                         const std::string &CALL_FUN, int CALL_IS_CLASS,
                         const std::string &FROM_WIN_OR_CLASS,
                         const std::string &FROM_FUN, std::string SYNTAX[1024],
-                        int SYNTAX_LONG, CLASS_TOKEN *o_tokens) -> std::string;
-void FINAL_CURRENT_FILE_CODE_CHECKING(CLASS_TOKEN *o_tokens);
-void FINAL_APPLICATION_CODE_CHECKING(CLASS_TOKEN *o_tokens, bool FIRST_FILE);
+                        int SYNTAX_LONG, lex::Token *o_tokens) -> std::string;
+void FINAL_CURRENT_FILE_CODE_CHECKING(lex::Token *o_tokens);
+void FINAL_APPLICATION_CODE_CHECKING(lex::Token *o_tokens, bool FIRST_FILE);
 
 #endif // CORE_CORE_H

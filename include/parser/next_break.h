@@ -5,6 +5,6 @@
 #ifndef PARSER_NEXT_BREAK_H
 #define PARSER_NEXT_BREAK_H
 
-void parser_NextBreak(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_NextBreak(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_NEXT_BREAK_H

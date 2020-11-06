@@ -5,6 +5,6 @@
 #ifndef PARSER_RETURN_H
 #define PARSER_RETURN_H
 
-void parser_Return(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_Return(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_RETURN_H

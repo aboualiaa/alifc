@@ -18,7 +18,7 @@
 
 // ----------------------------------
 
-void parser_ObjNew(std::string Token[2048], CLASS_TOKEN *o_tokens) {
+void parser_ObjNew(std::string Token[2048], lex::Token *o_tokens) {
   // كائن
 
   if (!o_tokens->TOKENS_PREDEFINED && IsInsideFunction) {

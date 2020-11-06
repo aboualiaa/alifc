@@ -18,6 +18,6 @@
 
 // ----------------------------------
 
-void parser_bool(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_bool(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_BOOL_H

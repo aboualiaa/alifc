@@ -16,6 +16,6 @@
 #include <generator/pc_gui.h>
 #include <string>
 
-void parser_Control(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_Control(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_CONTROL_H

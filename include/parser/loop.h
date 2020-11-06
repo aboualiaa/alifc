@@ -5,6 +5,6 @@
 #ifndef PARSER_LOOP_H
 #define PARSER_LOOP_H
 
-void parser_While(std::string Token[2048], CLASS_TOKEN *o_tokens);
+void parser_While(std::string Token[2048], lex::Token *o_tokens);
 
 #endif // PARSER_LOOP_H

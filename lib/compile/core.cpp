@@ -433,7 +433,7 @@ auto IsDataType(const std::string &value) -> bool {
 // Get UTF8 Total Leng
 // -----------------------------------------------------------
 
-auto CharCount_utf8(std::string LINE8, CLASS_TOKEN *o_tokens) -> int {
+auto CharCount_utf8(std::string LINE8, lex::Token *o_tokens) -> int {
 
   // ------------------------------------------------------
   // check ل invalid utf-8
@@ -477,7 +477,7 @@ auto CharCount_utf8(std::string LINE8, CLASS_TOKEN *o_tokens) -> int {
 
 // ====================================================
 
-auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens)
+auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, lex::Token *o_tokens)
     -> std::string {
   if (DEBUG) {
     DEBUG_MESSAGE("REAL_LINE : |" + o_tokens->REAL_LINE[o_tokens->Line] +
@@ -518,7 +518,7 @@ auto GET_REAL_LINE_MID(int START, int TOKEN_POSITION, CLASS_TOKEN *o_tokens)
 
 // ====================================================
 
-auto IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens)
+auto IsValidStringFormat(const std::string &STRING, lex::Token *o_tokens)
     -> bool {
   if (substr_utf8(STRING, 0, 1) != "\"") {
     return false;
@@ -532,7 +532,7 @@ auto IsValidStringFormat(const std::string &STRING, CLASS_TOKEN *o_tokens)
 }
 
 /*
-bool IsValidStringFormatOrStringVar(std::string STRING, CLASS_TOKEN *o_tokens){
+bool IsValidStringFormatOrStringVar(std::string STRING,lex::Token*o_tokens){
 
         // TODO : We need add support for global class var, global var.
 
@@ -563,7 +563,7 @@ STRING)] != "نص") return false;
 
 // ====================================================
 
-auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, CLASS_TOKEN *o_tokens)
+auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, lex::Token *o_tokens)
     -> std::string {
   std::string Char;
   std::string BUFFER;
@@ -623,7 +623,7 @@ auto REMOVE_DOUBLE_SPACE(const std::string &LINE_BUFFER, CLASS_TOKEN *o_tokens)
 
 // ====================================================
 
-auto IsValidDigit(const std::string &DIGIT, bool FLOAT, CLASS_TOKEN *o_tokens)
+auto IsValidDigit(const std::string &DIGIT, bool FLOAT, lex::Token *o_tokens)
     -> bool {
   int I = 0;
   int TOTAL_CHAR = CharCount_utf8(DIGIT, o_tokens);
@@ -804,7 +804,7 @@ auto CAN_ADD_PARENTHESIS_OPEN_HERE(const std::string &TOKEN_LAST) -> bool {
 
 // ====================================================
 
-auto IsValidVar(const std::string &Var, CLASS_TOKEN *o_tokens) -> bool {
+auto IsValidVar(const std::string &Var, lex::Token *o_tokens) -> bool {
   IsValidVar_Type = "عادم";
 
   if (Var.empty()) {
@@ -968,7 +968,7 @@ auto CAN_ADD_DIGIT_HERE(const std::string &TOKEN_LAST) -> bool {
 
 // ====================================================
 
-auto GET_TXT_FROM_STRING(const std::string &STRING, CLASS_TOKEN *o_tokens)
+auto GET_TXT_FROM_STRING(const std::string &STRING, lex::Token *o_tokens)
     -> std::string {
   std::string MESSAGE_BUFFER;
 
@@ -985,7 +985,7 @@ auto GET_TXT_FROM_STRING(const std::string &STRING, CLASS_TOKEN *o_tokens)
 
 // ====================================================
 
-void CheckForSameGlobalID(const std::string &Name, CLASS_TOKEN *o_tokens) {
+void CheckForSameGlobalID(const std::string &Name, lex::Token *o_tokens) {
   // check if same name with any already global declaration
 
   if (OBJ_IS_SET[std::make_pair("", Name)]) {
@@ -1032,7 +1032,7 @@ void CheckForSameGlobalID(const std::string &Name, CLASS_TOKEN *o_tokens) {
   }
 }
 
-auto IsValidName(const std::string &Name, CLASS_TOKEN *o_tokens) -> bool {
+auto IsValidName(const std::string &Name, lex::Token *o_tokens) -> bool {
 
   std::string Char;
   bool First = true;
@@ -1113,7 +1113,7 @@ auto IsValidName(const std::string &Name, CLASS_TOKEN *o_tokens) -> bool {
 
 void ADD_FUN(bool GLOBAL, const std::string &WIN_NAME,
              const std::string &FUN_NAME, const std::string &TYPE, int Line,
-             CLASS_TOKEN *o_tokens) {
+             lex::Token *o_tokens) {
   if (!IsValidName(FUN_NAME, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + FUN_NAME + " ' ", o_tokens);
   }
@@ -1175,7 +1175,7 @@ void ADD_FUN(bool GLOBAL, const std::string &WIN_NAME,
 void SetNewVar(bool IsGlobal, const std::string &TmpWindow,
                const std::string &TmpFunction, const std::string &VarName,
                const std::string &VarDataType, bool IsConstant, bool IsArray,
-               int Line, CLASS_TOKEN *o_tokens) {
+               int Line, lex::Token *o_tokens) {
 
   if (!IsValidName(VarName, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + VarName + " ' ", o_tokens);
@@ -1231,7 +1231,7 @@ void SetNewVar(bool IsGlobal, const std::string &TmpWindow,
 void SetNewVarClass(bool IsGlobal, bool IsPrivate, const std::string &ClassName,
                     const std::string &FunctionName, const std::string &VarName,
                     const std::string &VarDataType, bool IsConstant,
-                    bool IsArray, int Line, CLASS_TOKEN *o_tokens) {
+                    bool IsArray, int Line, lex::Token *o_tokens) {
 
   if (!IsValidName(VarName, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + VarName + " ' ", o_tokens);
@@ -1296,7 +1296,7 @@ void SetNewVarClass(bool IsGlobal, bool IsPrivate, const std::string &ClassName,
 }
 
 auto GetSyntaxDataType(std::string Token[1024], int Position,
-                       CLASS_TOKEN *o_tokens) -> std::string {
+                       lex::Token *o_tokens) -> std::string {
 
   // Token[Position] -> '='
 
@@ -1309,7 +1309,7 @@ auto GetSyntaxDataType(std::string Token[1024], int Position,
 
 void ADD_FUN_CLASS(bool PRIVATE, const std::string &CLASS_NAME,
                    const std::string &FUN_NAME, const std::string &TYPE,
-                   int Line, CLASS_TOKEN *o_tokens) {
+                   int Line, lex::Token *o_tokens) {
   if (!IsValidName(FUN_NAME, o_tokens)) {
     ErrorCode("اسم غير مقبول : ' " + FUN_NAME + " ' ", o_tokens);
   }
@@ -1363,7 +1363,7 @@ void ADD_FUN_CLASS(bool PRIVATE, const std::string &CLASS_NAME,
 
 auto CHECK_NEW_FUN_SYNTAX(bool GLOBAL, std::string SYNTAX[1024],
                           int SYNTAX_LONG, const std::string &TmpWindow,
-                          const std::string &TmpFunction, CLASS_TOKEN *o_tokens)
+                          const std::string &TmpFunction, lex::Token *o_tokens)
     -> std::string {
   // function (int a, نص b)
 
@@ -1499,7 +1499,7 @@ auto CheckForSyntax(
     int SYNTAX_LONG,           // SYNTAX_LONG int
     const std::string &TMP_WIN_OR_CLASS, // a = b + win:fun(2+2) + class:fun(x)
     const std::string &TmpFunction,      // a = b + win/class:fun(2+2)
-    CLASS_TOKEN *o_tokens) -> std::string {
+    lex::Token *o_tokens) -> std::string {
   // Note : WX Crash if On creating using reference إلى Controls, BUT OK ل
   // Functions.
 
@@ -3855,7 +3855,7 @@ auto CHECK_CALL_FUN_ARG(bool CALL_FUN_GLOBAL,
                         const std::string &CALL_FUN, int CALL_IS_CLASS,
                         const std::string &FROM_WIN_OR_CLASS,
                         const std::string &FROM_FUN, std::string SYNTAX[1024],
-                        int SYNTAX_LONG, CLASS_TOKEN *o_tokens) -> std::string {
+                        int SYNTAX_LONG, lex::Token *o_tokens) -> std::string {
   // SYNTAX[]			: 	1+1, b*2, 	("test" + s)
   // G_FUN_ARG_TYPE 	: 	INT, 	INT, 	STRING
 
@@ -4057,7 +4057,7 @@ auto CHECK_CALL_FUN_ARG(bool CALL_FUN_GLOBAL,
 
 // ====================================================
 
-void FINAL_CURRENT_FILE_CODE_CHECKING(CLASS_TOKEN *o_tokens) {
+void FINAL_CURRENT_FILE_CODE_CHECKING(lex::Token *o_tokens) {
   // if(DEBUG)DEBUG_MESSAGE("FINAL_CURRENT_FILE_CODE_CHECKING()... \n",
   // o_tokens); // DEBUG
 
@@ -4099,7 +4099,7 @@ void FINAL_CURRENT_FILE_CODE_CHECKING(CLASS_TOKEN *o_tokens) {
 
 // ====================================================
 
-void FINAL_APPLICATION_CODE_CHECKING(CLASS_TOKEN *o_tokens, bool FIRST_FILE) {
+void FINAL_APPLICATION_CODE_CHECKING(lex::Token *o_tokens, bool FIRST_FILE) {
   if (FIRST_FILE) {
     if (DEBUG) {
       DEBUG_MESSAGE("FINAL_APPLICATION_CODE_CHECKING()... \n",

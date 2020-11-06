@@ -13,9 +13,11 @@
 
 #include "class_token.h"
 
-void parser_NewWindowWeb(std::string Token[2048], CLASS_TOKEN *o_tokens);
+namespace lex = alif::lexer;
+
+void parser_NewWindowWeb(std::string Token[2048], lex::Token *o_tokens);
 
 void AlifLexerParser(std::string FILE_NAME, const std::string &FILE_TYPE,
-                     bool FIRST_FILE, bool TOKENS_ARE_PREDININED);
+                     bool FIRST_FILE, bool Tokens_Are_Predefined);
 
 #endif
